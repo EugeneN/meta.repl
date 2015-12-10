@@ -12021,7 +12021,7 @@ var theSite = new Types.Node({
         title: "About", 
         path: "about", 
         children: [  ], 
-        dataSource: new Types.MemorySource(Data_String.joinWith("\n")([ "Hi, I'm Eugene.", "", "Software {engineer, architect} with 10 years of experience in networking, distributed and high load systems, web development, software design and project management.", "", "Worked on online education systems, spam protection systems, online GIS systems, accounting and trading software, rich web applications, IT/network infrastructure systems.", "", "Created own small language for web development and a few open source utilities and applications.", "", "![Prom.ua](http://static-cache.ua.uaprom.net/image/i18n-domain/UA/logo_main-trans.png?r=e8abc69e68fadede022fc4e4a50e327b)", "![Cisco](https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Cisco_logo.svg/225px-Cisco_logo.svg.png)", "![Pearson](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJcAAAAsCAMAAABfTNr9AAAAdVBMVEXtawbtagPuchjsYADtZwD8+/L79er7+O7sYwDsXQD8/vXsWgD42MH66tr2zLj1v6D549HwkVv43Mj2z7f78eTvgULudSnxnXD0tZPuezX0so71wab0upzufTvvh0/rVADzrIfypn/2ya70u5fxlmPyoXjwh0myEfQ+AAAEh0lEQVRYhe2W25KqOhCGiUmnAwRlOCgqOsDovP8j7j8H0DVVuzZzt6o2XV4IhPClD393svs7LRF/pyWbbbbZZpv9T03IYEaFa4W/zqRcmoPA5atTGGne14cF7ob4eUMtd5R5Lcdma7hMUVVlWVbTQ7pX1d3We2e1PcZtRbuf6uUbZqrxzNZdmy63jn1V2v4sZ6r03Nmy3D9VJFDjfv+h5vf7+u1I/2qyYc6yjIiKFuvVR+aucUkzl+kyzuZtE2mJyS+wSVhgnhRsCmvUro439BCcboaM9S6sTgvSMvlvk4Xm0/1+AZ57Vd1J03DprtPir7xkzdO8l6yZp3GosKxKPcZ3hsfjQZP17lFnbNUcxgEHyGofXfUkzVUIdFpysYqrZL4ZZVSj6Wo8F3++55c4k9a6mWcRs2d6SpOPpLO7iqBfuZFH7Q8idpqpRhKa/K411Y5dnbAF9f4YacXlKq6KucWG5kTuBXGDc/L3BaYjW3H2mPPjynTC/89C02iCA8hFWSV+hbTMVR7C14LdrVUPdzR6+OWWq99wqW/ScLA4/+SSRfYciG36Jxf2p3H2V6nwz7Ooe6bpHM8gD6yL3CUt9sa+zqGppd9xwV8WXEcOcZyrWd0y3iVIoZi35uB5RN7orPXJ88DD4hbDbia4Kx7Bp4BbBC5GUBEP4bjqX3ApZLfzuecax/Fy6E3kwPkQHBrma3AZk37R/H15ABj1QaFSlFG3CBTg3XvgojN8Rlf5K65vmX8jS1yoxI61drqRlf6rwjTAQEFxmb+4bn0FXYkeTFInA5AZhyNB8lz0CUnOfeBqcRJkm3Fca4QVXNR2DJDJhcJxMXTUVkEZECVGbUkdoxa4nhk3w6shyHOJxPYa94MLxd4FrqMApOZzXq32F7VXLqZWhjKHvz59owk711x0w9AhPFe5cCG5+f52aiUPruKgJY7ka3mSBsrAJRKkWPH5C6777mhkOKTjatLlqXefk3fQNr4XOa5L3gPj+N4Q00vQBJTrSwd83h9F5PJlSde1+YXEur86rMv7Ny4DhSgra6sS+uPkwXN1xqlxGQOpZh2niwsZXHmO28mefVpCv3xXS3EcnHMlFwTv1Uh/cOUFlz6qn32sfycEvXF+pGvoQw9fiXksWUdsg64qLPJ67Lgcq0+xtVzFn1zQ+8Lrl/Rimzkn+Pvww00ELvQrc8p09vQVWBRt6tpQ6EsKIk+H3CgljwXTFPsQtbFJgWudrjYxQMGc7DfD5fJ1nUAhJxSFin5lPpgg7+ByBQFQ5QuWq8uhgWz6E7iGRuV4/+iRmTb07TFyJcaFeR2X5mx847pnce7B6REtmpu/6YkZX8GcQ5NxXadhahIhzphq2P1mPTMfxTwKHcIMYS5Z6PE4zpW4WcOl7FQ/37g+yrr2Y2HZCnWy9hKLXrRVbaFQmAutFwL1sLWFOIn02FVFYcdlYFXmZDHrlP1xrozBVnGAE6au7Zq5MJGzRMRNpR+kpZ9z1CxjSRi4fUHO99Qscpia01S+ajoRCjfSt8nayOUbbps1WJttttlmm2222T+OK0cIBMLjzQAAAABJRU5ErkJggg==)", "![G4](https://bytebucket.org/technowolf/wolfden_1/raw/6d4ce0e0b6f27612ede53642ca96e33d03218cd4/g4/media/images/g4logo_wolf.png?token=7bb2b0d4916016a8db3c603b6651ddaef5cb5168)", "![SoftServe](http://softserve.ua/html/img/softserve_logo-01.svg)" ]))
+        dataSource: new Types.MemorySource(Data_String.joinWith("\n")([ "Hi, I'm Eugene.", "", "Software {engineer, architect} with 10 years of experience in networking, distributed and high load systems, web development, software design and project management.", "", "Worked on online education systems, spam protection systems, online GIS systems, accounting and trading software, rich web applications, IT/network infrastructure systems.", "", "Created own small language for web development and a few open source utilities and applications.", "", "", "> ![Prom.ua](http://static-cache.ua.uaprom.net/image/i18n-domain/UA/logo_main-trans.png?r=e8abc69e68fadede022fc4e4a50e327b)", "> ![Cisco](https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Cisco_logo.svg/225px-Cisco_logo.svg.png)", "> ![Pearson](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJcAAAAsCAMAAABfTNr9AAAAdVBMVEXtawbtagPuchjsYADtZwD8+/L79er7+O7sYwDsXQD8/vXsWgD42MH66tr2zLj1v6D549HwkVv43Mj2z7f78eTvgULudSnxnXD0tZPuezX0so71wab0upzufTvvh0/rVADzrIfypn/2ya70u5fxlmPyoXjwh0myEfQ+AAAEh0lEQVRYhe2W25KqOhCGiUmnAwRlOCgqOsDovP8j7j8H0DVVuzZzt6o2XV4IhPClD393svs7LRF/pyWbbbbZZpv9T03IYEaFa4W/zqRcmoPA5atTGGne14cF7ob4eUMtd5R5Lcdma7hMUVVlWVbTQ7pX1d3We2e1PcZtRbuf6uUbZqrxzNZdmy63jn1V2v4sZ6r03Nmy3D9VJFDjfv+h5vf7+u1I/2qyYc6yjIiKFuvVR+aucUkzl+kyzuZtE2mJyS+wSVhgnhRsCmvUro439BCcboaM9S6sTgvSMvlvk4Xm0/1+AZ57Vd1J03DprtPir7xkzdO8l6yZp3GosKxKPcZ3hsfjQZP17lFnbNUcxgEHyGofXfUkzVUIdFpysYqrZL4ZZVSj6Wo8F3++55c4k9a6mWcRs2d6SpOPpLO7iqBfuZFH7Q8idpqpRhKa/K411Y5dnbAF9f4YacXlKq6KucWG5kTuBXGDc/L3BaYjW3H2mPPjynTC/89C02iCA8hFWSV+hbTMVR7C14LdrVUPdzR6+OWWq99wqW/ScLA4/+SSRfYciG36Jxf2p3H2V6nwz7Ooe6bpHM8gD6yL3CUt9sa+zqGppd9xwV8WXEcOcZyrWd0y3iVIoZi35uB5RN7orPXJ88DD4hbDbia4Kx7Bp4BbBC5GUBEP4bjqX3ApZLfzuecax/Fy6E3kwPkQHBrma3AZk37R/H15ABj1QaFSlFG3CBTg3XvgojN8Rlf5K65vmX8jS1yoxI61drqRlf6rwjTAQEFxmb+4bn0FXYkeTFInA5AZhyNB8lz0CUnOfeBqcRJkm3Fca4QVXNR2DJDJhcJxMXTUVkEZECVGbUkdoxa4nhk3w6shyHOJxPYa94MLxd4FrqMApOZzXq32F7VXLqZWhjKHvz59owk711x0w9AhPFe5cCG5+f52aiUPruKgJY7ka3mSBsrAJRKkWPH5C6777mhkOKTjatLlqXefk3fQNr4XOa5L3gPj+N4Q00vQBJTrSwd83h9F5PJlSde1+YXEur86rMv7Ny4DhSgra6sS+uPkwXN1xqlxGQOpZh2niwsZXHmO28mefVpCv3xXS3EcnHMlFwTv1Uh/cOUFlz6qn32sfycEvXF+pGvoQw9fiXksWUdsg64qLPJ67Lgcq0+xtVzFn1zQ+8Lrl/Rimzkn+Pvww00ELvQrc8p09vQVWBRt6tpQ6EsKIk+H3CgljwXTFPsQtbFJgWudrjYxQMGc7DfD5fJ1nUAhJxSFin5lPpgg7+ByBQFQ5QuWq8uhgWz6E7iGRuV4/+iRmTb07TFyJcaFeR2X5mx847pnce7B6REtmpu/6YkZX8GcQ5NxXadhahIhzphq2P1mPTMfxTwKHcIMYS5Z6PE4zpW4WcOl7FQ/37g+yrr2Y2HZCnWy9hKLXrRVbaFQmAutFwL1sLWFOIn02FVFYcdlYFXmZDHrlP1xrozBVnGAE6au7Zq5MJGzRMRNpR+kpZ9z1CxjSRi4fUHO99Qscpia01S+ajoRCjfSt8nayOUbbps1WJttttlmm2222T+OK0cIBMLjzQAAAABJRU5ErkJggg==)", "> ![G4](https://bytebucket.org/technowolf/wolfden_1/raw/6d4ce0e0b6f27612ede53642ca96e33d03218cd4/g4/media/images/g4logo_wolf.png?token=7bb2b0d4916016a8db3c603b6651ddaef5cb5168)", "> ![SoftServe](http://softserve.ua/html/img/softserve_logo-01.svg)" ]))
     }), new Types.Node({
         title: "Contact", 
         path: "contacts", 
@@ -19578,7 +19578,10 @@ module.exports = {
 },{"./foreign":"/Users/eugene/github3/en2/output/UI.Console.Main/foreign.js","Control.Monad.Eff":"/Users/eugene/github3/en2/output/Control.Monad.Eff/index.js","Control.Monad.Eff.Console":"/Users/eugene/github3/en2/output/Control.Monad.Eff.Console/index.js","Core":"/Users/eugene/github3/en2/output/Core/index.js","Data":"/Users/eugene/github3/en2/output/Data/index.js","Data.Maybe":"/Users/eugene/github3/en2/output/Data.Maybe/index.js","Prelude":"/Users/eugene/github3/en2/output/Prelude/index.js","Signal.Channel":"/Users/eugene/github3/en2/output/Signal.Channel/index.js","Text.Markdown.SlamDown.Parser":"/Users/eugene/github3/en2/output/Text.Markdown.SlamDown.Parser/index.js","Text.Markdown.SlamDown.Pretty":"/Users/eugene/github3/en2/output/Text.Markdown.SlamDown.Pretty/index.js","Types":"/Users/eugene/github3/en2/output/Types/index.js"}],"/Users/eugene/github3/en2/output/UI.HTML.Main/foreign.js":[function(require,module,exports){
 // module UI.HTML.Main
 
-exports.setInnerHTML = function (html) {return function() {document.body.innerHTML = html; return {}; } } 
+exports.setInnerHTML = function (html) {return function() {document.body.innerHTML = html; return {}; } }
+exports.toString = function (a) {
+  console.log(a)
+  return a.toString() }
 
 },{}],"/Users/eugene/github3/en2/output/UI.HTML.Main/index.js":[function(require,module,exports){
 // Generated by psc version 0.7.6.1
@@ -19589,8 +19592,12 @@ var Signal_Channel = require("Signal.Channel");
 var Control_Monad_Eff_Console = require("Control.Monad.Eff.Console");
 var Control_Monad_Eff = require("Control.Monad.Eff");
 var Data_Maybe = require("Data.Maybe");
+var Data_Monoid = require("Data.Monoid");
+var Data_List = require("Data.List");
+var Data_Foldable = require("Data.Foldable");
 var Text_Markdown_SlamDown_Pretty = require("Text.Markdown.SlamDown.Pretty");
 var Text_Markdown_SlamDown_Parser = require("Text.Markdown.SlamDown.Parser");
+var Text_Markdown_SlamDown = require("Text.Markdown.SlamDown");
 var Text_Smolder_HTML = require("Text.Smolder.HTML");
 var Text_Smolder_HTML_Attributes = require("Text.Smolder.HTML.Attributes");
 var Text_Smolder_Markup = require("Text.Smolder.Markup");
@@ -19598,13 +19605,199 @@ var Text_Smolder_Renderer_String = require("Text.Smolder.Renderer.String");
 var Data = require("Data");
 var Types = require("Types");
 var Core = require("Core");
-var getTitle = function (_2) {
-    return _2.value0.title;
+var ToHtml = function (toHtml) {
+    this.toHtml = toHtml;
+};
+var toHtml = function (dict) {
+    return dict.toHtml;
+};
+var toHtmlInline = new ToHtml(function (_8) {
+    if (_8 instanceof Text_Markdown_SlamDown.Str) {
+        return Text_Smolder_Markup.text(_8.value0);
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.Entity) {
+        return Text_Smolder_Markup.text(_8.value0);
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.Space) {
+        return Text_Smolder_Markup.text(" ");
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.SoftBreak) {
+        return Text_Smolder_Markup.text("&shy;");
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.LineBreak) {
+        return Text_Smolder_HTML.br;
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.Emph) {
+        return Text_Smolder_HTML.em(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_8.value0)(function (x) {
+            return toHtml(toHtmlInline)(x);
+        }));
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.Strong) {
+        return Text_Smolder_HTML.strong(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_8.value0)(function (x) {
+            return toHtml(toHtmlInline)(x);
+        }));
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.Code) {
+        return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("inline-code"))(Text_Smolder_Markup.text(_8.value1));
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.Link && _8.value1 instanceof Text_Markdown_SlamDown.InlineLink) {
+        return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_8.value1.value0))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_8.value0)(function (x) {
+            return toHtml(toHtmlInline)(x);
+        }));
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.Link && (_8.value1 instanceof Text_Markdown_SlamDown.ReferenceLink && _8.value1.value0 instanceof Data_Maybe.Nothing)) {
+        return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href("#"))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_8.value0)(function (x) {
+            return toHtml(toHtmlInline)(x);
+        }));
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.Link && (_8.value1 instanceof Text_Markdown_SlamDown.ReferenceLink && _8.value1.value0 instanceof Data_Maybe.Just)) {
+        return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_8.value1.value0.value0))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_8.value0)(function (x) {
+            return toHtml(toHtmlInline)(x);
+        }));
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.Image) {
+        return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.img)(Text_Smolder_HTML_Attributes.src(_8.value1));
+    };
+    if (_8 instanceof Text_Markdown_SlamDown.FormField) {
+        return Text_Smolder_Markup.text("[form-field " + (Prelude.show(Prelude.showString)(_8.value0) + (" " + (Prelude.show(Prelude.showBoolean)(_8.value1) + (" " + (Prelude.show(Text_Markdown_SlamDown.showFormField)(_8.value2) + "]"))))));
+    };
+    throw new Error("Failed pattern match: " + [ _8.constructor.name ]);
+});
+var toHtmlListBlock = new ToHtml(function (as) {
+    return Text_Smolder_HTML.p(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(as)(function (x) {
+        return toHtml(toHtmlBlock)(x);
+    }));
+});
+var toHtmlBlock = new ToHtml(function (_7) {
+    if (_7 instanceof Text_Markdown_SlamDown.Paragraph) {
+        return Text_Smolder_HTML.p(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value0)(function (x) {
+            return toHtml(toHtmlInline)(x);
+        }));
+    };
+    if (_7 instanceof Text_Markdown_SlamDown.Header) {
+        if (_7.value0 === 1) {
+            return Text_Smolder_HTML.h1(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(function (x) {
+                return toHtml(toHtmlInline)(x);
+            }));
+        };
+        if (_7.value0 === 2) {
+            return Text_Smolder_HTML.h2(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(function (x) {
+                return toHtml(toHtmlInline)(x);
+            }));
+        };
+        if (_7.value0 === 3) {
+            return Text_Smolder_HTML.h3(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(function (x) {
+                return toHtml(toHtmlInline)(x);
+            }));
+        };
+        if (_7.value0 === 4) {
+            return Text_Smolder_HTML.h4(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(function (x) {
+                return toHtml(toHtmlInline)(x);
+            }));
+        };
+        if (_7.value0 === 5) {
+            return Text_Smolder_HTML.h5(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(function (x) {
+                return toHtml(toHtmlInline)(x);
+            }));
+        };
+        if (_7.value0 === 6) {
+            return Text_Smolder_HTML.h6(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(function (x) {
+                return toHtml(toHtmlInline)(x);
+            }));
+        };
+    };
+    if (_7 instanceof Text_Markdown_SlamDown.Blockquote) {
+        return Text_Smolder_HTML.blockquote(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value0)(function (x) {
+            return toHtml(toHtmlBlock)(x);
+        }));
+    };
+    if (_7 instanceof Text_Markdown_SlamDown.Lst && _7.value0 instanceof Text_Markdown_SlamDown.Bullet) {
+        return Text_Smolder_HTML.ul(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(function (x) {
+            return toHtml(toHtmlListBlock)(x);
+        }));
+    };
+    if (_7 instanceof Text_Markdown_SlamDown.Lst && _7.value0 instanceof Text_Markdown_SlamDown.Ordered) {
+        return Text_Smolder_HTML.ol(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(function (x) {
+            return toHtml(toHtmlListBlock)(x);
+        }));
+    };
+    if (_7 instanceof Text_Markdown_SlamDown.CodeBlock) {
+        return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("code"))(Text_Smolder_Markup.text(Prelude.show(Data_List.showList(Prelude.showString))(_7.value1)));
+    };
+    if (_7 instanceof Text_Markdown_SlamDown.LinkReference) {
+        return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_7.value1))(Text_Smolder_Markup.text(_7.value0));
+    };
+    if (_7 instanceof Text_Markdown_SlamDown.Rule) {
+        return Text_Smolder_HTML.hr;
+    };
+    throw new Error("Failed pattern match: " + [ _7.constructor.name ]);
+});
+var toHtmlSlamDown = new ToHtml(function (_6) {
+    return toHtml(toHtmlListBlock)(_6.value0);
+});
+var readSource = function (_1) {
+    if (_1 instanceof Types.MemorySource) {
+        return _1.value0;
+    };
+    throw new Error("Failed pattern match at UI.HTML.Main line 33, column 1 - line 35, column 1: " + [ _1.constructor.name ]);
+};
+var parseBody = function (_2) {
+    if (_2 instanceof Data_Maybe.Nothing) {
+        return new Text_Markdown_SlamDown.SlamDown(Data_Monoid.mempty(Data_List.monoidList));
+    };
+    if (_2 instanceof Data_Maybe.Just) {
+        return Text_Markdown_SlamDown_Parser.parseMd(readSource(_2.value0.value0.dataSource));
+    };
+    throw new Error("Failed pattern match at UI.HTML.Main line 35, column 1 - line 36, column 1: " + [ _2.constructor.name ]);
+};
+var getTitle = function (_4) {
+    return _4.value0.title;
+};
+var renderHTML = function (inputChannel) {
+    return function (_5) {
+        var markdownAST = parseBody(Core.getCurrentNode(_5));
+        var payloadHtml = toHtml(toHtmlSlamDown)(markdownAST);
+        var doc = Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.html)(Text_Smolder_HTML_Attributes.lang("en"))(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_HTML.head(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.meta)(Text_Smolder_HTML_Attributes.charset("utf-8")))(function () {
+            return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_HTML.title(Text_Smolder_Markup.text(getTitle(Data.theSite))))(function () {
+                return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.meta)(Text_Smolder_HTML_Attributes.name("description")))(Text_Smolder_HTML_Attributes.content("YES OMG HAI LOL")))(function () {
+                    return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.meta)(Text_Smolder_HTML_Attributes.name("viewport")))(Text_Smolder_HTML_Attributes.content("width=device-width")))(function () {
+                        return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.link)(Text_Smolder_HTML_Attributes.rel("stylesheet")))(Text_Smolder_HTML_Attributes.href("https://fonts.googleapis.com/css?family=Montserrat:400,700|Montserrat+Alternates:400,700|Montserrat+Subrayada:400,700|Quattrocento:400,700|Quattrocento+Sans:400,400italic,700,700italic&subset=latin,latin-ext")))(function () {
+                            return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.link)(Text_Smolder_HTML_Attributes.rel("stylesheet")))(Text_Smolder_HTML_Attributes.href("https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic|Source+Code+Pro:100,200,300,400,600,700,900&subset=latin,cyrillic,cyrillic-ext,greek-ext,greek,latin-ext")))(function () {
+                                return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.link)(Text_Smolder_HTML_Attributes.rel("stylesheet")))(Text_Smolder_HTML_Attributes.href("screen.css"));
+                            });
+                        });
+                    });
+                });
+            });
+        })))(function () {
+            return Text_Smolder_HTML.body(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("content"))(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("section"))(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href("?ui=console"))(Text_Smolder_Markup.text("Console UI")))(function () {
+                return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.h1)(Text_Smolder_HTML_Attributes.className("name"))(Text_Smolder_Markup.text(getTitle(Data.theSite))))(function () {
+                    return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("section page"))(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_HTML.h2(Text_Smolder_Markup.text(Data_Maybe.fromMaybe("-no title-")(Prelude["<$>"](Data_Maybe.functorMaybe)(getTitle)(Core.getCurrentNode(_5))))))(function () {
+                        return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("text"))(payloadHtml))(function () {
+                            return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("section footer"))(Text_Smolder_HTML.span(Text_Smolder_Markup.text("&copy; 2015")));
+                        });
+                    }));
+                });
+            }))));
+        }));
+        return function __do() {
+            Control_Monad_Eff_Console.log(Prelude.show(Text_Markdown_SlamDown.showSlamDown)(markdownAST))();
+            Control_Monad_Eff_Console.log($foreign.toString(payloadHtml))();
+            return $foreign.setInnerHTML(Text_Smolder_Renderer_String.render(doc))();
+        };
+    };
+};
+var getPageTitle = function (appState) {
+    var _58 = Core.getCurrentNode(appState);
+    if (_58 instanceof Data_Maybe.Nothing) {
+        return renderHTML;
+    };
+    throw new Error("Failed pattern match at UI.HTML.Main line 85, column 1 - line 91, column 1: " + [ _58.constructor.name ]);
 };
 var formatText = function (title) {
-    return function (_1) {
-        if (_1 instanceof Types.MemorySource) {
-            return "\n\n" + (Text_Markdown_SlamDown_Pretty.prettyPrintMd(Text_Markdown_SlamDown_Parser.parseMd(title + ("\n========\n\n" + _1.value0))) + "\n(c) 2015\n\n");
+    return function (_3) {
+        if (_3 instanceof Types.MemorySource) {
+            return "\n\n" + (Text_Markdown_SlamDown_Pretty.prettyPrintMd(Text_Markdown_SlamDown_Parser.parseMd(title + ("\n========\n\n" + _3.value0))) + "\n(c) 2015\n\n");
         };
         return "\n\n" + (Text_Markdown_SlamDown_Pretty.prettyPrintMd(Text_Markdown_SlamDown_Parser.parseMd(title + "\n========\n\n-no data-")) + "\n(c) 2015\n\n");
     };
@@ -19616,33 +19809,13 @@ var showNode = function (_0) {
     if (_0 instanceof Data_Maybe.Just) {
         return formatText(_0.value0.value0.title)(_0.value0.value0.dataSource);
     };
-    throw new Error("Failed pattern match at UI.HTML.Main line 23, column 1 - line 24, column 1: " + [ _0.constructor.name ]);
-};
-var renderHTML = function (inputChannel) {
-    return function (_3) {
-        var doc = Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.html)(Text_Smolder_HTML_Attributes.lang("en"))(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_HTML.head(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.meta)(Text_Smolder_HTML_Attributes.charset("utf-8")))(function () {
-            return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_HTML.title(Text_Smolder_Markup.text(getTitle(Data.theSite))))(function () {
-                return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.meta)(Text_Smolder_HTML_Attributes.name("description")))(Text_Smolder_HTML_Attributes.content("YES OMG HAI LOL")))(function () {
-                    return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.meta)(Text_Smolder_HTML_Attributes.name("viewport")))(Text_Smolder_HTML_Attributes.content("width=device-width")))(function () {
-                        return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.link)(Text_Smolder_HTML_Attributes.rel("stylesheet")))(Text_Smolder_HTML_Attributes.href("css/screen.css"));
-                    });
-                });
-            });
-        })))(function () {
-            return Text_Smolder_HTML.body(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href("?ui=console"))(Text_Smolder_Markup.text("Console UI")))(function () {
-                return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_HTML.h1(Text_Smolder_Markup.text(getTitle(Data.theSite))))(function () {
-                    return Text_Smolder_HTML.pre(Text_Smolder_Markup.text(showNode(Core.getCurrentNode(_3)) + ("-------------------------------------------------" + ("Actions count: " + (Prelude.show(Prelude.showInt)(_3.value0.actionsCount) + ("Available nodes: " + Prelude.show(Prelude.showArray(Prelude.showString))(Core.getChildNodes(Data.theSite))))))));
-                });
-            }));
-        }));
-        return $foreign.setInnerHTML(Text_Smolder_Renderer_String.render(doc));
-    };
+    throw new Error("Failed pattern match at UI.HTML.Main line 29, column 1 - line 30, column 1: " + [ _0.constructor.name ]);
 };
 module.exports = {
     renderHTML: renderHTML
 };
 
-},{"./foreign":"/Users/eugene/github3/en2/output/UI.HTML.Main/foreign.js","Control.Monad.Eff":"/Users/eugene/github3/en2/output/Control.Monad.Eff/index.js","Control.Monad.Eff.Console":"/Users/eugene/github3/en2/output/Control.Monad.Eff.Console/index.js","Core":"/Users/eugene/github3/en2/output/Core/index.js","Data":"/Users/eugene/github3/en2/output/Data/index.js","Data.Maybe":"/Users/eugene/github3/en2/output/Data.Maybe/index.js","Prelude":"/Users/eugene/github3/en2/output/Prelude/index.js","Signal.Channel":"/Users/eugene/github3/en2/output/Signal.Channel/index.js","Text.Markdown.SlamDown.Parser":"/Users/eugene/github3/en2/output/Text.Markdown.SlamDown.Parser/index.js","Text.Markdown.SlamDown.Pretty":"/Users/eugene/github3/en2/output/Text.Markdown.SlamDown.Pretty/index.js","Text.Smolder.HTML":"/Users/eugene/github3/en2/output/Text.Smolder.HTML/index.js","Text.Smolder.HTML.Attributes":"/Users/eugene/github3/en2/output/Text.Smolder.HTML.Attributes/index.js","Text.Smolder.Markup":"/Users/eugene/github3/en2/output/Text.Smolder.Markup/index.js","Text.Smolder.Renderer.String":"/Users/eugene/github3/en2/output/Text.Smolder.Renderer.String/index.js","Types":"/Users/eugene/github3/en2/output/Types/index.js"}],"/Users/eugene/github3/en2/output/Unsafe.Coerce/foreign.js":[function(require,module,exports){
+},{"./foreign":"/Users/eugene/github3/en2/output/UI.HTML.Main/foreign.js","Control.Monad.Eff":"/Users/eugene/github3/en2/output/Control.Monad.Eff/index.js","Control.Monad.Eff.Console":"/Users/eugene/github3/en2/output/Control.Monad.Eff.Console/index.js","Core":"/Users/eugene/github3/en2/output/Core/index.js","Data":"/Users/eugene/github3/en2/output/Data/index.js","Data.Foldable":"/Users/eugene/github3/en2/output/Data.Foldable/index.js","Data.List":"/Users/eugene/github3/en2/output/Data.List/index.js","Data.Maybe":"/Users/eugene/github3/en2/output/Data.Maybe/index.js","Data.Monoid":"/Users/eugene/github3/en2/output/Data.Monoid/index.js","Prelude":"/Users/eugene/github3/en2/output/Prelude/index.js","Signal.Channel":"/Users/eugene/github3/en2/output/Signal.Channel/index.js","Text.Markdown.SlamDown":"/Users/eugene/github3/en2/output/Text.Markdown.SlamDown/index.js","Text.Markdown.SlamDown.Parser":"/Users/eugene/github3/en2/output/Text.Markdown.SlamDown.Parser/index.js","Text.Markdown.SlamDown.Pretty":"/Users/eugene/github3/en2/output/Text.Markdown.SlamDown.Pretty/index.js","Text.Smolder.HTML":"/Users/eugene/github3/en2/output/Text.Smolder.HTML/index.js","Text.Smolder.HTML.Attributes":"/Users/eugene/github3/en2/output/Text.Smolder.HTML.Attributes/index.js","Text.Smolder.Markup":"/Users/eugene/github3/en2/output/Text.Smolder.Markup/index.js","Text.Smolder.Renderer.String":"/Users/eugene/github3/en2/output/Text.Smolder.Renderer.String/index.js","Types":"/Users/eugene/github3/en2/output/Types/index.js"}],"/Users/eugene/github3/en2/output/Unsafe.Coerce/foreign.js":[function(require,module,exports){
 "use strict";
 
 // module Unsafe.Coerce
