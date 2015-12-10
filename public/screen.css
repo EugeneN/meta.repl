@@ -55,6 +55,7 @@ iframe {
   color: #888;
   text-decoration: none;
   font-weight: lighter;
+  text-transform: uppercase;
 }
 .nav a:hover {
   color: #000;

@@ -82,8 +82,7 @@ formatText title _ =
 
 getTitle (Node x) = x.title
 
-getPageTitle appState = case getCurrentNode appState of
-  Nothing ->
+getMenuItems (Node x) = x.children <#> \(Node y) -> y.title
 
 -- | Will be called on every render
 -- | TODO: Implement setupUI and UI state
@@ -108,6 +107,10 @@ renderHTML inputChannel appState@(AppState s) = do
                   div ! className "section" $ do
                     a ! href "?ui=console" $ text "Console UI"
                     h1 ! className "name" $ text (getTitle theSite)
+
+                    div ! className "nav" $ do
+                      for_ (getMenuItems theSite) $ \x -> do
+                        a ! href ("#" ++ x) $ text x
 
                     div ! className "section page"  $ do
                       h2 $ text $ fromMaybe "-no title-" (getTitle <$> getCurrentNode appState)
