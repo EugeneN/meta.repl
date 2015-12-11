@@ -1,10 +1,13 @@
-module UI.Console.Main (renderCLI) where
+module UI.Console.Main (setupCliUi) where
 
 import Prelude
-import Signal.Channel (send, Channel())
+
 import Control.Monad.Eff.Console
 import Control.Monad.Eff (Eff())
 import Data.Maybe (Maybe(..))
+
+import Signal (foldp, runSignal, filter)
+import Signal.Channel (channel, subscribe, send, Channel())
 
 import Text.Markdown.SlamDown.Pretty
 import Text.Markdown.SlamDown.Parser
@@ -15,24 +18,38 @@ import Core
 
 foreign import exportGlobal :: forall e. String -> (String -> Eff e Unit) -> Eff e Unit
 
-showNode :: Maybe Node -> String
-showNode Nothing = "404 No such page"
-showNode (Just (Node x)) = formatText x.title x.dataSource
 
-formatText title (MemorySource body) =
-  "\n\n" ++ (prettyPrintMd <<< parseMd) (title ++ "\n========\n\n" ++ body) ++ "\n(c) 2015\n\n"
-formatText title _ =
-  "\n\n" ++ (prettyPrintMd <<< parseMd) (title ++ "\n========\n\n-no data-") ++ "\n(c) 2015\n\n"
+data UIState = UIState { text :: String }
 
--- | Will be called on every render
--- | TODO: Implement setupUI and UI state
-renderCLI :: Channel Input -> AppState -> Eff _ Unit
-renderCLI inputChannel appState@(AppState s) = do
-  log $ showNode (getCurrentNode appState)
-
-  log   "-------------------------------------------------"
-  log $ "Actions count: " ++ show s.actionsCount
-  log   "Enter `go(<node>)()` to go to the respective node"
-  log $ "Available nodes: " ++ show (getChildNodes theSite)
+setupCliUi :: Channel Input -> Eff _ (Channel UIActions)
+setupCliUi inputChannel = do
+  renderChan <- channel RenderNoop
+  let renderSignal = subscribe renderChan
+  let initialUIState = UIState { text: "" }
+  let ui = foldp uiLogic initialUIState renderSignal
 
   exportGlobal "go" $ \x -> send inputChannel $ Navigate [x]
+  runSignal (printPage <$> ui)
+  pure renderChan
+
+printPage :: UIState -> Eff _ Unit
+printPage (UIState s) = log s.text
+
+uiLogic (RenderState appState) (UIState u) = UIState (u { text = renderPage appState })
+uiLogic RenderNoop             uiState     = uiState
+
+renderPage appState = header ++ showPage (getCurrentNode appState) ++ footer appState
+
+showPage :: Maybe Node -> String
+showPage Nothing = "404 No such page"
+showPage (Just (Node x)) = formatPage x.title x.dataSource
+
+formatPage title (MemorySource body) = prettyPrintMd <<< parseMd $ "#" ++ title ++ "\n\n" ++ body
+formatPage title _                   = prettyPrintMd <<< parseMd $ "#" ++ title ++ "\n\n-no data-"
+
+header              = "\n\n"
+footer (AppState s) =  "\n\n(c) 2015"
+                    ++ "\n\n-------------------------------------------------"
+                    ++ "\nActions count: " ++ show s.actionsCount
+                    ++ "\nEnter `go(<page>)` to navigate to the respective page"
+                    ++ "\nAvailable pages: " ++ show (getChildNodes theSite)

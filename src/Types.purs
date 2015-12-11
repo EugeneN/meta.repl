@@ -5,6 +5,8 @@ import Data.Maybe (Maybe())
 
 data Input = Navigate (Array Url) | Noop
 
+data UIActions = RenderState AppState | RenderNoop
+
 data AppState = AppState {
     actionsCount :: Int
   , currentPath  :: Array Url

@@ -128,6 +128,16 @@
 	  exports.showStringImpl = function (s) {
 	    return JSON.stringify(s);
 	  };
+
+	  exports.showArrayImpl = function (f) {
+	    return function (xs) {
+	      var ss = [];
+	      for (var i = 0, l = xs.length; i < l; i++) {
+	        ss[i] = f(xs[i]);
+	      }
+	      return "[" + ss.join(",") + "]";
+	    };
+	  };
 	 
 	})(PS["Prelude"] = PS["Prelude"] || {});
 	(function(exports) {
@@ -222,6 +232,9 @@
 	  });
 	  var show = function (dict) {
 	      return dict.show;
+	  };
+	  var showArray = function (__dict_Show_1) {
+	      return new Show($foreign.showArrayImpl(show(__dict_Show_1)));
 	  };                                                                     
 	  var semigroupoidFn = new Semigroupoid(function (f) {
 	      return function (g) {
@@ -465,7 +478,8 @@
 	  exports["booleanAlgebraBoolean"] = booleanAlgebraBoolean;
 	  exports["showBoolean"] = showBoolean;
 	  exports["showInt"] = showInt;
-	  exports["showString"] = showString;;
+	  exports["showString"] = showString;
+	  exports["showArray"] = showArray;;
 	 
 	})(PS["Prelude"] = PS["Prelude"] || {});
 	(function(exports) {
@@ -757,12 +771,16 @@
 	  var Monoid = function (__superclass_Prelude$dotSemigroup_0, mempty) {
 	      this["__superclass_Prelude.Semigroup_0"] = __superclass_Prelude$dotSemigroup_0;
 	      this.mempty = mempty;
-	  };       
+	  };               
+	  var monoidString = new Monoid(function () {
+	      return Prelude.semigroupString;
+	  }, "");  
 	  var mempty = function (dict) {
 	      return dict.mempty;
 	  };
 	  exports["Monoid"] = Monoid;
-	  exports["mempty"] = mempty;;
+	  exports["mempty"] = mempty;
+	  exports["monoidString"] = monoidString;;
 	 
 	})(PS["Data.Monoid"] = PS["Data.Monoid"] || {});
 	(function(exports) {
@@ -959,6 +977,11 @@
 	  var foldMap = function (dict) {
 	      return dict.foldMap;
 	  };
+	  var fold = function (__dict_Foldable_35) {
+	      return function (__dict_Monoid_36) {
+	          return foldMap(__dict_Foldable_35)(__dict_Monoid_36)(Prelude.id(Prelude.categoryFn));
+	      };
+	  };
 	  var any = function (__dict_Foldable_38) {
 	      return function (__dict_BooleanAlgebra_39) {
 	          return function (p) {
@@ -1004,6 +1027,7 @@
 	  exports["any"] = any;
 	  exports["for_"] = for_;
 	  exports["traverse_"] = traverse_;
+	  exports["fold"] = fold;
 	  exports["foldMapDefaultR"] = foldMapDefaultR;
 	  exports["foldMap"] = foldMap;
 	  exports["foldl"] = foldl;
@@ -1155,9 +1179,27 @@
 	      };
 	      return AppState;
 	  })();
+	  var RenderState = (function () {
+	      function RenderState(value0) {
+	          this.value0 = value0;
+	      };
+	      RenderState.create = function (value0) {
+	          return new RenderState(value0);
+	      };
+	      return RenderState;
+	  })();
+	  var RenderNoop = (function () {
+	      function RenderNoop() {
+
+	      };
+	      RenderNoop.value = new RenderNoop();
+	      return RenderNoop;
+	  })();
 	  exports["MemorySource"] = MemorySource;
 	  exports["Node"] = Node;
 	  exports["AppState"] = AppState;
+	  exports["RenderState"] = RenderState;
+	  exports["RenderNoop"] = RenderNoop;
 	  exports["Navigate"] = Navigate;
 	  exports["Noop"] = Noop;;
 	 
@@ -1359,6 +1401,11 @@
 	  var getCurrentPath = function (_5) {
 	      return _5.value0.currentPath;
 	  };
+	  var getChildNodes = function (_3) {
+	      return Prelude["<#>"](Prelude.functorArray)(_3.value0.children)(function (_0) {
+	          return _0.value0.path;
+	      });
+	  };
 	  var findChildNodeByPath = function (_4) {
 	      return function (path) {
 	          var pred = function (p) {
@@ -1407,6 +1454,7 @@
 	  };
 	  exports["getCurrentPath"] = getCurrentPath;
 	  exports["findChildNodeByPath"] = findChildNodeByPath;
+	  exports["getChildNodes"] = getChildNodes;
 	  exports["getCurrentNode"] = getCurrentNode;
 	  exports["appLogic"] = appLogic;;
 	 
@@ -1802,6 +1850,90 @@
 	      };
 	      return go(Nil.value);
 	  })();
+	  var zipWith = function (f) {
+	      return function (xs) {
+	          return function (ys) {
+	              var go = function (__copy__55) {
+	                  return function (__copy__56) {
+	                      return function (__copy_acc) {
+	                          var _55 = __copy__55;
+	                          var _56 = __copy__56;
+	                          var acc = __copy_acc;
+	                          tco: while (true) {
+	                              if (_55 instanceof Nil) {
+	                                  return acc;
+	                              };
+	                              if (_56 instanceof Nil) {
+	                                  return acc;
+	                              };
+	                              if (_55 instanceof Cons && _56 instanceof Cons) {
+	                                  var __tco__55 = _55.value1;
+	                                  var __tco__56 = _56.value1;
+	                                  var __tco_acc = new Cons(f(_55.value0)(_56.value0), acc);
+	                                  _55 = __tco__55;
+	                                  _56 = __tco__56;
+	                                  acc = __tco_acc;
+	                                  continue tco;
+	                              };
+	                              throw new Error("Failed pattern match at Data.List line 651, column 1 - line 652, column 1: " + [ _55.constructor.name, _56.constructor.name, acc.constructor.name ]);
+	                          };
+	                      };
+	                  };
+	              };
+	              return reverse(go(xs)(ys)(Nil.value));
+	          };
+	      };
+	  };
+	  var range = function (start) {
+	      return function (end) {
+	          if (start === end) {
+	              return singleton(start);
+	          };
+	          if (Prelude.otherwise) {
+	              var go = function (__copy_s) {
+	                  return function (__copy_e) {
+	                      return function (__copy_step) {
+	                          return function (__copy_rest) {
+	                              var s = __copy_s;
+	                              var e = __copy_e;
+	                              var step = __copy_step;
+	                              var rest = __copy_rest;
+	                              tco: while (true) {
+	                                  if (s === e) {
+	                                      return new Cons(s, rest);
+	                                  };
+	                                  if (Prelude.otherwise) {
+	                                      var __tco_s = s + step | 0;
+	                                      var __tco_e = e;
+	                                      var __tco_step = step;
+	                                      var __tco_rest = new Cons(s, rest);
+	                                      s = __tco_s;
+	                                      e = __tco_e;
+	                                      step = __tco_step;
+	                                      rest = __tco_rest;
+	                                      continue tco;
+	                                  };
+	                                  throw new Error("Failed pattern match at Data.List line 137, column 1 - line 138, column 1: " + [ s.constructor.name, e.constructor.name, step.constructor.name, rest.constructor.name ]);
+	                              };
+	                          };
+	                      };
+	                  };
+	              };
+	              return go(end)(start)((function () {
+	                  var _163 = start > end;
+	                  if (_163) {
+	                      return 1;
+	                  };
+	                  if (!_163) {
+	                      return -1;
+	                  };
+	                  throw new Error("Failed pattern match at Data.List line 137, column 1 - line 138, column 1: " + [ _163.constructor.name ]);
+	              })())(Nil.value);
+	          };
+	          throw new Error("Failed pattern match at Data.List line 137, column 1 - line 138, column 1: " + [ start.constructor.name, end.constructor.name ]);
+	      };
+	  };
+	  var $dot$dot = range;
 	  var monoidList = new Data_Monoid.Monoid(function () {
 	      return semigroupList;
 	  }, Nil.value);
@@ -1969,6 +2101,17 @@
 	              throw new Error("Failed pattern match: " + [ _30.constructor.name, _31.constructor.name ]);
 	          };
 	      };
+	  };
+	  var concatMap = function (f) {
+	      return function (_28) {
+	          if (_28 instanceof Nil) {
+	              return Nil.value;
+	          };
+	          if (_28 instanceof Cons) {
+	              return Prelude["<>"](semigroupList)(f(_28.value0))(concatMap(f)(_28.value1));
+	          };
+	          throw new Error("Failed pattern match: " + [ f.constructor.name, _28.constructor.name ]);
+	      };
 	  };                                                       
 	  var applyList = new Prelude.Apply(function () {
 	      return functorList;
@@ -1990,9 +2133,11 @@
 	  });
 	  exports["Nil"] = Nil;
 	  exports["Cons"] = Cons;
+	  exports["zipWith"] = zipWith;
 	  exports["span"] = span;
 	  exports["drop"] = drop;
 	  exports["take"] = take;
+	  exports["concatMap"] = concatMap;
 	  exports["reverse"] = reverse;
 	  exports["uncons"] = uncons;
 	  exports["init"] = init;
@@ -2002,6 +2147,8 @@
 	  exports[":"] = $colon;
 	  exports["many"] = many;
 	  exports["some"] = some;
+	  exports["range"] = range;
+	  exports[".."] = $dot$dot;
 	  exports["singleton"] = singleton;
 	  exports["toList"] = toList;
 	  exports["fromList"] = fromList;
@@ -2640,12 +2787,14 @@
 	 
 	})(PS["Utils"] = PS["Utils"] || {});
 	(function(exports) {
-	                                                                                                         
-	  exports.appendToBody = function (node) {return function() {document.body.appendChild(node); return {}; } }
+	  // module UI.Console.Main
 
-	  exports.vNode2vTree = function(vnode) { return vnode }
+	  exports.exportGlobal = function (fname) {return function(f) {return function() {
+	    window[fname] = function(a) { return f(a)() }; 
+	    return {};
+	  } } }
 	 
-	})(PS["UI.HTML.Main"] = PS["UI.HTML.Main"] || {});
+	})(PS["UI.Console.Main"] = PS["UI.Console.Main"] || {});
 	(function(exports) {
 	  // Generated by psc version 0.7.6.1
 	  "use strict";
@@ -3104,6 +3253,253 @@
 	  exports["showTextBoxType"] = showTextBoxType;;
 	 
 	})(PS["Text.Markdown.SlamDown"] = PS["Text.Markdown.SlamDown"] || {});
+	(function(exports) {
+	  // Generated by psc version 0.7.6.1
+	  "use strict";
+	  var Prelude = PS["Prelude"];
+	  var Data_Foldable = PS["Data.Foldable"];
+	  var Data_List = PS["Data.List"];
+	  var Data_Maybe = PS["Data.Maybe"];
+	  var Data_Monoid = PS["Data.Monoid"];
+	  var Data_String = PS["Data.String"];
+	  var Text_Markdown_SlamDown = PS["Text.Markdown.SlamDown"];
+	  var Data_Unfoldable = PS["Data.Unfoldable"];     
+	  var unlines = function (lst) {
+	      return Data_String.joinWith("\n")(Data_List.fromList(Data_Unfoldable.unfoldableArray)(lst));
+	  };
+	  var squares = function (s) {
+	      return "[" + (s + "]");
+	  };
+	  var replicateS = function (n) {
+	      return function (s) {
+	          return Data_Foldable.fold(Data_List.foldableList)(Data_Monoid.monoidString)(Prelude["<$>"](Data_List.functorList)(Prelude["const"](s))(Data_List[".."](1)(n)));
+	      };
+	  };
+	  var prettyPrintExpr = function (wrap) {
+	      return function (f) {
+	          return function (_5) {
+	              if (_5 instanceof Text_Markdown_SlamDown.Literal) {
+	                  return f(_5.value0);
+	              };
+	              if (_5 instanceof Text_Markdown_SlamDown.Unevaluated) {
+	                  return wrap("!`" + (_5.value0 + "`"));
+	              };
+	              throw new Error("Failed pattern match at Text.Markdown.SlamDown.Pretty line 107, column 1 - line 108, column 1: " + [ wrap.constructor.name, f.constructor.name, _5.constructor.name ]);
+	          };
+	      };
+	  };
+	  var parens = function (s) {
+	      return "(" + (s + ")");
+	  };
+	  var lines = function (_1) {
+	      if (_1 === "") {
+	          return Data_Monoid.mempty(Data_List.monoidList);
+	      };
+	      return Data_List.toList(Data_Foldable.foldableArray)(Data_String.split("\n")(_1));
+	  };
+	  var overLines = function (f) {
+	      return function (_75) {
+	          return Prelude.map(Data_List.functorList)(f)(Data_List.concatMap(lines)(_75));
+	      };
+	  };
+	  var indent = function (n) {
+	      return function (s) {
+	          return replicateS(n)(" ") + s;
+	      };
+	  };
+	  var braces = function (s) {
+	      return "{" + (s + "}");
+	  };
+	  var prettyPrintFormElement = function (_4) {
+	      if (_4 instanceof Text_Markdown_SlamDown.TextBox) {
+	          var intro = function (_9) {
+	              if (_9 instanceof Text_Markdown_SlamDown.PlainText) {
+	                  return "______";
+	              };
+	              if (_9 instanceof Text_Markdown_SlamDown.Numeric) {
+	                  return "#______";
+	              };
+	              if (_9 instanceof Text_Markdown_SlamDown["Date"]) {
+	                  return "__ - __ - ____";
+	              };
+	              if (_9 instanceof Text_Markdown_SlamDown.Time) {
+	                  return "__ : __";
+	              };
+	              if (_9 instanceof Text_Markdown_SlamDown.DateTime) {
+	                  return "__ - __ - ____ __ : __";
+	              };
+	              throw new Error("Failed pattern match at Text.Markdown.SlamDown.Pretty line 88, column 3 - line 89, column 3: " + [ _9.constructor.name ]);
+	          };
+	          return intro(_4.value0) + Data_Maybe.maybe("")(function (v) {
+	              return " (" + (prettyPrintExpr(Prelude.id(Prelude.categoryFn))(Prelude.id(Prelude.categoryFn))(v) + ")");
+	          })(_4.value1);
+	      };
+	      if (_4 instanceof Text_Markdown_SlamDown.RadioButtons) {
+	          return prettyPrintExpr(parens)(Prelude["<>"](Prelude.semigroupString)("(x) "))(_4.value0) + (" " + prettyPrintExpr(Prelude.id(Prelude.categoryFn))(function (_76) {
+	              return Data_String.joinWith(" ")(Data_List.fromList(Data_Unfoldable.unfoldableArray)(Prelude.map(Data_List.functorList)(Prelude["<>"](Prelude.semigroupString)("() "))(_76)));
+	          })(_4.value1));
+	      };
+	      if (_4 instanceof Text_Markdown_SlamDown.CheckBoxes && (_4.value0 instanceof Text_Markdown_SlamDown.Literal && _4.value1 instanceof Text_Markdown_SlamDown.Literal)) {
+	          var checkBox = function (b) {
+	              return function (l) {
+	                  return (function () {
+	                      if (b) {
+	                          return "[x] ";
+	                      };
+	                      if (!b) {
+	                          return "[] ";
+	                      };
+	                      throw new Error("Failed pattern match at Text.Markdown.SlamDown.Pretty line 99, column 3 - line 100, column 1: " + [ b.constructor.name ]);
+	                  })() + l;
+	              };
+	          };
+	          return Data_String.joinWith(" ")(Data_List.fromList(Data_Unfoldable.unfoldableArray)(Data_List.zipWith(checkBox)(_4.value0.value0)(_4.value1.value0)));
+	      };
+	      if (_4 instanceof Text_Markdown_SlamDown.CheckBoxes && (_4.value0 instanceof Text_Markdown_SlamDown.Unevaluated && _4.value1 instanceof Text_Markdown_SlamDown.Unevaluated)) {
+	          return "[!`" + (_4.value0.value0 + ("`] !`" + (_4.value1.value0 + "`")));
+	      };
+	      if (_4 instanceof Text_Markdown_SlamDown.DropDown) {
+	          return braces(prettyPrintExpr(Prelude.id(Prelude.categoryFn))(Prelude[">>>"](Prelude.semigroupoidFn)(Data_List.fromList(Data_Unfoldable.unfoldableArray))(Data_String.joinWith(", ")))(_4.value0)) + Data_Maybe.maybe("")(function (s) {
+	              return parens(prettyPrintExpr(Prelude.id(Prelude.categoryFn))(Prelude.id(Prelude.categoryFn))(s));
+	          })(_4.value1);
+	      };
+	      return "Unsupported form element";
+	  };
+	  var prettyPrintInlines = function (is) {
+	      return Data_String.joinWith("")(Data_List.fromList(Data_Unfoldable.unfoldableArray)(Prelude.map(Data_List.functorList)(prettyPrintInline)(is)));
+	  };
+	  var prettyPrintInline = function (_3) {
+	      if (_3 instanceof Text_Markdown_SlamDown.Str) {
+	          return _3.value0;
+	      };
+	      if (_3 instanceof Text_Markdown_SlamDown.Entity) {
+	          return _3.value0;
+	      };
+	      if (_3 instanceof Text_Markdown_SlamDown.Space) {
+	          return " ";
+	      };
+	      if (_3 instanceof Text_Markdown_SlamDown.SoftBreak) {
+	          return "\n";
+	      };
+	      if (_3 instanceof Text_Markdown_SlamDown.LineBreak) {
+	          return "  \n";
+	      };
+	      if (_3 instanceof Text_Markdown_SlamDown.Emph) {
+	          return "*" + (prettyPrintInlines(_3.value0) + "*");
+	      };
+	      if (_3 instanceof Text_Markdown_SlamDown.Strong) {
+	          return "**" + (prettyPrintInlines(_3.value0) + "**");
+	      };
+	      if (_3 instanceof Text_Markdown_SlamDown.Code) {
+	          var bang = (function () {
+	              if (_3.value0) {
+	                  return "!";
+	              };
+	              if (!_3.value0) {
+	                  return "";
+	              };
+	              throw new Error("Failed pattern match at Text.Markdown.SlamDown.Pretty line 73, column 9 - line 74, column 1: " + [ _3.value0.constructor.name ]);
+	          })();
+	          return bang + ("`" + (_3.value1 + "`"));
+	      };
+	      if (_3 instanceof Text_Markdown_SlamDown.Link) {
+	          var printTarget = function (_8) {
+	              if (_8 instanceof Text_Markdown_SlamDown.InlineLink) {
+	                  return parens(_8.value0);
+	              };
+	              if (_8 instanceof Text_Markdown_SlamDown.ReferenceLink) {
+	                  return squares(Data_Maybe.fromMaybe("")(_8.value0));
+	              };
+	              throw new Error("Failed pattern match at Text.Markdown.SlamDown.Pretty line 76, column 3 - line 77, column 3: " + [ _8.constructor.name ]);
+	          };
+	          return "[" + (prettyPrintInlines(_3.value0) + ("]" + printTarget(_3.value1)));
+	      };
+	      if (_3 instanceof Text_Markdown_SlamDown.Image) {
+	          return "![" + (prettyPrintInlines(_3.value0) + ("](" + (_3.value1 + ")")));
+	      };
+	      if (_3 instanceof Text_Markdown_SlamDown.FormField) {
+	          var star = (function () {
+	              if (_3.value1) {
+	                  return "*";
+	              };
+	              if (!_3.value1) {
+	                  return " ";
+	              };
+	              throw new Error("Failed pattern match at Text.Markdown.SlamDown.Pretty line 82, column 3 - line 84, column 1: " + [ _3.value1.constructor.name ]);
+	          })();
+	          var esc = function (s) {
+	              return Data_Maybe.maybe(s)(Prelude["const"]("[" + (s + "]")))(Data_String.indexOf(" ")(s));
+	          };
+	          return esc(_3.value0) + (star + (" = " + prettyPrintFormElement(_3.value2)));
+	      };
+	      throw new Error("Failed pattern match: " + [ _3.constructor.name ]);
+	  };
+	  var prettyPrintBlock = function (_2) {
+	      if (_2 instanceof Text_Markdown_SlamDown.Paragraph) {
+	          return new Data_List.Cons(prettyPrintInlines(_2.value0), new Data_List.Cons("", Data_List.Nil.value));
+	      };
+	      if (_2 instanceof Text_Markdown_SlamDown.Header) {
+	          return Data_List.singleton(replicateS(_2.value0)("#") + (" " + prettyPrintInlines(_2.value1)));
+	      };
+	      if (_2 instanceof Text_Markdown_SlamDown.Blockquote) {
+	          return overLines(Prelude["<>"](Prelude.semigroupString)("> "))(Data_List.concatMap(prettyPrintBlock)(_2.value0));
+	      };
+	      if (_2 instanceof Text_Markdown_SlamDown.Lst) {
+	          var prettyPrintMarker = function (_7) {
+	              if (_7 instanceof Text_Markdown_SlamDown.Bullet) {
+	                  return _7.value0;
+	              };
+	              if (_7 instanceof Text_Markdown_SlamDown.Ordered) {
+	                  return "1" + _7.value0;
+	              };
+	              throw new Error("Failed pattern match at Text.Markdown.SlamDown.Pretty line 38, column 3 - line 39, column 3: " + [ _7.constructor.name ]);
+	          };
+	          var addMarker = function (_6) {
+	              if (_6 instanceof Data_List.Nil) {
+	                  return Data_List.Nil.value;
+	              };
+	              if (_6 instanceof Data_List.Cons) {
+	                  var m = prettyPrintMarker(_2.value0);
+	                  var len = Data_String.length(m);
+	                  return Data_List.Cons.create(m + (" " + _6.value0))(overLines(indent(len + 1 | 0))(_6.value1));
+	              };
+	              throw new Error("Failed pattern match: " + [ _6.constructor.name ]);
+	          };
+	          var listItem = function (bs) {
+	              var ss = Data_List.concatMap(prettyPrintBlock)(bs);
+	              return addMarker(Data_List.concatMap(lines)(ss));
+	          };
+	          return Data_List.concatMap(listItem)(_2.value1);
+	      };
+	      if (_2 instanceof Text_Markdown_SlamDown.CodeBlock && _2.value0 instanceof Text_Markdown_SlamDown.Indented) {
+	          return Prelude.map(Data_List.functorList)(indent(4))(_2.value1);
+	      };
+	      if (_2 instanceof Text_Markdown_SlamDown.CodeBlock && _2.value0 instanceof Text_Markdown_SlamDown.Fenced) {
+	          var bang = (function () {
+	              if (_2.value0.value0) {
+	                  return "!";
+	              };
+	              if (Prelude.otherwise) {
+	                  return "";
+	              };
+	              throw new Error("Failed pattern match at Text.Markdown.SlamDown.Pretty line 56, column 3 - line 58, column 1: " + [  ]);
+	          })();
+	          return Prelude["<>"](Data_List.semigroupList)(Data_List.singleton(bang + ("```" + _2.value0.value1)))(Prelude["<>"](Data_List.semigroupList)(_2.value1)(Data_List.singleton("```")));
+	      };
+	      if (_2 instanceof Text_Markdown_SlamDown.LinkReference) {
+	          return Data_List.singleton(squares(_2.value0) + (": " + _2.value1));
+	      };
+	      if (_2 instanceof Text_Markdown_SlamDown.Rule) {
+	          return Data_List.singleton("***");
+	      };
+	      throw new Error("Failed pattern match: " + [ _2.constructor.name ]);
+	  };
+	  var prettyPrintMd = function (_0) {
+	      return unlines(Data_List.concatMap(prettyPrintBlock)(_0.value0));
+	  };
+	  exports["prettyPrintMd"] = prettyPrintMd;;
+	 
+	})(PS["Text.Markdown.SlamDown.Pretty"] = PS["Text.Markdown.SlamDown.Pretty"] || {});
 	(function(exports) {
 	  // module Text.Markdown.SlamDown.Parser.Inline
 
@@ -4561,6 +4957,134 @@
 	(function(exports) {
 	  // Generated by psc version 0.7.6.1
 	  "use strict";
+	  var $foreign = PS["UI.Console.Main"];
+	  var Prelude = PS["Prelude"];
+	  var Control_Monad_Eff_Console = PS["Control.Monad.Eff.Console"];
+	  var Control_Monad_Eff = PS["Control.Monad.Eff"];
+	  var Data_Maybe = PS["Data.Maybe"];
+	  var Signal = PS["Signal"];
+	  var Signal_Channel = PS["Signal.Channel"];
+	  var Text_Markdown_SlamDown_Pretty = PS["Text.Markdown.SlamDown.Pretty"];
+	  var Text_Markdown_SlamDown_Parser = PS["Text.Markdown.SlamDown.Parser"];
+	  var Data = PS["Data"];
+	  var Types = PS["Types"];
+	  var Core = PS["Core"];     
+	  var UIState = (function () {
+	      function UIState(value0) {
+	          this.value0 = value0;
+	      };
+	      UIState.create = function (value0) {
+	          return new UIState(value0);
+	      };
+	      return UIState;
+	  })();
+	  var printPage = function (_1) {
+	      return Control_Monad_Eff_Console.log(_1.value0.text);
+	  };
+	  var header = "\n\n";
+	  var formatPage = function (title) {
+	      return function (_5) {
+	          if (_5 instanceof Types.MemorySource) {
+	              return Text_Markdown_SlamDown_Pretty.prettyPrintMd(Text_Markdown_SlamDown_Parser.parseMd("#" + (title + ("\n\n" + _5.value0))));
+	          };
+	          return Text_Markdown_SlamDown_Pretty.prettyPrintMd(Text_Markdown_SlamDown_Parser.parseMd("#" + (title + "\n\n-no data-")));
+	      };
+	  };
+	  var showPage = function (_4) {
+	      if (_4 instanceof Data_Maybe.Nothing) {
+	          return "404 No such page";
+	      };
+	      if (_4 instanceof Data_Maybe.Just) {
+	          return formatPage(_4.value0.value0.title)(_4.value0.value0.dataSource);
+	      };
+	      throw new Error("Failed pattern match at UI.Console.Main line 43, column 1 - line 44, column 1: " + [ _4.constructor.name ]);
+	  };
+	  var footer = function (_6) {
+	      return "\n\n(c) 2015" + ("\n\n-------------------------------------------------" + ("\nActions count: " + (Prelude.show(Prelude.showInt)(_6.value0.actionsCount) + ("\nEnter `go(<page>)` to navigate to the respective page" + ("\nAvailable pages: " + Prelude.show(Prelude.showArray(Prelude.showString))(Core.getChildNodes(Data.theSite)))))));
+	  };
+	  var renderPage = function (appState) {
+	      return header + (showPage(Core.getCurrentNode(appState)) + footer(appState));
+	  };
+	  var uiLogic = function (_2) {
+	      return function (_3) {
+	          if (_2 instanceof Types.RenderState) {
+	              return new UIState((function () {
+	                  var _19 = {};
+	                  for (var _20 in _3.value0) {
+	                      if (_3.value0.hasOwnProperty(_20)) {
+	                          _19[_20] = _3.value0[_20];
+	                      };
+	                  };
+	                  _19.text = renderPage(_2.value0);
+	                  return _19;
+	              })());
+	          };
+	          if (_2 instanceof Types.RenderNoop) {
+	              return _3;
+	          };
+	          throw new Error("Failed pattern match at UI.Console.Main line 38, column 1 - line 39, column 1: " + [ _2.constructor.name, _3.constructor.name ]);
+	      };
+	  };
+	  var setupCliUi = function (inputChannel) {
+	      return function __do() {
+	          var _0 = Signal_Channel.channel(Types.RenderNoop.value)();
+	          return (function () {
+	              var renderSignal = Signal_Channel.subscribe(_0);
+	              var initialUIState = new UIState({
+	                  text: ""
+	              });
+	              var ui = Signal.foldp(uiLogic)(initialUIState)(renderSignal);
+	              return function __do() {
+	                  $foreign.exportGlobal("go")(function (x) {
+	                      return Signal_Channel.send(inputChannel)(new Types.Navigate([ x ]));
+	                  })();
+	                  Signal.runSignal(Prelude["<$>"](Signal.functorSignal)(printPage)(ui))();
+	                  return _0;
+	              };
+	          })()();
+	      };
+	  };
+	  exports["setupCliUi"] = setupCliUi;;
+	 
+	})(PS["UI.Console.Main"] = PS["UI.Console.Main"] || {});
+	(function(exports) {
+	  // module Routing
+
+	  exports.hashChanged = function(handler) {
+	      return function() {
+	          var getHash = function() {
+	              return document.location.href.split('#').splice(1).join('#');
+	          };
+	          var oldHash = '';
+	          handler('')(getHash())();
+	          window.addEventListener('hashchange', function(ev) {
+	              var newHash = getHash();
+	              handler(oldHash)(newHash)();
+	              oldHash = newHash;
+	          });
+	      };
+	  };                                                     
+	 
+	})(PS["Routing"] = PS["Routing"] || {});
+	(function(exports) {
+	  // Generated by psc version 0.7.6.1
+	  "use strict";
+	  var $foreign = PS["Routing"];
+	  var Prelude = PS["Prelude"];
+	  var Control_Monad_Eff = PS["Control.Monad.Eff"];
+	  var Control_Monad_Aff = PS["Control.Monad.Aff"];
+	  var Data_Maybe = PS["Data.Maybe"];
+	  var Data_Either = PS["Data.Either"];
+	  var Data_Tuple = PS["Data.Tuple"];
+	  var Data_String_Regex = PS["Data.String.Regex"];
+	  var Routing_Parser = PS["Routing.Parser"];
+	  var Routing_Match = PS["Routing.Match"];
+	  exports["hashChanged"] = $foreign.hashChanged;;
+	 
+	})(PS["Routing"] = PS["Routing"] || {});
+	(function(exports) {
+	  // Generated by psc version 0.7.6.1
+	  "use strict";
 	  var Prelude = PS["Prelude"];
 	  var Data_Maybe = PS["Data.Maybe"];
 	  var Data_Monoid = PS["Data.Monoid"];
@@ -4823,53 +5347,21 @@
 	 
 	})(PS["VirtualDOM"] = PS["VirtualDOM"] || {});
 	(function(exports) {
-	  // module Routing
-
-	  exports.hashChanged = function(handler) {
-	      return function() {
-	          var getHash = function() {
-	              return document.location.href.split('#').splice(1).join('#');
-	          };
-	          var oldHash = '';
-	          handler('')(getHash())();
-	          window.addEventListener('hashchange', function(ev) {
-	              var newHash = getHash();
-	              handler(oldHash)(newHash)();
-	              oldHash = newHash;
-	          });
-	      };
-	  };                                                     
+	                                                                                                         
+	  exports.appendToBody = function (node) {return function() {document.body.appendChild(node); return {}; } }
+	  exports.vNode2vTree = function(vnode) { return vnode }
 	 
-	})(PS["Routing"] = PS["Routing"] || {});
-	(function(exports) {
-	  // Generated by psc version 0.7.6.1
-	  "use strict";
-	  var $foreign = PS["Routing"];
-	  var Prelude = PS["Prelude"];
-	  var Control_Monad_Eff = PS["Control.Monad.Eff"];
-	  var Control_Monad_Aff = PS["Control.Monad.Aff"];
-	  var Data_Maybe = PS["Data.Maybe"];
-	  var Data_Either = PS["Data.Either"];
-	  var Data_Tuple = PS["Data.Tuple"];
-	  var Data_String_Regex = PS["Data.String.Regex"];
-	  var Routing_Parser = PS["Routing.Parser"];
-	  var Routing_Match = PS["Routing.Match"];
-	  exports["hashChanged"] = $foreign.hashChanged;;
-	 
-	})(PS["Routing"] = PS["Routing"] || {});
+	})(PS["UI.HTML.Utils"] = PS["UI.HTML.Utils"] || {});
 	(function(exports) {
 	                                      
 
 	  var vn = __webpack_require__(14).VNode;
-
 	  exports.vnodeP = function(a,b,c) { return new vn(a,b,c); }
 
 	  var vt = __webpack_require__(14).VText;
-
 	  exports.vtext = function(a) { return new vt(a); }
 
 	  var rewriteAttr = function(a) { return (a === "class") ? "className" : a; }
-
 	  exports.convertAttrsP = function(toList, attrs) {
 	    var out = {};
 	    toList(attrs).forEach(function(t) {
@@ -4982,15 +5474,14 @@
 	(function(exports) {
 	  // Generated by psc version 0.7.6.1
 	  "use strict";
-	  var $foreign = PS["UI.HTML.Main"];
+	  var $foreign = PS["UI.HTML.Utils"];
 	  var Prelude = PS["Prelude"];
-	  var Signal_Channel = PS["Signal.Channel"];
 	  var Control_Monad_Eff_Console = PS["Control.Monad.Eff.Console"];
 	  var Control_Monad_Eff = PS["Control.Monad.Eff"];
-	  var Data_Maybe = PS["Data.Maybe"];
-	  var Data_Monoid = PS["Data.Monoid"];
-	  var Data_List = PS["Data.List"];
 	  var Data_Foldable = PS["Data.Foldable"];
+	  var Data_List = PS["Data.List"];
+	  var Data_Maybe = PS["Data.Maybe"];
+	  var DOM_Node_Types = PS["DOM.Node.Types"];
 	  var Text_Markdown_SlamDown_Pretty = PS["Text.Markdown.SlamDown.Pretty"];
 	  var Text_Markdown_SlamDown_Parser = PS["Text.Markdown.SlamDown.Parser"];
 	  var Text_Markdown_SlamDown = PS["Text.Markdown.SlamDown"];
@@ -5000,38 +5491,8 @@
 	  var Text_Smolder_Renderer_String = PS["Text.Smolder.Renderer.String"];
 	  var VirtualDOM = PS["VirtualDOM"];
 	  var VirtualDOM_VTree = PS["VirtualDOM.VTree"];
-	  var Routing = PS["Routing"];
-	  var Signal = PS["Signal"];
-	  var DOM_Node_Types = PS["DOM.Node.Types"];
-	  var Data = PS["Data"];
 	  var Types = PS["Types"];
-	  var Core = PS["Core"];
 	  var UI_HTML_VDom = PS["UI.HTML.VDom"];     
-	  var UIState = (function () {
-	      function UIState(value0) {
-	          this.value0 = value0;
-	      };
-	      UIState.create = function (value0) {
-	          return new UIState(value0);
-	      };
-	      return UIState;
-	  })();
-	  var RenderState = (function () {
-	      function RenderState(value0) {
-	          this.value0 = value0;
-	      };
-	      RenderState.create = function (value0) {
-	          return new RenderState(value0);
-	      };
-	      return RenderState;
-	  })();
-	  var RenderNoop = (function () {
-	      function RenderNoop() {
-
-	      };
-	      RenderNoop.value = new RenderNoop();
-	      return RenderNoop;
-	  })();
 	  var MenuItem = (function () {
 	      function MenuItem(value0, value1) {
 	          this.value0 = value0;
@@ -5050,142 +5511,194 @@
 	  var toHtml = function (dict) {
 	      return dict.toHtml;
 	  };
-	  var toHtmlInline = new ToHtml(function (_15) {
-	      if (_15 instanceof Text_Markdown_SlamDown.Str) {
-	          return Text_Smolder_Markup.text(_15.value0);
+	  var toHtmlInline = new ToHtml(function (_8) {
+	      if (_8 instanceof Text_Markdown_SlamDown.Str) {
+	          return Text_Smolder_Markup.text(_8.value0);
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.Entity) {
-	          return Text_Smolder_Markup.text(_15.value0);
+	      if (_8 instanceof Text_Markdown_SlamDown.Entity) {
+	          return Text_Smolder_Markup.text(_8.value0);
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.Space) {
+	      if (_8 instanceof Text_Markdown_SlamDown.Space) {
 	          return Text_Smolder_Markup.text(" ");
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.SoftBreak) {
+	      if (_8 instanceof Text_Markdown_SlamDown.SoftBreak) {
 	          return Text_Smolder_Markup.text("&shy;");
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.LineBreak) {
+	      if (_8 instanceof Text_Markdown_SlamDown.LineBreak) {
 	          return Text_Smolder_HTML.br;
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.Emph) {
-	          return Text_Smolder_HTML.em(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_15.value0)(toHtml(toHtmlInline)));
+	      if (_8 instanceof Text_Markdown_SlamDown.Emph) {
+	          return Text_Smolder_HTML.em(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_8.value0)(toHtml(toHtmlInline)));
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.Strong) {
-	          return Text_Smolder_HTML.strong(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_15.value0)(toHtml(toHtmlInline)));
+	      if (_8 instanceof Text_Markdown_SlamDown.Strong) {
+	          return Text_Smolder_HTML.strong(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_8.value0)(toHtml(toHtmlInline)));
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.Code) {
-	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("inline-code"))(Text_Smolder_Markup.text(_15.value1));
+	      if (_8 instanceof Text_Markdown_SlamDown.Code) {
+	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("inline-code"))(Text_Smolder_Markup.text(_8.value1));
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.Link && _15.value1 instanceof Text_Markdown_SlamDown.InlineLink) {
-	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_15.value1.value0))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_15.value0)(toHtml(toHtmlInline)));
+	      if (_8 instanceof Text_Markdown_SlamDown.Link && _8.value1 instanceof Text_Markdown_SlamDown.InlineLink) {
+	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_8.value1.value0))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_8.value0)(toHtml(toHtmlInline)));
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.Link && (_15.value1 instanceof Text_Markdown_SlamDown.ReferenceLink && _15.value1.value0 instanceof Data_Maybe.Nothing)) {
-	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href("#"))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_15.value0)(toHtml(toHtmlInline)));
+	      if (_8 instanceof Text_Markdown_SlamDown.Link && (_8.value1 instanceof Text_Markdown_SlamDown.ReferenceLink && _8.value1.value0 instanceof Data_Maybe.Nothing)) {
+	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href("#"))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_8.value0)(toHtml(toHtmlInline)));
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.Link && (_15.value1 instanceof Text_Markdown_SlamDown.ReferenceLink && _15.value1.value0 instanceof Data_Maybe.Just)) {
-	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_15.value1.value0.value0))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_15.value0)(toHtml(toHtmlInline)));
+	      if (_8 instanceof Text_Markdown_SlamDown.Link && (_8.value1 instanceof Text_Markdown_SlamDown.ReferenceLink && _8.value1.value0 instanceof Data_Maybe.Just)) {
+	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_8.value1.value0.value0))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_8.value0)(toHtml(toHtmlInline)));
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.Image) {
-	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.img)(Text_Smolder_HTML_Attributes.src(_15.value1));
+	      if (_8 instanceof Text_Markdown_SlamDown.Image) {
+	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupM)(Text_Smolder_HTML.img)(Text_Smolder_HTML_Attributes.src(_8.value1));
 	      };
-	      if (_15 instanceof Text_Markdown_SlamDown.FormField) {
-	          return Text_Smolder_Markup.text("[form-field " + (Prelude.show(Prelude.showString)(_15.value0) + (" " + (Prelude.show(Prelude.showBoolean)(_15.value1) + (" " + (Prelude.show(Text_Markdown_SlamDown.showFormField)(_15.value2) + "]"))))));
+	      if (_8 instanceof Text_Markdown_SlamDown.FormField) {
+	          return Text_Smolder_Markup.text("[form-field " + (Prelude.show(Prelude.showString)(_8.value0) + (" " + (Prelude.show(Prelude.showBoolean)(_8.value1) + (" " + (Prelude.show(Text_Markdown_SlamDown.showFormField)(_8.value2) + "]"))))));
 	      };
-	      throw new Error("Failed pattern match: " + [ _15.constructor.name ]);
+	      throw new Error("Failed pattern match: " + [ _8.constructor.name ]);
 	  });
 	  var toHtmlListBlock = new ToHtml(function (as) {
 	      return Text_Smolder_HTML.p(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(as)(toHtml(toHtmlBlock)));
 	  });
-	  var toHtmlBlock = new ToHtml(function (_14) {
-	      if (_14 instanceof Text_Markdown_SlamDown.Paragraph) {
-	          return Text_Smolder_HTML.p(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_14.value0)(toHtml(toHtmlInline)));
+	  var toHtmlBlock = new ToHtml(function (_7) {
+	      if (_7 instanceof Text_Markdown_SlamDown.Paragraph) {
+	          return Text_Smolder_HTML.p(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value0)(toHtml(toHtmlInline)));
 	      };
-	      if (_14 instanceof Text_Markdown_SlamDown.Header) {
-	          if (_14.value0 === 1) {
-	              return Text_Smolder_HTML.h1(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_14.value1)(toHtml(toHtmlInline)));
+	      if (_7 instanceof Text_Markdown_SlamDown.Header) {
+	          if (_7.value0 === 1) {
+	              return Text_Smolder_HTML.h1(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(toHtml(toHtmlInline)));
 	          };
-	          if (_14.value0 === 2) {
-	              return Text_Smolder_HTML.h2(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_14.value1)(toHtml(toHtmlInline)));
+	          if (_7.value0 === 2) {
+	              return Text_Smolder_HTML.h2(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(toHtml(toHtmlInline)));
 	          };
-	          if (_14.value0 === 3) {
-	              return Text_Smolder_HTML.h3(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_14.value1)(toHtml(toHtmlInline)));
+	          if (_7.value0 === 3) {
+	              return Text_Smolder_HTML.h3(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(toHtml(toHtmlInline)));
 	          };
-	          if (_14.value0 === 4) {
-	              return Text_Smolder_HTML.h4(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_14.value1)(toHtml(toHtmlInline)));
+	          if (_7.value0 === 4) {
+	              return Text_Smolder_HTML.h4(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(toHtml(toHtmlInline)));
 	          };
-	          if (_14.value0 === 5) {
-	              return Text_Smolder_HTML.h5(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_14.value1)(toHtml(toHtmlInline)));
+	          if (_7.value0 === 5) {
+	              return Text_Smolder_HTML.h5(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(toHtml(toHtmlInline)));
 	          };
-	          if (_14.value0 === 6) {
-	              return Text_Smolder_HTML.h6(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_14.value1)(toHtml(toHtmlInline)));
+	          if (_7.value0 === 6) {
+	              return Text_Smolder_HTML.h6(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(toHtml(toHtmlInline)));
 	          };
 	      };
-	      if (_14 instanceof Text_Markdown_SlamDown.Blockquote) {
-	          return Text_Smolder_HTML.blockquote(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_14.value0)(toHtml(toHtmlBlock)));
+	      if (_7 instanceof Text_Markdown_SlamDown.Blockquote) {
+	          return Text_Smolder_HTML.blockquote(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value0)(toHtml(toHtmlBlock)));
 	      };
-	      if (_14 instanceof Text_Markdown_SlamDown.Lst && _14.value0 instanceof Text_Markdown_SlamDown.Bullet) {
-	          return Text_Smolder_HTML.ul(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_14.value1)(toHtml(toHtmlListBlock)));
+	      if (_7 instanceof Text_Markdown_SlamDown.Lst && _7.value0 instanceof Text_Markdown_SlamDown.Bullet) {
+	          return Text_Smolder_HTML.ul(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(toHtml(toHtmlListBlock)));
 	      };
-	      if (_14 instanceof Text_Markdown_SlamDown.Lst && _14.value0 instanceof Text_Markdown_SlamDown.Ordered) {
-	          return Text_Smolder_HTML.ol(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_14.value1)(toHtml(toHtmlListBlock)));
+	      if (_7 instanceof Text_Markdown_SlamDown.Lst && _7.value0 instanceof Text_Markdown_SlamDown.Ordered) {
+	          return Text_Smolder_HTML.ol(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_7.value1)(toHtml(toHtmlListBlock)));
 	      };
-	      if (_14 instanceof Text_Markdown_SlamDown.CodeBlock) {
-	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("code"))(Text_Smolder_Markup.text(Prelude.show(Data_List.showList(Prelude.showString))(_14.value1)));
+	      if (_7 instanceof Text_Markdown_SlamDown.CodeBlock) {
+	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("code"))(Text_Smolder_Markup.text(Prelude.show(Data_List.showList(Prelude.showString))(_7.value1)));
 	      };
-	      if (_14 instanceof Text_Markdown_SlamDown.LinkReference) {
-	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_14.value1))(Text_Smolder_Markup.text(_14.value0));
+	      if (_7 instanceof Text_Markdown_SlamDown.LinkReference) {
+	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_7.value1))(Text_Smolder_Markup.text(_7.value0));
 	      };
-	      if (_14 instanceof Text_Markdown_SlamDown.Rule) {
+	      if (_7 instanceof Text_Markdown_SlamDown.Rule) {
 	          return Text_Smolder_HTML.hr;
 	      };
-	      throw new Error("Failed pattern match: " + [ _14.constructor.name ]);
+	      throw new Error("Failed pattern match: " + [ _7.constructor.name ]);
 	  });
-	  var toHtmlSlamDown = new ToHtml(function (_13) {
-	      return toHtml(toHtmlListBlock)(_13.value0);
+	  var toHtmlSlamDown = new ToHtml(function (_6) {
+	      return toHtml(toHtmlListBlock)(_6.value0);
 	  });
-	  var readSource = function (_4) {
-	      if (_4 instanceof Types.MemorySource) {
-	          return _4.value0;
+	  var readSource = function (_1) {
+	      if (_1 instanceof Types.MemorySource) {
+	          return _1.value0;
 	      };
-	      throw new Error("Failed pattern match at UI.HTML.Main line 40, column 1 - line 42, column 1: " + [ _4.constructor.name ]);
+	      throw new Error("Failed pattern match at UI.HTML.Utils line 30, column 1 - line 31, column 1: " + [ _1.constructor.name ]);
 	  };
-	  var patchVDom = function (_11) {
-	      var patches = VirtualDOM.diff(_11.value0.oldVDom)(_11.value0.newVDom);
+	  var parseBody = function (_2) {
+	      return Text_Markdown_SlamDown_Parser.parseMd(readSource(_2.value0.dataSource));
+	  };
+	  var getTitle = function (_3) {
+	      return _3.value0.title;
+	  };
+	  var getPath = function (_4) {
+	      return _4.value0.path;
+	  };
+	  var getMenuItems = function (_5) {
+	      return Prelude["<#>"](Prelude.functorArray)(_5.value0.children)(function (_0) {
+	          return new MenuItem(_0.value0.path, _0.value0.title);
+	      });
+	  };
+	  exports["MenuItem"] = MenuItem;
+	  exports["ToHtml"] = ToHtml;
+	  exports["toHtml"] = toHtml;
+	  exports["getMenuItems"] = getMenuItems;
+	  exports["getPath"] = getPath;
+	  exports["getTitle"] = getTitle;
+	  exports["parseBody"] = parseBody;
+	  exports["readSource"] = readSource;
+	  exports["toHtmlSlamDown"] = toHtmlSlamDown;
+	  exports["toHtmlListBlock"] = toHtmlListBlock;
+	  exports["toHtmlBlock"] = toHtmlBlock;
+	  exports["toHtmlInline"] = toHtmlInline;
+	  exports["appendToBody"] = $foreign.appendToBody;
+	  exports["vNode2vTree"] = $foreign.vNode2vTree;;
+	 
+	})(PS["UI.HTML.Utils"] = PS["UI.HTML.Utils"] || {});
+	(function(exports) {
+	  // Generated by psc version 0.7.6.1
+	  "use strict";
+	  var Prelude = PS["Prelude"];
+	  var Control_Monad_Eff_Console = PS["Control.Monad.Eff.Console"];
+	  var Control_Monad_Eff = PS["Control.Monad.Eff"];
+	  var Data_Foldable = PS["Data.Foldable"];
+	  var Data_List = PS["Data.List"];
+	  var Data_Maybe = PS["Data.Maybe"];
+	  var Data_Monoid = PS["Data.Monoid"];
+	  var DOM_Node_Types = PS["DOM.Node.Types"];
+	  var Routing = PS["Routing"];
+	  var Signal = PS["Signal"];
+	  var Signal_Channel = PS["Signal.Channel"];
+	  var Text_Markdown_SlamDown_Pretty = PS["Text.Markdown.SlamDown.Pretty"];
+	  var Text_Markdown_SlamDown_Parser = PS["Text.Markdown.SlamDown.Parser"];
+	  var Text_Markdown_SlamDown = PS["Text.Markdown.SlamDown"];
+	  var Text_Smolder_HTML = PS["Text.Smolder.HTML"];
+	  var Text_Smolder_HTML_Attributes = PS["Text.Smolder.HTML.Attributes"];
+	  var Text_Smolder_Markup = PS["Text.Smolder.Markup"];
+	  var Text_Smolder_Renderer_String = PS["Text.Smolder.Renderer.String"];
+	  var VirtualDOM = PS["VirtualDOM"];
+	  var VirtualDOM_VTree = PS["VirtualDOM.VTree"];
+	  var Data = PS["Data"];
+	  var Types = PS["Types"];
+	  var Core = PS["Core"];
+	  var UI_HTML_Utils = PS["UI.HTML.Utils"];
+	  var UI_HTML_VDom = PS["UI.HTML.VDom"];     
+	  var UIState = (function () {
+	      function UIState(value0) {
+	          this.value0 = value0;
+	      };
+	      UIState.create = function (value0) {
+	          return new UIState(value0);
+	      };
+	      return UIState;
+	  })();
+	  var patchVDom = function (_5) {
+	      var patches = VirtualDOM.diff(_5.value0.oldVDom)(_5.value0.newVDom);
 	      return function __do() {
-	          var _1 = VirtualDOM.patch(_11.value0.rootNode)(patches)();
+	          var _1 = VirtualDOM.patch(_5.value0.rootNode)(patches)();
 	          return Prelude.unit;
 	      };
 	  };
-	  var parseBody = function (_5) {
-	      return Text_Markdown_SlamDown_Parser.parseMd(readSource(_5.value0.dataSource));
-	  };
 	  var page404 = Text_Markdown_SlamDown_Parser.parseMd("## 404 Not found");
-	  var initialVDom = $foreign.vNode2vTree(UI_HTML_VDom.render(Text_Smolder_HTML.div(Text_Smolder_Markup.text("initial vdom"))));
-	  var getTitle = function (_6) {
-	      return _6.value0.title;
-	  };
-	  var getPath = function (_7) {
-	      return _7.value0.path;
-	  };
-	  var getMenuItems = function (_8) {
-	      return Prelude["<#>"](Prelude.functorArray)(_8.value0.children)(function (_2) {
-	          return new MenuItem(_2.value0.path, _2.value0.title);
-	      });
-	  };
-	  var renderHTML = function (_12) {
-	      var markdownAST = Data_Maybe.fromMaybe(page404)(Prelude["<$>"](Data_Maybe.functorMaybe)(parseBody)(Core.getCurrentNode(_12)));
-	      var payloadHtml = toHtml(toHtmlSlamDown)(markdownAST);
-	      var currentPath = Data_Maybe.fromMaybe("404")(Prelude["<$>"](Data_Maybe.functorMaybe)(getPath)(Core.getCurrentNode(_12)));
+	  var renderHTML = function (_6) {
+	      var markdownAST = Data_Maybe.fromMaybe(page404)(Prelude["<$>"](Data_Maybe.functorMaybe)(UI_HTML_Utils.parseBody)(Core.getCurrentNode(_6)));
+	      var payloadHtml = UI_HTML_Utils.toHtml(UI_HTML_Utils.toHtmlSlamDown)(markdownAST);
+	      var currentPath = Data_Maybe.fromMaybe("404")(Prelude["<$>"](Data_Maybe.functorMaybe)(UI_HTML_Utils.getPath)(Core.getCurrentNode(_6)));
 	      return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("content"))(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("section"))(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.className("text mode-menu")))(Text_Smolder_HTML_Attributes.href("?ui=console"))(Text_Smolder_Markup.text("CLI mode")))(function () {
-	          return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.h1)(Text_Smolder_HTML_Attributes.className("name"))(Text_Smolder_Markup.text(getTitle(Data.theSite))))(function () {
-	              return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("nav"))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_Foldable.foldableArray)(getMenuItems(Data.theSite))(function (_3) {
-	                  var _72 = Prelude["=="](Prelude.eqString)(_3.value0)(currentPath);
-	                  if (_72) {
-	                      return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.className("current-menu-item")))(Text_Smolder_HTML_Attributes.href("#" + _3.value0))(Text_Smolder_Markup.text(_3.value1));
+	          return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.h1)(Text_Smolder_HTML_Attributes.className("name"))(Text_Smolder_Markup.text(UI_HTML_Utils.getTitle(Data.theSite))))(function () {
+	              return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("nav"))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_Foldable.foldableArray)(UI_HTML_Utils.getMenuItems(Data.theSite))(function (_2) {
+	                  var _12 = Prelude["=="](Prelude.eqString)(_2.value0)(currentPath);
+	                  if (_12) {
+	                      return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.className("current-menu-item")))(Text_Smolder_HTML_Attributes.href("#" + _2.value0))(Text_Smolder_Markup.text(_2.value1));
 	                  };
-	                  if (!_72) {
-	                      return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href("#" + _3.value0))(Text_Smolder_Markup.text(_3.value1));
+	                  if (!_12) {
+	                      return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href("#" + _2.value0))(Text_Smolder_Markup.text(_2.value1));
 	                  };
-	                  throw new Error("Failed pattern match at UI.HTML.Main line 143, column 1 - line 144, column 1: " + [ _72.constructor.name ]);
+	                  throw new Error("Failed pattern match at UI.HTML.Main line 84, column 1 - line 85, column 1: " + [ _12.constructor.name ]);
 	              })))(function () {
 	                  return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("section page"))(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("text"))(payloadHtml))(function () {
 	                      return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("section footer"))(Text_Smolder_HTML.span(Text_Smolder_Markup.text("&copy; 2015")));
@@ -5194,34 +5707,35 @@
 	          });
 	      })));
 	  };
-	  var uiLogic = function (_9) {
-	      return function (_10) {
-	          if (_9 instanceof RenderState) {
-	              var newMarkup = renderHTML(_9.value0);
-	              var newVDom = $foreign.vNode2vTree(UI_HTML_VDom.render(newMarkup));
+	  var uiLogic = function (_3) {
+	      return function (_4) {
+	          if (_3 instanceof Types.RenderState) {
+	              var newMarkup = renderHTML(_3.value0);
+	              var newVDom = UI_HTML_Utils.vNode2vTree(UI_HTML_VDom.render(newMarkup));
 	              return new UIState((function () {
-	                  var _78 = {};
-	                  for (var _79 in _10.value0) {
-	                      if (_10.value0.hasOwnProperty(_79)) {
-	                          _78[_79] = _10.value0[_79];
+	                  var _18 = {};
+	                  for (var _19 in _4.value0) {
+	                      if (_4.value0.hasOwnProperty(_19)) {
+	                          _18[_19] = _4.value0[_19];
 	                      };
 	                  };
-	                  _78.oldVDom = _10.value0.newVDom;
-	                  _78.newVDom = newVDom;
-	                  return _78;
+	                  _18.oldVDom = _4.value0.newVDom;
+	                  _18.newVDom = newVDom;
+	                  return _18;
 	              })());
 	          };
-	          if (_9 instanceof RenderNoop) {
-	              return _10;
+	          if (_3 instanceof Types.RenderNoop) {
+	              return _4;
 	          };
-	          throw new Error("Failed pattern match at UI.HTML.Main line 107, column 1 - line 114, column 1: " + [ _9.constructor.name, _10.constructor.name ]);
+	          throw new Error("Failed pattern match at UI.HTML.Main line 47, column 1 - line 54, column 1: " + [ _3.constructor.name, _4.constructor.name ]);
 	      };
 	  };
+	  var initialVDom = UI_HTML_Utils.vNode2vTree(UI_HTML_VDom.render(Text_Smolder_HTML.div(Text_Smolder_Markup.text("initial vdom"))));
 	  var setupHtmlUi = function (inputChannel) {
 	      var rootNode = VirtualDOM.createElement(initialVDom);
 	      return function __do() {
-	          $foreign.appendToBody(rootNode)();
-	          var _0 = Signal_Channel.channel(RenderNoop.value)();
+	          UI_HTML_Utils.appendToBody(rootNode)();
+	          var _0 = Signal_Channel.channel(Types.RenderNoop.value)();
 	          return (function () {
 	              var renderSignal = Signal_Channel.subscribe(_0);
 	              var initialUIState = new UIState({
@@ -5246,8 +5760,6 @@
 	          })()();
 	      };
 	  };
-	  exports["RenderState"] = RenderState;
-	  exports["RenderNoop"] = RenderNoop;
 	  exports["setupHtmlUi"] = setupHtmlUi;;
 	 
 	})(PS["UI.HTML.Main"] = PS["UI.HTML.Main"] || {});
@@ -5276,10 +5788,13 @@
 	                  if (_2 === "html") {
 	                      return UI_HTML_Main.setupHtmlUi(_1);
 	                  };
-	                  return UI_HTML_Main.setupHtmlUi(_1);
+	                  if (_2 === "console") {
+	                      return UI_Console_Main.setupCliUi(_1);
+	                  };
+	                  return UI_Console_Main.setupCliUi(_1);
 	              })()();
 	              return Signal.runSignal(Prelude["<$>"](Signal.functorSignal)(function (s) {
-	                  return Signal_Channel.send(_0)(new UI_HTML_Main.RenderState(s));
+	                  return Signal_Channel.send(_0)(new Types.RenderState(s));
 	              })(app))();
 	          };
 	      })()();

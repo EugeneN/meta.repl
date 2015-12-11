@@ -3,8 +3,7 @@
   "license": "(c) Eugene Naumenko",
   "scripts": {
     "postinstall": "bower install",
-    "build": "gulp",
-    "example-todo": "bower link && cd examples/todo && bower link purescript-halogen && bower install && gulp"
+    "build": "gulp"
   },
   "devDependencies": {
     "bower": "^1.4.1",

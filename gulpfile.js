@@ -22,14 +22,14 @@ gulp.task("make", function() {
 gulp.task("prebundle", ["make"], function() {
   return purescript.pscBundle({
     src: "output/**/*.js",
-    output: "dist/a.js",
+    output: "dist/o.js",
     module: "Main",
     main: "Main"
   });
 });
 
 gulp.task("bundle", ["prebundle"], function () {
-  return gulp.src("dist/a.js")
+  return gulp.src("dist/o.js")
     .pipe(webpack({
       resolve: { modulesDirectories: ["node_modules"] },
       output: { filename: "app.js" }

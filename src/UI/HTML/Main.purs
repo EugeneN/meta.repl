@@ -1,13 +1,21 @@
-module UI.HTML.Main (setupHtmlUi, UIActions(..)) where
+module UI.HTML.Main (setupHtmlUi) where
 
 import Prelude hiding (div, map, sub)
-import Signal.Channel (send, Channel())
+
 import Control.Monad.Eff.Console
 import Control.Monad.Eff (Eff())
+
+import Data.Foldable (for_)
+import Data.List hiding (head, span)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (mempty)
-import Data.List hiding (head, span)
-import Data.Foldable (for_)
+
+import qualified DOM.Node.Types as DT
+
+import Routing (hashChanged)
+
+import Signal (foldp, runSignal)
+import Signal.Channel (channel, subscribe, send, Channel())
 
 import Text.Markdown.SlamDown.Pretty
 import Text.Markdown.SlamDown.Parser
@@ -21,87 +29,19 @@ import Text.Smolder.Renderer.String (render)
 import VirtualDOM
 import VirtualDOM.VTree
 
-import Routing (hashChanged)
-
-import Signal (foldp, runSignal)
-import Signal.Channel (channel, subscribe, send)
-
-import qualified DOM.Node.Types as DT
-
 import Data
 import Types
 import Core
-
+import UI.HTML.Utils
 import qualified UI.HTML.VDom as VDom
 
-foreign import injectBody :: forall e. String -> Eff e Unit
-foreign import toString :: forall a. a -> String
-
-readSource (MemorySource x) = x
 
 page404 = parseMd "## 404 Not found"
-
-parseBody (Node x) = parseMd <<< readSource $ x.dataSource
-
-class ToHtml a where
-  toHtml :: a -> Markup
-
-instance toHtmlSlamDown :: ToHtml SlamDown where
-  toHtml (SlamDown bs) = toHtml bs
-
-instance toHtmlListBlock :: ToHtml (List Block) where
-  toHtml as = p  $ do for_ as toHtml
-
-instance toHtmlBlock :: ToHtml Block where
-  toHtml (Paragraph is)              = p  $ for_ is toHtml
-  toHtml (Header n is) | n == 1      = h1 $ for_ is toHtml
-                            | n == 2 = h2 $ for_ is toHtml
-                            | n == 3 = h3 $ for_ is toHtml
-                            | n == 4 = h4 $ for_ is toHtml
-                            | n == 5 = h5 $ for_ is toHtml
-                            | n == 6 = h6 $ for_ is toHtml
-  toHtml (Blockquote bs)             = blockquote $ for_ bs toHtml
-  toHtml (Lst (Bullet _) bss)        = ul $ for_ bss toHtml
-  toHtml (Lst (Ordered _) bss)       = ol $ for_ bss toHtml
-  toHtml (CodeBlock _ ss)            = div ! className "code" $ text $ show ss
-  toHtml (LinkReference l uri)       = a ! href uri $ text $ l
-  toHtml Rule                        = hr
-
-instance toHtmlInline :: ToHtml Inline where
-  toHtml (Str s)                     = text $ s
-  toHtml (Entity s)                  = text $ s
-  toHtml Space                       = text $ " "
-  toHtml SoftBreak                   = text $ "&shy;"
-  toHtml LineBreak                   = br
-  toHtml (Emph is)                   = em     $ for_ is toHtml
-  toHtml (Strong is)                 = strong $ for_ is toHtml
-  toHtml (Code e s)                  = div ! className "inline-code" $ text $ s
-  toHtml (Link is (InlineLink uri))           = a ! href uri $ for_ is toHtml
-  toHtml (Link is (ReferenceLink Nothing))    = a ! href "#" $ for_ is toHtml
-  toHtml (Link is (ReferenceLink (Just uri))) = a ! href uri $ for_ is toHtml
-  toHtml (Image is uri)              = img ! src uri
-  toHtml (FormField s b ff)          = text $ "[form-field " ++ show s ++ " " ++ show b ++ " " ++ show ff ++ "]"
-
-foreign import vNode2vTree :: VDom.VNode -> VTree
-
-data MenuItem = MenuItem Url String
-
-getTitle (Node x) = x.title
-getPath  (Node x) = x.path
-
-getMenuItems (Node x) = x.children <#> \(Node y) -> MenuItem y.path y.title
-
 initialVDom = vNode2vTree $ VDom.render $ div $ text "initial vdom"
-
-foreign import appendToBody :: forall e. DT.Node -> Eff e Unit
 
 data UIState = UIState { rootNode    :: DT.Node
                        , oldVDom     :: VTree
                        , newVDom     :: VTree }
-
--- move to ui api
-data UIActions = RenderState AppState | RenderNoop
-
 
 -- uiLogic :: UIActions AppState -> UIState -> UIState
 uiLogic (RenderState appState) (UIState u) =
@@ -134,6 +74,7 @@ setupHtmlUi inputChannel = do
 
     pure renderChan
 
+patchVDom :: UIState -> Eff _ Unit
 patchVDom (UIState s) = do
   let patches = diff s.oldVDom s.newVDom
   newRootNode <- patch s.rootNode patches
