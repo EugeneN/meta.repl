@@ -1,0 +1,22 @@
+{
+  "name": "en",
+  "license": "(c) Eugene Naumenko",
+  "scripts": {
+    "postinstall": "bower install",
+    "build": "gulp",
+    "example-todo": "bower link && cd examples/todo && bower link purescript-halogen && bower install && gulp"
+  },
+  "devDependencies": {
+    "bower": "^1.4.1",
+    "gulp": "^3.8.11",
+    "gulp-jscs": "^1.6.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-purescript": "^0.7.0",
+    "rimraf": "^2.4.1",
+    "webpack-stream": "^2.0.0",
+    "purescript": "^0.7.6"
+  },
+  "dependencies": {
+    "virtual-dom": "^2.0.1"
+  }
+}

@@ -42,47 +42,77 @@ theSite = Node {
              , path: "contacts"
              , children: []
              , dataSource: MemorySource (joinWith "\n" [
-                  "[mailto:eugene.naumenko <$> gmail.com](eugene.naumenko <$> gmail.com)"
-                , "[http://eugenen.github.io/](eugenen.github.io)"
-                , "[https://drive.google.com/file/d/0B8speZLVOSYvYTZTMXVIbHVnZWM/view](CV)"
-                , "[https://twitter.com/8gene](twitter.com/8gene)"
-                , "[https://github.com/EugeneN](github.com/EugeneN)"
-                , "[https://plus.google.com/+EugeneNaumenko/](https://plus.google.com/+EugeneNaumenko/)"
+                  "[eugene.naumenko^at^gmail.com](mailto:eugene.naumenko^gmail.com)"
+                , ""
+                , ""
+                , "[eugenen.github.io](htp://eugenen.github.io)"
+                , ""
+                , ""
+                , "[Curriculum Vitae](https://drive.google.com/file/d/0B8speZLVOSYvYTZTMXVIbHVnZWM/view)"
+                , ""
+                , ""
+                , "[twitter.com/8gene](https://twitter.com/8gene)"
+                , ""
+                , ""
+                , "[github.com/EugeneN](https://github.com/EugeneN)"
+                , ""
+                , ""
+                , "[plus.google.com/+EugeneNaumenko](https://plus.google.com/+EugeneNaumenko/)"
                ])
            }
       , Node { title: "Blog"
              , path: "blog"
              , children: []
-             , dataSource: MemorySource "Nothing"
+             , dataSource: MemorySource "Nothing as in Maybe"
              }
       , Node { title: "Apps"
              , path: "apps"
              , children: []
              , dataSource: MemorySource (joinWith "\n" [
-                  "[http://eugenen.github.io/C.MD](C.MD gist editor)"
-                , "[http://eugenen.github.io/pureGoL](pureGoL)"
-                , "[https://github.com/EugeneN/twic](twic)"
+                  "[C.MD gist editor](http://eugenen.github.io/C.MD): This is a rich markdown editor for Github Gists.&nbsp;"
+                , "This is a 100% client side application written in ClojureScript to explore offline mode and multiprocessing for web applications."
+                , ""
+                , ""
+                , "[pureGoL](http://eugenen.github.io/pureGoL): “Game of Life” game written in Purescript as a research on&nbsp;"
+                , "decoupling and encapsulating state between user interface, application core and input effects in reactive web applications.&nbsp;"
+                , "Features a stateful core and few distinct interchangeable stateful user interfaces."
+                , ""
+                , ""
+                , "[twic](https://github.com/EugeneN/twic): Experimental Twitter client written in Haskell and Purescript with clean UI and simple UX.&nbsp;"
+                , "Written to explore component models for web applications and usage of immutable cloud database for eventual consistency."
               ])
              }
       , Node { title: "Presentations"
              , path: "presentations"
              , children: []
              , dataSource: MemorySource (joinWith "\n" [
-                  "[https://docs.google.com/presentation/d/1IOM9A3Otxufs5xzvYb3yPrT7JDVPhkJVkdaWvVl8R_E/pub?start=false&loop=false&delayms=3000](Purescript)"
-                , "[https://docs.google.com/presentation/d/1lfbKvDcXfBdvdu76anAyTglo6O3vP68oYJUa0K-d7zo/pub?start=false&loop=false&delayms=3000](DNA)"
-                , "[https://docs.google.com/presentation/d/1e5dyOXcSAp3UCCS3sJMBTttKDmQw8dDq3qYobsTvpKA/pub?start=false&loop=false&delayms=3000](Evolution of client side applications)"
+                  "[Purescript](https://docs.google.com/presentation/d/1IOM9A3Otxufs5xzvYb3yPrT7JDVPhkJVkdaWvVl8R_E/pub?start=false&loop=false&delayms=3000)"
+                , ""
+                , ""
+                , "[DNA](https://docs.google.com/presentation/d/1lfbKvDcXfBdvdu76anAyTglo6O3vP68oYJUa0K-d7zo/pub?start=false&loop=false&delayms=3000)"
+                , ""
+                , ""
+                , "[Evolution of client side applications](https://docs.google.com/presentation/d/1e5dyOXcSAp3UCCS3sJMBTttKDmQw8dDq3qYobsTvpKA/pub?start=false&loop=false&delayms=3000)"
               ])
              }
       , Node { title: "G4"
              , path: "g4"
              , children: []
              , dataSource: MemorySource (joinWith "\n" [
-                  "![http://eugenen.github.io/g4/g4massive.png](Many objects)"
-                , "![http://eugenen.github.io/g4/g4manywpts.jpg](Many waypoints)"
-                , "![http://eugenen.github.io/g4/g4greenbtn1.png](Login screen)"
-                , "![http://eugenen.github.io/g4/g4chartsnew.png](Track charts)"
-                , "![http://eugenen.github.io/g4/g4evolving.png](More charts)"
-                , "![http://eugenen.github.io/g4/g4r.jpg](Tracks comparison)"
+                  "G4 is a rich web application for managing geospatial data – GPS tracks, waypoints, geotagged items, custom maps etc. "
+                , "&nbsp;The application features complex geographical/geometric calculations, automatic categorization and clustering of data, "
+                , "&nbsp;real-time push based communications, external RESTful API, spatial search, uses advanced HTML5 "
+                , "&nbsp;features like drag-and-drop multi-file upload, sound effects, interactive svg charting etc."
+                , ""
+                , ""
+                , "The application is currently offline, but you can see some screenshots here:"
+                , ""
+                , "![Many objects](http://eugenen.github.io/g4/g4massive.png)"
+                , "![Many waypoints](http://eugenen.github.io/g4/g4manywpts.jpg)"
+                , "![Login screen](http://eugenen.github.io/g4/g4greenbtn1.png)"
+                , "![Track charts](http://eugenen.github.io/g4/g4chartsnew.png)"
+                , "![More charts](http://eugenen.github.io/g4/g4evolving.png)"
+                , "![Tracks comparison](http://eugenen.github.io/g4/g4r.jpg)"
               ])
              }
       ]

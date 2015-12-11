@@ -5,29 +5,30 @@ import Prelude
 import Control.Monad.Eff.Console
 import Control.Monad.Eff (Eff())
 
-
 import Signal (foldp, runSignal, filter)
-import Signal.Channel (channel, subscribe)
+import Signal.Channel (channel, subscribe, send)
+
+
 
 import Types
 import Data
 import Core
 import Utils
 import UI.Console.Main (renderCLI)
-import UI.HTML.Main (renderHTML)
+import UI.HTML.Main (setupHtmlUi, UIActions(..))
 
 
 main = do
-  uiParam <- getParameterByName "ui"
+  uiParam <- getParameterByName "ui" -- from env, args, not exactly document.locations
 
-  actionsChan <- channel Noop
+  actionsChannel <- channel Noop
 
-  let actionsSig = subscribe actionsChan
-  let app = foldp appLogic initialState actionsSig
+  let actionsSignal = subscribe actionsChannel
+  let app = foldp appLogic initialState actionsSignal
 
-  let renderer = case uiParam of
-                   "html"    -> renderHTML actionsChan
-                   "console" -> renderCLI actionsChan
-                   _         -> renderCLI actionsChan
+  uiChannel <- case uiParam of
+    "html"    -> setupHtmlUi actionsChannel
+    _         -> setupHtmlUi actionsChannel
+    --  "console" -> renderCLI actionsChannel
 
-  runSignal (renderer <$> app)
+  runSignal ((\s -> send uiChannel $ RenderState s) <$> app)

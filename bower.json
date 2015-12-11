@@ -17,5 +17,7 @@
     , "purescript-strings": "*"
     , "purescript-markdown": "*"
     , "purescript-smolder": "*"
+    , "purescript-routing": "*"
+    , "purescript-virtual-dom": "EugeneN/purescript-virtual-dom#a0461cdbe8b9b8cc003438c2d81fda5073b71264"
   }
 }

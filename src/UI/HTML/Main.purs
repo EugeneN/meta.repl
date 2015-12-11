@@ -1,4 +1,4 @@
-module UI.HTML.Main (renderHTML) where
+module UI.HTML.Main (setupHtmlUi, UIActions(..)) where
 
 import Prelude hiding (div, map, sub)
 import Signal.Channel (send, Channel())
@@ -17,19 +17,31 @@ import Text.Smolder.HTML
 import Text.Smolder.HTML.Attributes (href, className, src, lang, charset, name, content, rel)
 import Text.Smolder.Markup
 import Text.Smolder.Renderer.String (render)
--- import qualified Text.Smolder.Renderer.Util as SU -- (SU.renderMarkup, Node())
+
+import VirtualDOM
+import VirtualDOM.VTree
+
+import Routing (hashChanged)
+
+import Signal (foldp, runSignal)
+import Signal.Channel (channel, subscribe, send)
+
+import qualified DOM.Node.Types as DT
 
 import Data
 import Types
 import Core
 
-foreign import setInnerHTML :: forall e. String -> Eff e Unit
+import qualified UI.HTML.VDom as VDom
+
+foreign import injectBody :: forall e. String -> Eff e Unit
 foreign import toString :: forall a. a -> String
 
 readSource (MemorySource x) = x
 
-parseBody Nothing = SlamDown mempty
-parseBody (Just (Node x)) = parseMd <<< readSource $ x.dataSource
+page404 = parseMd "## 404 Not found"
+
+parseBody (Node x) = parseMd <<< readSource $ x.dataSource
 
 class ToHtml a where
   toHtml :: a -> Markup
@@ -70,40 +82,86 @@ instance toHtmlInline :: ToHtml Inline where
   toHtml (Image is uri)              = img ! src uri
   toHtml (FormField s b ff)          = text $ "[form-field " ++ show s ++ " " ++ show b ++ " " ++ show ff ++ "]"
 
+foreign import vNode2vTree :: VDom.VNode -> VTree
+
+data MenuItem = MenuItem Url String
 
 getTitle (Node x) = x.title
-getMenuItems (Node x) = x.children <#> \(Node y) -> y.title
+getPath  (Node x) = x.path
 
--- | Will be called on every render
--- | TODO: Implement setupUI and UI state
-renderHTML :: Channel Input -> AppState -> Eff _ Unit
-renderHTML inputChannel appState@(AppState s) = do
-  let markdownAST = parseBody (getCurrentNode appState)
-  let payloadHtml = toHtml markdownAST
-  let doc = body $ do
+getMenuItems (Node x) = x.children <#> \(Node y) -> MenuItem y.path y.title
 
-                link ! rel "stylesheet" ! href "https://fonts.googleapis.com/css?family=Montserrat:400,700|Montserrat+Alternates:400,700|Montserrat+Subrayada:400,700|Quattrocento:400,700|Quattrocento+Sans:400,400italic,700,700italic&subset=latin,latin-ext"
-                link ! rel "stylesheet" ! href "https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic|Source+Code+Pro:100,200,300,400,600,700,900&subset=latin,cyrillic,cyrillic-ext,greek-ext,greek,latin-ext"
+initialVDom = vNode2vTree $ VDom.render $ div $ text "initial vdom"
 
-                link ! rel "stylesheet" ! href "screen.css"
+foreign import appendToBody :: forall e. DT.Node -> Eff e Unit
 
-                div ! className "content" $ do
-                  div ! className "section" $ do
-                    a ! href "?ui=console" $ text "Console UI"
-                    h1 ! className "name" $ text (getTitle theSite)
+data UIState = UIState { rootNode    :: DT.Node
+                       , oldVDom     :: VTree
+                       , newVDom     :: VTree }
 
-                    div ! className "nav" $ do
-                      for_ (getMenuItems theSite) $ \x -> do
-                        a ! href ("#" ++ x) $ text x
+-- move to ui api
+data UIActions = RenderState AppState | RenderNoop
 
-                    div ! className "section page"  $ do
-                      h2 $ text $ fromMaybe "-no title-" (getTitle <$> getCurrentNode appState)
-                      div ! className "text" $ do
-                        payloadHtml
 
-                      div ! className "section footer" $ do
-                        span $ text "&copy; 2015"
+-- uiLogic :: UIActions AppState -> UIState -> UIState
+uiLogic (RenderState appState) (UIState u) =
+  UIState (u { oldVDom = u.newVDom
+             , newVDom = newVDom })
+  where
+  newMarkup = renderHTML appState
+  newVDom = vNode2vTree $ VDom.render newMarkup
 
-  log $ show markdownAST
-  log $ toString $ payloadHtml
-  setInnerHTML $ render doc
+uiLogic RenderNoop uiState = uiState
+
+setupHtmlUi :: Channel Input -> Eff _ (Channel UIActions)
+setupHtmlUi inputChannel = do
+    let rootNode = createElement initialVDom
+    appendToBody rootNode
+
+    renderChan <- channel RenderNoop
+    let renderSignal = subscribe renderChan
+    let initialUIState = UIState { rootNode: rootNode
+                                 , oldVDom: initialVDom
+                                 , newVDom: initialVDom }
+    let ui = foldp uiLogic initialUIState renderSignal
+
+    runSignal (patchVDom <$> ui)
+
+    hashChanged $ \old new -> do
+      log $ "hash changed: " ++ old ++ " -> " ++ new
+      send inputChannel $ Navigate [new]
+      pure unit
+
+    pure renderChan
+
+patchVDom (UIState s) = do
+  let patches = diff s.oldVDom s.newVDom
+  newRootNode <- patch s.rootNode patches
+
+  pure unit
+
+renderHTML :: AppState -> Markup
+renderHTML appState@(AppState s) =
+  div ! className "content" $ do
+    div ! className "section" $ do
+      a ! className "text mode-menu" ! href "?ui=console" $ text "CLI mode"
+      h1 ! className "name" $ text (getTitle theSite)
+
+      div ! className "nav" $ do
+        for_ (getMenuItems theSite) $ \(MenuItem slug title) -> do
+          if slug == currentPath
+            then a ! className "current-menu-item" ! href ("#" ++ slug) $ text title
+            else a ! href ("#" ++ slug) $ text title
+
+      div ! className "section page"  $ do
+        --h2 $ text $ fromMaybe "-no title-" $ getTitle <$> getCurrentNode appState
+        div ! className "text" $ do
+          payloadHtml
+
+        div ! className "section footer" $ do
+          span $ text "&copy; 2015"
+
+  where
+  markdownAST = fromMaybe page404 $ parseBody <$> (getCurrentNode appState)
+  payloadHtml = toHtml markdownAST
+  currentPath = fromMaybe "404" $ getPath <$> getCurrentNode appState
