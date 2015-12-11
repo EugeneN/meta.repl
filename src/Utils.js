@@ -11,3 +11,10 @@ exports.getParameterByName = function (name) {
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 }
+
+exports.setTitle = function(a) {
+    return function() {
+        document.title = a;
+        return {};
+    }
+}

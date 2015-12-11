@@ -29,23 +29,27 @@ import Text.Smolder.Renderer.String (render)
 import VirtualDOM
 import VirtualDOM.VTree
 
+import Core
 import Data
 import Types
-import Core
+import Utils
 import UI.HTML.Utils
 import qualified UI.HTML.VDom as VDom
 
 
 page404 = parseMd "## 404 Not found"
 initialVDom = vNode2vTree $ VDom.render $ div $ text "initial vdom"
+defaultTitle = "Eugene Naumenko" -- read from theSite
 
 data UIState = UIState { rootNode    :: DT.Node
+                       , title       :: String
                        , oldVDom     :: VTree
                        , newVDom     :: VTree }
 
 -- uiLogic :: UIActions AppState -> UIState -> UIState
 uiLogic (RenderState appState) (UIState u) =
   UIState (u { oldVDom = u.newVDom
+             , title   = calcTitle appState
              , newVDom = newVDom })
   where
   newMarkup = renderHTML appState
@@ -62,6 +66,7 @@ setupHtmlUi inputChannel = do
     let renderSignal = subscribe renderChan
     let initialUIState = UIState { rootNode: rootNode
                                  , oldVDom: initialVDom
+                                 , title: defaultTitle
                                  , newVDom: initialVDom }
     let ui = foldp uiLogic initialUIState renderSignal
 
@@ -78,6 +83,8 @@ patchVDom :: UIState -> Eff _ Unit
 patchVDom (UIState s) = do
   let patches = diff s.oldVDom s.newVDom
   newRootNode <- patch s.rootNode patches
+
+  setTitle s.title
 
   pure unit
 
@@ -100,7 +107,7 @@ renderHTML appState@(AppState s) =
           payloadHtml
 
         div ! className "section footer" $ do
-          span $ text "&copy; 2015"
+          span $ text "© 2015"
 
   where
   markdownAST = fromMaybe page404 $ parseBody <$> (getCurrentNode appState)

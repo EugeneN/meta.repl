@@ -2,10 +2,12 @@ module Core where
 
 import Prelude
 import qualified Data.Array as A
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
+import Data.String (joinWith)
 
 import Types
 import Data
+import Utils
 
 appLogic :: Input -> AppState -> AppState
 appLogic (Navigate path) (AppState s) = AppState (s { actionsCount = s.actionsCount + 1
@@ -24,3 +26,6 @@ findChildNodeByPath (Node x) path = case path of
   pred p (Node y) = y.path == p
 
 getCurrentPath (AppState s) = s.currentPath
+
+calcTitle appState =
+  joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle theSite)]

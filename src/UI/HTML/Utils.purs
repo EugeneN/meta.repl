@@ -24,13 +24,11 @@ import VirtualDOM
 import VirtualDOM.VTree
 
 import Types
+import Utils
 import qualified UI.HTML.VDom as VDom
 
 
-readSource (MemorySource x) = x
 parseBody (Node x) = parseMd <<< readSource $ x.dataSource
-getTitle (Node x) = x.title
-getPath  (Node x) = x.path
 
 foreign import vNode2vTree :: VDom.VNode -> VTree
 foreign import appendToBody :: forall e. DT.Node -> Eff e Unit

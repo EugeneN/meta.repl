@@ -115,5 +115,16 @@ theSite = Node {
                 , "![Tracks comparison](http://eugenen.github.io/g4/g4r.jpg)"
               ])
              }
+      , Node { title: "Site"
+             , path: "site"
+             , children: []
+             , dataSource: MemorySource (joinWith "\n" [
+                  "This «web site» is a concept web application aimed to explore ways to reach *The Holy Grail* of software engineering -"
+                , "*composability* and *reusability*."
+                , ""
+                , ""
+                , "Here be dragons."
+                ])
+             }
       ]
 }

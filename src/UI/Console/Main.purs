@@ -20,7 +20,8 @@ import Utils
 foreign import exportGlobal :: forall e. String -> (String -> Eff e Unit) -> Eff e Unit
 
 
-data UIState = UIState { text :: String }
+data UIState = UIState { text  :: String
+                       , title :: String }
 
 setupCliUi :: Channel Input -> Eff _ (Channel UIActions)
 setupCliUi inputChannel = do
@@ -28,7 +29,7 @@ setupCliUi inputChannel = do
 
   renderChan <- channel RenderNoop
   let renderSignal = subscribe renderChan
-  let initialUIState = UIState { text: "" }
+  let initialUIState = UIState { text: "", title: "<$>" }
   let ui = foldp uiLogic initialUIState renderSignal
 
   exportGlobal "go" $ \x -> send inputChannel $ Navigate [x]
@@ -36,9 +37,12 @@ setupCliUi inputChannel = do
   pure renderChan
 
 printPage :: UIState -> Eff _ Unit
-printPage (UIState s) = log s.text
+printPage (UIState s) = do
+  setTitle s.title
+  log s.text
 
-uiLogic (RenderState appState) (UIState u) = UIState (u { text = renderPage appState })
+uiLogic (RenderState appState) (UIState u) = UIState (u { text = renderPage appState
+                                                        , title = calcTitle appState })
 uiLogic RenderNoop             uiState     = uiState
 
 renderPage appState = header ++ showPage (getCurrentNode appState) ++ footer appState
