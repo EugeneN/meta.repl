@@ -34,8 +34,6 @@ getPath  (Node x) = x.path
 
 foreign import vNode2vTree :: VDom.VNode -> VTree
 foreign import appendToBody :: forall e. DT.Node -> Eff e Unit
-foreign import injectBody :: forall e. String -> Eff e Unit
-foreign import toString :: forall a. a -> String
 
 data MenuItem = MenuItem Url String
 getMenuItems (Node x) = x.children <#> \(Node y) -> MenuItem y.path y.title

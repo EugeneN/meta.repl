@@ -15,6 +15,7 @@ import Text.Markdown.SlamDown.Parser
 import Data
 import Types
 import Core
+import Utils
 
 foreign import exportGlobal :: forall e. String -> (String -> Eff e Unit) -> Eff e Unit
 
@@ -23,6 +24,8 @@ data UIState = UIState { text :: String }
 
 setupCliUi :: Channel Input -> Eff _ (Channel UIActions)
 setupCliUi inputChannel = do
+  injectBody "<h4 class=text>This site currently is in command line interface mode.</h4><h4 class=text>Please open browser console to use the site, or switch to <a href='?ui=html#about'>html</a> mode</h4>"
+
   renderChan <- channel RenderNoop
   let renderSignal = subscribe renderChan
   let initialUIState = UIState { text: "" }

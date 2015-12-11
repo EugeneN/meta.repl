@@ -2768,6 +2768,8 @@
 	(function(exports) {
 	  // module Utils
 
+	  exports.injectBody = function (html) {return function() {document.body.innerHTML = html; return {}; } }
+
 	  exports.getParameterByName = function (name) {
 	      return function() {
 	          name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -2783,6 +2785,8 @@
 	  "use strict";
 	  var $foreign = PS["Utils"];
 	  var Control_Monad_Eff = PS["Control.Monad.Eff"];
+	  var Prelude = PS["Prelude"];
+	  exports["injectBody"] = $foreign.injectBody;
 	  exports["getParameterByName"] = $foreign.getParameterByName;;
 	 
 	})(PS["Utils"] = PS["Utils"] || {});
@@ -4968,7 +4972,8 @@
 	  var Text_Markdown_SlamDown_Parser = PS["Text.Markdown.SlamDown.Parser"];
 	  var Data = PS["Data"];
 	  var Types = PS["Types"];
-	  var Core = PS["Core"];     
+	  var Core = PS["Core"];
+	  var Utils = PS["Utils"];     
 	  var UIState = (function () {
 	      function UIState(value0) {
 	          this.value0 = value0;
@@ -4997,7 +5002,7 @@
 	      if (_4 instanceof Data_Maybe.Just) {
 	          return formatPage(_4.value0.value0.title)(_4.value0.value0.dataSource);
 	      };
-	      throw new Error("Failed pattern match at UI.Console.Main line 43, column 1 - line 44, column 1: " + [ _4.constructor.name ]);
+	      throw new Error("Failed pattern match at UI.Console.Main line 46, column 1 - line 47, column 1: " + [ _4.constructor.name ]);
 	  };
 	  var footer = function (_6) {
 	      return "\n\n(c) 2015" + ("\n\n-------------------------------------------------" + ("\nActions count: " + (Prelude.show(Prelude.showInt)(_6.value0.actionsCount) + ("\nEnter `go(<page>)` to navigate to the respective page" + ("\nAvailable pages: " + Prelude.show(Prelude.showArray(Prelude.showString))(Core.getChildNodes(Data.theSite)))))));
@@ -5022,11 +5027,12 @@
 	          if (_2 instanceof Types.RenderNoop) {
 	              return _3;
 	          };
-	          throw new Error("Failed pattern match at UI.Console.Main line 38, column 1 - line 39, column 1: " + [ _2.constructor.name, _3.constructor.name ]);
+	          throw new Error("Failed pattern match at UI.Console.Main line 41, column 1 - line 42, column 1: " + [ _2.constructor.name, _3.constructor.name ]);
 	      };
 	  };
 	  var setupCliUi = function (inputChannel) {
 	      return function __do() {
+	          Utils.injectBody("<h4 class=text>This site currently is in command line interface mode.</h4><h4 class=text>Please open browser console to use the site, or switch to <a href='?ui=html#about'>html</a> mode</h4>")();
 	          var _0 = Signal_Channel.channel(Types.RenderNoop.value)();
 	          return (function () {
 	              var renderSignal = Signal_Channel.subscribe(_0);
@@ -5347,7 +5353,9 @@
 	 
 	})(PS["VirtualDOM"] = PS["VirtualDOM"] || {});
 	(function(exports) {
-	                                                                                                         
+	  // module UI.HTML.Utils
+
+
 	  exports.appendToBody = function (node) {return function() {document.body.appendChild(node); return {}; } }
 	  exports.vNode2vTree = function(vnode) { return vnode }
 	 
