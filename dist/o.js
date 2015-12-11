@@ -5484,7 +5484,7 @@ var PS = { };
           return Text_Smolder_Markup.text(" ");
       };
       if (_8 instanceof Text_Markdown_SlamDown.SoftBreak) {
-          return Text_Smolder_Markup.text("&shy;");
+          return Text_Smolder_Markup.text(" ");
       };
       if (_8 instanceof Text_Markdown_SlamDown.LineBreak) {
           return Text_Smolder_HTML.br;
