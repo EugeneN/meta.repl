@@ -21,8 +21,8 @@ import Text.Markdown.SlamDown.Pretty
 import Text.Markdown.SlamDown.Parser
 import Text.Markdown.SlamDown
 
-import Text.Smolder.HTML
-import Text.Smolder.HTML.Attributes (href, className, src, lang, charset, name, content, rel)
+import Text.Smolder.HTML hiding (title)
+import Text.Smolder.HTML.Attributes (href, className, src, lang, charset, name, content, rel, title)
 import Text.Smolder.Markup
 import Text.Smolder.Renderer.String (render)
 
@@ -93,6 +93,7 @@ renderHTML appState@(AppState s) =
   div ! className "content" $ do
     div ! className "section" $ do
       a ! className "text mode-menu" ! href "?ui=console" $ text "CLI mode"
+      a ! className "text mode-menu" ! href "app.js" ! title "To use Telnet mode, please run `app.js` with Node.js" $ text "Telnet mode"
       h1 ! className "name" $ text (getTitle theSite)
 
       div ! className "nav" $ do

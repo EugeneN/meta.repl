@@ -25,7 +25,7 @@ data UIState = UIState { text  :: String
 
 setupCliUi :: Channel Input -> Eff _ (Channel UIActions)
 setupCliUi inputChannel = do
-  injectBody "<h4 class=text>This site currently is in command line interface mode.</h4><h4 class=text>Please open browser console to use the site, or switch to <a href='?ui=html#about'>html</a> mode</h4>"
+  injectBody "<h4 class=text>This site currently is in command line interface mode.</h4><h4 class=text>Please open browser console to use the site, or switch to <a href='?ui=html#about'>html</a> or <a href='app.js'>telnet</a>* mode</h4><h6>*To use Telnet mode, please run `app.js` with Node.js.</h6>"
 
   renderChan <- channel RenderNoop
   let renderSignal = subscribe renderChan

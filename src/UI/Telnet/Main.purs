@@ -30,5 +30,7 @@ setupTelnetUi inputChannel = do
 
   log "Telnet UI here"
 
+  -- start socket connection on some port, listen to commands and print pages
+
   -- runSignal (printPage <$> ui)
   pure renderChan
