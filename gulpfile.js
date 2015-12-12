@@ -31,6 +31,14 @@ gulp.task("prebundle", ["make"], function() {
 gulp.task("bundle", ["prebundle"], function () {
   return gulp.src("dist/o.js")
     .pipe(webpack({
+      externals: {
+        fs: 'commonjs fs',
+        net: "commonjs net",
+        readline: "commonjs readline"
+      },
+      node: {
+        process: false
+      },
       resolve: { modulesDirectories: ["node_modules"] },
       output: { filename: "app.js" }
     }))
