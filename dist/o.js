@@ -1412,6 +1412,7 @@ var PS = { };
   // module Utils
 
   exports.injectBody = function (html) {return function() {document.body.innerHTML = html; return {}; } }
+  exports.toString = function (a) { console.log(a); return a.toString(); }
 
   exports.platformDetect = function () {
     if (typeof window === 'object') {
@@ -1481,6 +1482,7 @@ var PS = { };
   exports["platformDetect'"] = platformDetect$prime;
   exports["getParameterByName'"] = getParameterByName$prime;
   exports["setTitle"] = $foreign.setTitle;
+  exports["toString"] = $foreign.toString;
   exports["injectBody"] = $foreign.injectBody;;
  
 })(PS["Utils"] = PS["Utils"] || {});
@@ -5869,9 +5871,19 @@ var PS = { };
     };
   }
 
+  exports.onConnectionImpl = function(cb, s) {
+    return function() {
+      s.on('connection',function(o){ cb(o)(); });
+    };
+  }
+
   exports.createServer = function(o) {
     var net = require('net');
     return function() { return net.createServer(o); };
+  }
+
+  exports.writeImpl = function(d,cb,s) {
+    return function() { return s.write(d,cb); };
   }
 
   exports.listenTCPImpl = function(h,p,s) {
@@ -5887,27 +5899,21 @@ var PS = { };
   var Control_Monad_Eff = PS["Control.Monad.Eff"];
   var Control_Monad_Eff_Exception = PS["Control.Monad.Eff.Exception"];
   var Data_Function = PS["Data.Function"];
-  var Data_Maybe = PS["Data.Maybe"];                                                                                     
+  var Data_Maybe = PS["Data.Maybe"];     
+  var write = Data_Function.runFn3($foreign.writeImpl);                                                                  
   var onEvent = Data_Function.runFn3($foreign.onEventImpl);
-  var onEvent0 = function (e) {
-      return function (cb) {
-          return onEvent(e)(function (_0) {
-              return cb;
-          });
-      };
-  };                                  
   var onError = Data_Function.runFn2($foreign.onErrorImpl);
-  var onEnd = onEvent0("end");    
-  var onData = onEvent("data");                                  
+  var onData = onEvent("data");
+  var onConnection = Data_Function.runFn2($foreign.onConnectionImpl);
   var listenTCP = Data_Function.runFn3($foreign.listenTCPImpl);
   var defaultServerOptions = {
       allowHalfOpen: false
   };
   exports["listenTCP"] = listenTCP;
+  exports["write"] = write;
+  exports["onConnection"] = onConnection;
   exports["onError"] = onError;
-  exports["onEnd"] = onEnd;
   exports["onData"] = onData;
-  exports["onEvent0"] = onEvent0;
   exports["onEvent"] = onEvent;
   exports["defaultServerOptions"] = defaultServerOptions;
   exports["createServer"] = $foreign.createServer;;
@@ -5932,30 +5938,133 @@ var PS = { };
   var Node_Net_Socket = PS["Node.Net.Socket"];
   var Control_Apply = PS["Control.Apply"];
   var Node_ReadLine = PS["Node.ReadLine"];
-  var Control_Monad_Eff_Exception = PS["Control.Monad.Eff.Exception"];
-  var telnet = function (host_1) {
-      return function (port_1) {
-          return function __do() {
-              var _0 = Node_Net_Socket.createServer(Node_Net_Socket.defaultServerOptions)();
-              Node_Net_Socket.onError(function (e) {
-                  return Control_Apply["*>"](Control_Monad_Eff.applyEff)(Control_Monad_Eff_Console.log(Prelude.show(Control_Monad_Eff_Exception.showError)(e)))($foreign.exit(1));
-              })(_0)();
-              Node_Net_Socket.onEnd(Control_Apply["*>"](Control_Monad_Eff.applyEff)(Control_Monad_Eff_Console.log("connection closed"))($foreign.exit(0)))(_0)();
-              Node_Net_Socket.onData(Control_Monad_Eff_Console.log)(_0)();
-              Node_Net_Socket.listenTCP(host_1)(port_1)(_0)();
-              Control_Monad_Eff_Console.log("Server started on " + (host_1 + (":" + Prelude.show(Prelude.showInt)(port_1))))();
-              return Prelude["return"](Control_Monad_Eff.applicativeEff)(Prelude.unit)();
+  var Control_Monad_Eff_Exception = PS["Control.Monad.Eff.Exception"];     
+  var UIState = (function () {
+      function UIState(value0) {
+          this.value0 = value0;
+      };
+      UIState.create = function (value0) {
+          return new UIState(value0);
+      };
+      return UIState;
+  })();
+  var port = 8888;
+  var host = "localhost";
+  var header = "\n\n";
+  var formatPage = function (title) {
+      return function (_7) {
+          if (_7 instanceof Types.MemorySource) {
+              return Text_Markdown_SlamDown_Pretty.prettyPrintMd(Text_Markdown_SlamDown_Parser.parseMd("#" + (title + ("\n\n" + _7.value0))));
+          };
+          return Text_Markdown_SlamDown_Pretty.prettyPrintMd(Text_Markdown_SlamDown_Parser.parseMd("#" + (title + "\n\n-no data-")));
+      };
+  };
+  var showPage = function (_6) {
+      if (_6 instanceof Data_Maybe.Nothing) {
+          return "404 No such page";
+      };
+      if (_6 instanceof Data_Maybe.Just) {
+          return formatPage(_6.value0.value0.title)(_6.value0.value0.dataSource);
+      };
+      throw new Error("Failed pattern match at UI.Telnet.Main line 93, column 1 - line 94, column 1: " + [ _6.constructor.name ]);
+  };
+  var footer = function (_8) {
+      return "\n\n(c) 2015" + ("\n\n-------------------------------------------------" + ("\nActions count: " + (Prelude.show(Prelude.showInt)(_8.value0.actionsCount) + ("\nEnter page name to navigate to the respective page" + ("\nAvailable pages: " + (Prelude.show(Prelude.showArray(Prelude.showString))(Core.getChildNodes(Data.theSite)) + "\n\nEnter your choice: "))))));
+  };
+  var renderPage = function (appState) {
+      return header + (showPage(Core.getCurrentNode(appState)) + footer(appState));
+  };
+  var uiLogic = function (_4) {
+      return function (_5) {
+          if (_4 instanceof Types.RenderState) {
+              return new UIState((function () {
+                  var _20 = {};
+                  for (var _21 in _5.value0) {
+                      if (_5.value0.hasOwnProperty(_21)) {
+                          _20[_21] = _5.value0[_21];
+                      };
+                  };
+                  _20.text = renderPage(_4.value0);
+                  _20.title = Core.calcTitle(_4.value0);
+                  return _20;
+              })());
+          };
+          if (_4 instanceof Types.RenderNoop) {
+              return _5;
+          };
+          throw new Error("Failed pattern match at UI.Telnet.Main line 87, column 1 - line 89, column 1: " + [ _4.constructor.name, _5.constructor.name ]);
+      };
+  };
+  var clientHandler = function (ui) {
+      return function (inputChannel) {
+          return function (clientSocket) {
+              var printPage = function (clientSocket_1) {
+                  return function (_9) {
+                      return function __do() {
+                          Node_Net_Socket.write(_9.value0.text)(Prelude.pure(Control_Monad_Eff.applicativeEff)(Prelude.unit))(clientSocket_1)();
+                          return Prelude.unit;
+                      };
+                  };
+              };
+              return function __do() {
+                  Control_Monad_Eff_Console.log("Got a client")();
+                  Signal.runSignal(Prelude["<$>"](Signal.functorSignal)(printPage(clientSocket))(ui))();
+                  Node_Net_Socket.onError(function (e) {
+                      return Control_Monad_Eff_Console.log("Error: " + Prelude.show(Control_Monad_Eff_Exception.showError)(e));
+                  })(clientSocket)();
+                  Prelude.flip(Node_Net_Socket.onData)(clientSocket)(function (x) {
+                      return function __do() {
+                          Control_Monad_Eff_Console.log("< " + Utils.toString(x))();
+                          Signal_Channel.send(inputChannel)(new Types.Navigate([ x ]))();
+                          return Prelude.unit;
+                      };
+                  })();
+                  Node_Net_Socket.onEvent("close")(function (_2) {
+                      return Control_Monad_Eff_Console.log("Client disconnected");
+                  })(clientSocket)();
+                  return Prelude.unit;
+              };
           };
       };
   };
-  var port = 8888;
-  var host = "localhost";
+  var startServer = function (host_1) {
+      return function (port_1) {
+          return function (ui) {
+              return function (inputChannel) {
+                  var clientHandler$prime = clientHandler(ui)(inputChannel);
+                  return function __do() {
+                      var _0 = Node_Net_Socket.createServer(Node_Net_Socket.defaultServerOptions)();
+                      Node_Net_Socket.onError(function (e) {
+                          return Control_Apply["*>"](Control_Monad_Eff.applyEff)(Control_Monad_Eff_Console.log("Error: " + Prelude.show(Control_Monad_Eff_Exception.showError)(e)))($foreign.exit(1));
+                      })(_0)();
+                      Node_Net_Socket.onConnection(clientHandler$prime)(_0)();
+                      Node_Net_Socket.onEvent("listening")(function (_3) {
+                          return Control_Monad_Eff_Console.log("Listening...");
+                      })(_0)();
+                      Node_Net_Socket.listenTCP(host_1)(port_1)(_0)();
+                      Control_Monad_Eff_Console.log("Server started on " + (host_1 + (":" + Prelude.show(Prelude.showInt)(port_1))))();
+                      return Prelude["return"](Control_Monad_Eff.applicativeEff)(Prelude.unit)();
+                  };
+              };
+          };
+      };
+  };
   var setupTelnetUi = function (inputChannel) {
       return function __do() {
           var _1 = Signal_Channel.channel(Types.RenderNoop.value)();
-          Control_Monad_Eff_Console.log("Telnet UI here")();
-          telnet(host)(port)();
-          return _1;
+          return (function () {
+              var renderSignal = Signal_Channel.subscribe(_1);
+              var initialUIState = new UIState({
+                  text: "", 
+                  title: "<$>"
+              });
+              var ui = Signal.foldp(uiLogic)(initialUIState)(renderSignal);
+              return function __do() {
+                  Control_Monad_Eff_Console.log("Telnet UI here")();
+                  startServer(host)(port)(ui)(inputChannel)();
+                  return _1;
+              };
+          })()();
       };
   };
   exports["setupTelnetUi"] = setupTelnetUi;;
