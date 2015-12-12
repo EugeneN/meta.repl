@@ -1,5 +1,6 @@
 module Types where
 
+import Prelude
 import Signal.DOM (CoordinatePair())
 import Data.Maybe (Maybe())
 
@@ -25,3 +26,10 @@ type Url = String
 data DataSource a = MemorySource a | LocalSource a | RemoteSource a
 
 -- data Processor a = forall a. a -> a
+
+data Platform = Browser | Nodejs | Unknown
+
+instance showPlatform :: Show Platform where
+  show Browser = "Browser"
+  show Nodejs  = "Nodejs"
+  show Unknown = "Unknown"
