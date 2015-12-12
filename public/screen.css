@@ -110,3 +110,19 @@ blockquote {
   font-size: 10pt;
   margin-right: 1em;
 }
+.code {
+  font-family: "Courier New", sans-serif;
+  background-color: #eee;
+  padding: 10px;
+}
+.inline-code {
+  display: inline-block;
+  font-family: "Courier New", sans-serif;
+  background-color: #eee;
+  padding-left: .5em;
+  padding-right: .5em;
+}
+
+ul li {
+  list-style-type: circle;
+}

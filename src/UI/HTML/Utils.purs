@@ -8,6 +8,7 @@ import Control.Monad.Eff (Eff())
 import Data.Foldable (for_)
 import Data.List hiding (head, span)
 import Data.Maybe (Maybe(..), fromMaybe)
+import Data.String (joinWith)
 
 import qualified DOM.Node.Types as DT
 
@@ -44,7 +45,7 @@ instance toHtmlSlamDown :: ToHtml SlamDown where
   toHtml (SlamDown bs) = toHtml bs
 
 instance toHtmlListBlock :: ToHtml (List Block) where
-  toHtml as = p  $ do for_ as toHtml
+  toHtml as = span  $ do for_ as toHtml
 
 instance toHtmlBlock :: ToHtml Block where
   toHtml (Paragraph is)              = p  $ for_ is toHtml
@@ -55,9 +56,9 @@ instance toHtmlBlock :: ToHtml Block where
                             | n == 5 = h5 $ for_ is toHtml
                             | n == 6 = h6 $ for_ is toHtml
   toHtml (Blockquote bs)             = blockquote $ for_ bs toHtml
-  toHtml (Lst (Bullet _) bss)        = ul $ for_ bss toHtml
-  toHtml (Lst (Ordered _) bss)       = ol $ for_ bss toHtml
-  toHtml (CodeBlock _ ss)            = div ! className "code" $ text $ show ss
+  toHtml (Lst (Bullet _) bss)        = ul $ for_ bss (\bs -> li $ for_ bs toHtml)
+  toHtml (Lst (Ordered _) bss)       = ol $ for_ bss (\bs -> li $ for_ bs toHtml)
+  toHtml (CodeBlock _ ss)            = div ! className "code" $ text $ joinWith "<br>" $ fromList ss
   toHtml (LinkReference l uri)       = a ! href uri $ text $ l
   toHtml Rule                        = hr
 

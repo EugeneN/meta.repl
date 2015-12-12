@@ -1382,7 +1382,7 @@ var PS = { };
           title: "Apps", 
           path: "apps", 
           children: [  ], 
-          dataSource: new Types.MemorySource(Data_String.joinWith("\n")([ "[C.MD gist editor](http://eugenen.github.io/C.MD): This is a rich markdown editor for Github Gists.&nbsp;", "This is a 100% client side application written in ClojureScript to explore offline mode and multiprocessing for web applications.", "", "", "[pureGoL](http://eugenen.github.io/pureGoL): \u201cGame of Life\u201d game written in Purescript as a research on&nbsp;", "decoupling and encapsulating state between user interface, application core and input effects in reactive web applications.&nbsp;", "Features a stateful core and few distinct interchangeable stateful user interfaces.", "", "", "[twic](https://github.com/EugeneN/twic): Experimental Twitter client written in Haskell and Purescript with clean UI and simple UX.&nbsp;", "Written to explore component models for web applications and usage of immutable cloud database for eventual consistency." ]))
+          dataSource: new Types.MemorySource(Data_String.joinWith("\n")([ "[C.MD gist editor](http://eugenen.github.io/C.MD): This is a rich markdown editor for Github Gists.&nbsp;", "This is a 100% client side application written in ClojureScript to explore offline mode and multiprocessing for web applications.", "", "", "[pureGoL](http://eugenen.github.io/pureGoL): \u201cGame of Life\u201d game written in Purescript as a research on&nbsp;", "decoupling and encapsulating state between user interface, application core and input effects in reactive web applications.&nbsp;", "Features a stateful core and few distinct interchangeable stateful user interfaces.", "", "", "[twic](https://github.com/EugeneN/twic): Experimental Twitter client written in Haskell and Purescript with clean UI and simple UX.&nbsp;", "Written to explore component models for web applications and usage of immutable cloud database for eventual consistency.", "", "", "**metarepl** (draft): this application. Experiments with better ways to build apllications." ]))
       }), new Types.Node({
           title: "Presentations", 
           path: "presentations", 
@@ -1394,10 +1394,10 @@ var PS = { };
           children: [  ], 
           dataSource: new Types.MemorySource(Data_String.joinWith("\n")([ "G4 is a rich web application for managing geospatial data \u2013 GPS tracks, waypoints, geotagged items, custom maps etc. ", "&nbsp;The application features complex geographical/geometric calculations, automatic categorization and clustering of data, ", "&nbsp;real-time push based communications, external RESTful API, spatial search, uses advanced HTML5 ", "&nbsp;features like drag-and-drop multi-file upload, sound effects, interactive svg charting etc.", "", "", "The application is currently offline, but you can see some screenshots here:", "", "![Many objects](http://eugenen.github.io/g4/g4massive.png)", "![Many waypoints](http://eugenen.github.io/g4/g4manywpts.jpg)", "![Login screen](http://eugenen.github.io/g4/g4greenbtn1.png)", "![Track charts](http://eugenen.github.io/g4/g4chartsnew.png)", "![More charts](http://eugenen.github.io/g4/g4evolving.png)", "![Tracks comparison](http://eugenen.github.io/g4/g4r.jpg)" ]))
       }), new Types.Node({
-          title: "Site", 
-          path: "site", 
+          title: "WTF?", 
+          path: "help", 
           children: [  ], 
-          dataSource: new Types.MemorySource(Data_String.joinWith("\n")([ "This \xabweb site\xbb is a concept web application aimed to explore ways to reach *The Holy Grail* of software engineering -", "*composability* and *reusability*.", "", "", "Here be dragons." ]))
+          dataSource: new Types.MemorySource(Data_String.joinWith("\n")([ "This \xabweb site\xbb is a concept **application** aimed to explore ways to reach *The Holy Grail* of software engineering -", "*composability* and *reusability*.", "", "", "It can be run either in browser or under node.js - 100% *isomorphic* application :-)", "", "", "To run in a browser, just open [eugenen.github.io](http://eugenen.github.io/) and then follow instructions. ", "There are 2 distinct user interfaces for browsers: ", "- conventional HTML-based, rendered using virtual dom;", "- REPL based using Javascript console. After switching to this mode one has to open Javascript console and ", "  use functions provided to interact with the application.", "", "", "Another option is to run the application without browser. Just save the very same `app.js` file, which is used ", "in browsers, to your filesystem, then run it with `node.js` and connect using `telnet`:", "", "```", "$ node app.js", "```", "", "and in another terminal:", "", "```", "$ telnet localhost 8888", "```", "", "Then follow prompts and input commands to interact with the application :-)", "", "", "_", "", "", "Here be dragons." ]))
       }) ]
   });
   var initialState = new Types.AppState({
@@ -5113,7 +5113,7 @@ var PS = { };
   };
   var setupCliUi = function (inputChannel) {
       return function __do() {
-          Utils.injectBody("<h4 class=text>This site currently is in command line interface mode.</h4><h4 class=text>Please open browser console to use the site, or switch to <a href='?ui=html#about'>html</a> or <a href='app.js'>telnet</a>* mode</h4><h6>*To use Telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat.</h6>")();
+          Utils.injectBody("<h4 class=text>This site currently is in REPL interface mode.</h4><h4 class=text>Please open browser console to use the site, or switch to <a href='?ui=html#about'>html</a> or <a href='app.js'>CLI/telnet</a>* mode</h4><h6>*To use CLI/telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat.</h6>")();
           var _0 = Signal_Channel.channel(Types.RenderNoop.value)();
           return (function () {
               var renderSignal = Signal_Channel.subscribe(_0);
@@ -5346,7 +5346,8 @@ var PS = { };
   var strong = Text_Smolder_Markup.parent("strong");
   var span = Text_Smolder_Markup.parent("span");
   var p = Text_Smolder_Markup.parent("p");              
-  var ol = Text_Smolder_Markup.parent("ol");    
+  var ol = Text_Smolder_Markup.parent("ol");  
+  var li = Text_Smolder_Markup.parent("li");    
   var img = Text_Smolder_Markup.leaf("img");    
   var hr = Text_Smolder_Markup.leaf("hr");      
   var h6 = Text_Smolder_Markup.parent("h6");
@@ -5368,6 +5369,7 @@ var PS = { };
   exports["span"] = span;
   exports["p"] = p;
   exports["ol"] = ol;
+  exports["li"] = li;
   exports["h6"] = h6;
   exports["h5"] = h5;
   exports["h4"] = h4;
@@ -5573,6 +5575,7 @@ var PS = { };
   var Data_Foldable = PS["Data.Foldable"];
   var Data_List = PS["Data.List"];
   var Data_Maybe = PS["Data.Maybe"];
+  var Data_String = PS["Data.String"];
   var DOM_Node_Types = PS["DOM.Node.Types"];
   var Text_Markdown_SlamDown_Pretty = PS["Text.Markdown.SlamDown.Pretty"];
   var Text_Markdown_SlamDown_Parser = PS["Text.Markdown.SlamDown.Parser"];
@@ -5585,7 +5588,8 @@ var PS = { };
   var VirtualDOM_VTree = PS["VirtualDOM.VTree"];
   var Types = PS["Types"];
   var Utils = PS["Utils"];
-  var UI_HTML_VDom = PS["UI.HTML.VDom"];     
+  var UI_HTML_VDom = PS["UI.HTML.VDom"];
+  var Data_Unfoldable = PS["Data.Unfoldable"];     
   var MenuItem = (function () {
       function MenuItem(value0, value1) {
           this.value0 = value0;
@@ -5646,9 +5650,6 @@ var PS = { };
       };
       throw new Error("Failed pattern match: " + [ _5.constructor.name ]);
   });
-  var toHtmlListBlock = new ToHtml(function (as) {
-      return Text_Smolder_HTML.p(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(as)(toHtml(toHtmlBlock)));
-  });
   var toHtmlBlock = new ToHtml(function (_4) {
       if (_4 instanceof Text_Markdown_SlamDown.Paragraph) {
           return Text_Smolder_HTML.p(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_4.value0)(toHtml(toHtmlInline)));
@@ -5677,13 +5678,17 @@ var PS = { };
           return Text_Smolder_HTML.blockquote(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_4.value0)(toHtml(toHtmlBlock)));
       };
       if (_4 instanceof Text_Markdown_SlamDown.Lst && _4.value0 instanceof Text_Markdown_SlamDown.Bullet) {
-          return Text_Smolder_HTML.ul(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_4.value1)(toHtml(toHtmlListBlock)));
+          return Text_Smolder_HTML.ul(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_4.value1)(function (bs) {
+              return Text_Smolder_HTML.li(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(bs)(toHtml(toHtmlBlock)));
+          }));
       };
       if (_4 instanceof Text_Markdown_SlamDown.Lst && _4.value0 instanceof Text_Markdown_SlamDown.Ordered) {
-          return Text_Smolder_HTML.ol(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_4.value1)(toHtml(toHtmlListBlock)));
+          return Text_Smolder_HTML.ol(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_4.value1)(function (bs) {
+              return Text_Smolder_HTML.li(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(bs)(toHtml(toHtmlBlock)));
+          }));
       };
       if (_4 instanceof Text_Markdown_SlamDown.CodeBlock) {
-          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("code"))(Text_Smolder_Markup.text(Prelude.show(Data_List.showList(Prelude.showString))(_4.value1)));
+          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("code"))(Text_Smolder_Markup.text(Data_String.joinWith("<br>")(Data_List.fromList(Data_Unfoldable.unfoldableArray)(_4.value1))));
       };
       if (_4 instanceof Text_Markdown_SlamDown.LinkReference) {
           return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_4.value1))(Text_Smolder_Markup.text(_4.value0));
@@ -5692,6 +5697,9 @@ var PS = { };
           return Text_Smolder_HTML.hr;
       };
       throw new Error("Failed pattern match: " + [ _4.constructor.name ]);
+  });
+  var toHtmlListBlock = new ToHtml(function (as) {
+      return Text_Smolder_HTML.span(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(as)(toHtml(toHtmlBlock)));
   });
   var toHtmlSlamDown = new ToHtml(function (_3) {
       return toHtml(toHtmlListBlock)(_3.value0);
@@ -5768,8 +5776,8 @@ var PS = { };
       var markdownAST = Data_Maybe.fromMaybe(page404)(Prelude["<$>"](Data_Maybe.functorMaybe)(UI_HTML_Utils.parseBody)(Core.getCurrentNode(_6)));
       var payloadHtml = UI_HTML_Utils.toHtml(UI_HTML_Utils.toHtmlSlamDown)(markdownAST);
       var currentPath = Data_Maybe.fromMaybe("404")(Prelude["<$>"](Data_Maybe.functorMaybe)(Utils.getPath)(Core.getCurrentNode(_6)));
-      return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("content"))(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("section"))(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.className("text mode-menu")))(Text_Smolder_HTML_Attributes.href("?ui=console"))(Text_Smolder_Markup.text("CLI mode")))(function () {
-          return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.className("text mode-menu")))(Text_Smolder_HTML_Attributes.href("app.js")))(Text_Smolder_HTML_Attributes.title("To use Telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat"))(Text_Smolder_Markup.text("Telnet mode")))(function () {
+      return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("content"))(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("section"))(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.className("text mode-menu")))(Text_Smolder_HTML_Attributes.href("?ui=console"))(Text_Smolder_Markup.text("REPL mode")))(function () {
+          return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.className("text mode-menu")))(Text_Smolder_HTML_Attributes.href("app.js")))(Text_Smolder_HTML_Attributes.title("To use CLI/telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat"))(Text_Smolder_Markup.text("CLI/telnet mode")))(function () {
               return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.h1)(Text_Smolder_HTML_Attributes.className("name"))(Text_Smolder_Markup.text(Utils.getTitle(Data.theSite))))(function () {
                   return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("nav"))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_Foldable.foldableArray)(UI_HTML_Utils.getMenuItems(Data.theSite))(function (_2) {
                       var _12 = Prelude["=="](Prelude.eqString)(_2.value0)(currentPath);
