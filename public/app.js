@@ -5936,28 +5936,31 @@
 	      };
 	  };
 	  var main = function __do() {
-	      var _3 = Utils["platformDetect'"]();
-	      Control_Monad_Eff_Console.log("platform " + Prelude.show(Types.showPlatform)(_3))();
-	      var _2 = (function () {
-	          if (_3 instanceof Types.Browser) {
-	              return Utils["getParameterByName'"]("ui");
+	      var _4 = Utils["platformDetect'"]();
+	      Control_Monad_Eff_Console.log("platform " + Prelude.show(Types.showPlatform)(_4))();
+	      var _3 = (function () {
+	          if (_4 instanceof Types.Browser) {
+	              return function __do() {
+	                  var _1 = Utils["getParameterByName'"]("ui")();
+	                  return Data_Maybe.Just.create(Data_Maybe.fromMaybe("console")(_1));
+	              };
 	          };
-	          if (_3 instanceof Types.Nodejs) {
+	          if (_4 instanceof Types.Nodejs) {
 	              return Prelude.pure(Control_Monad_Eff.applicativeEff)(new Data_Maybe.Just("telnet"));
 	          };
 	          return Prelude.pure(Control_Monad_Eff.applicativeEff)(Data_Maybe.Nothing.value);
 	      })()();
-	      var _1 = Signal_Channel.channel(Types.Noop.value)();
+	      var _2 = Signal_Channel.channel(Types.Noop.value)();
 	      return (function () {
-	          var actionsSignal = Signal_Channel.subscribe(_1);
+	          var actionsSignal = Signal_Channel.subscribe(_2);
 	          var app = Signal.foldp(Core.appLogic)(Data.initialState)(actionsSignal);
-	          if (_2 instanceof Data_Maybe.Just) {
-	              return setupUI(app)(_1)(_2.value0);
+	          if (_3 instanceof Data_Maybe.Just) {
+	              return setupUI(app)(_2)(_3.value0);
 	          };
-	          if (_2 instanceof Data_Maybe.Nothing) {
+	          if (_3 instanceof Data_Maybe.Nothing) {
 	              return Control_Monad_Eff_Console.log("Error: No interface.");
 	          };
-	          throw new Error("Failed pattern match at Main line 29, column 1 - line 45, column 23: " + [ _2.constructor.name ]);
+	          throw new Error("Failed pattern match at Main line 29, column 1 - line 48, column 23: " + [ _3.constructor.name ]);
 	      })()();
 	  };
 	  exports["main"] = main;

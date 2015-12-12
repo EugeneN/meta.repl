@@ -31,8 +31,11 @@ main = do
   log $ "platform " ++ show platform
 
   uiParam <- case platform of
-    Browser -> getParameterByName' "ui" -- from env, args, not exactly document.location
-    Nodejs  -> pure $ Just "telnet" -- get from argv
+    Browser -> do
+      x <- getParameterByName' "ui"
+      pure $ Just $ fromMaybe "console" x
+      
+    Nodejs  -> pure $ Just "telnet"
     _       -> pure Nothing
 
   actionsChannel <- channel Noop
