@@ -93,7 +93,7 @@ renderHTML appState@(AppState s) =
   div ! className "content" $ do
     div ! className "section" $ do
       a ! className "text mode-menu" ! href "?ui=console" $ text "CLI mode"
-      a ! className "text mode-menu" ! href "app.js" ! title "To use Telnet mode, please run `app.js` with Node.js" $ text "Telnet mode"
+      a ! className "text mode-menu" ! href "app.js" ! title "To use Telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat" $ text "Telnet mode"
       h1 ! className "name" $ text (getTitle theSite)
 
       div ! className "nav" $ do

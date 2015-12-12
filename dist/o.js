@@ -5113,7 +5113,7 @@ var PS = { };
   };
   var setupCliUi = function (inputChannel) {
       return function __do() {
-          Utils.injectBody("<h4 class=text>This site currently is in command line interface mode.</h4><h4 class=text>Please open browser console to use the site, or switch to <a href='?ui=html#about'>html</a> or <a href='app.js'>telnet</a>* mode</h4><h6>*To use Telnet mode, please run `app.js` with Node.js.</h6>")();
+          Utils.injectBody("<h4 class=text>This site currently is in command line interface mode.</h4><h4 class=text>Please open browser console to use the site, or switch to <a href='?ui=html#about'>html</a> or <a href='app.js'>telnet</a>* mode</h4><h6>*To use Telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat.</h6>")();
           var _0 = Signal_Channel.channel(Types.RenderNoop.value)();
           return (function () {
               var renderSignal = Signal_Channel.subscribe(_0);
@@ -5769,7 +5769,7 @@ var PS = { };
       var payloadHtml = UI_HTML_Utils.toHtml(UI_HTML_Utils.toHtmlSlamDown)(markdownAST);
       var currentPath = Data_Maybe.fromMaybe("404")(Prelude["<$>"](Data_Maybe.functorMaybe)(Utils.getPath)(Core.getCurrentNode(_6)));
       return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("content"))(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("section"))(Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.className("text mode-menu")))(Text_Smolder_HTML_Attributes.href("?ui=console"))(Text_Smolder_Markup.text("CLI mode")))(function () {
-          return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.className("text mode-menu")))(Text_Smolder_HTML_Attributes.href("app.js")))(Text_Smolder_HTML_Attributes.title("To use Telnet mode, please run `app.js` with Node.js"))(Text_Smolder_Markup.text("Telnet mode")))(function () {
+          return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.className("text mode-menu")))(Text_Smolder_HTML_Attributes.href("app.js")))(Text_Smolder_HTML_Attributes.title("To use Telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat"))(Text_Smolder_Markup.text("Telnet mode")))(function () {
               return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.h1)(Text_Smolder_HTML_Attributes.className("name"))(Text_Smolder_Markup.text(Utils.getTitle(Data.theSite))))(function () {
                   return Prelude.bind(Text_Smolder_Markup.bindMarkupM)(Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("nav"))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_Foldable.foldableArray)(UI_HTML_Utils.getMenuItems(Data.theSite))(function (_2) {
                       var _12 = Prelude["=="](Prelude.eqString)(_2.value0)(currentPath);
@@ -5927,6 +5927,7 @@ var PS = { };
   var Control_Monad_Eff_Console = PS["Control.Monad.Eff.Console"];
   var Control_Monad_Eff = PS["Control.Monad.Eff"];
   var Data_Maybe = PS["Data.Maybe"];
+  var Data_String = PS["Data.String"];
   var Signal = PS["Signal"];
   var Signal_Channel = PS["Signal.Channel"];
   var Text_Markdown_SlamDown_Pretty = PS["Text.Markdown.SlamDown.Pretty"];
@@ -5949,6 +5950,11 @@ var PS = { };
       return UIState;
   })();
   var port = 8888;
+  var onListening$prime = Prelude.flip(Node_Net_Socket.onEvent("listening"));
+  var onError$prime = Prelude.flip(Node_Net_Socket.onError);
+  var onData$prime = Prelude.flip(Node_Net_Socket.onData);
+  var onConnection$prime = Prelude.flip(Node_Net_Socket.onConnection);
+  var onClose$prime = Prelude.flip(Node_Net_Socket.onEvent("close"));
   var host = "localhost";
   var header = "\n\n";
   var formatPage = function (title) {
@@ -5966,7 +5972,7 @@ var PS = { };
       if (_6 instanceof Data_Maybe.Just) {
           return formatPage(_6.value0.value0.title)(_6.value0.value0.dataSource);
       };
-      throw new Error("Failed pattern match at UI.Telnet.Main line 93, column 1 - line 94, column 1: " + [ _6.constructor.name ]);
+      throw new Error("Failed pattern match at UI.Telnet.Main line 102, column 1 - line 103, column 1: " + [ _6.constructor.name ]);
   };
   var footer = function (_8) {
       return "\n\n(c) 2015" + ("\n\n-------------------------------------------------" + ("\nActions count: " + (Prelude.show(Prelude.showInt)(_8.value0.actionsCount) + ("\nEnter page name to navigate to the respective page" + ("\nAvailable pages: " + (Prelude.show(Prelude.showArray(Prelude.showString))(Core.getChildNodes(Data.theSite)) + "\n\nEnter your choice: "))))));
@@ -5992,7 +5998,7 @@ var PS = { };
           if (_4 instanceof Types.RenderNoop) {
               return _5;
           };
-          throw new Error("Failed pattern match at UI.Telnet.Main line 87, column 1 - line 89, column 1: " + [ _4.constructor.name, _5.constructor.name ]);
+          throw new Error("Failed pattern match at UI.Telnet.Main line 96, column 1 - line 98, column 1: " + [ _4.constructor.name, _5.constructor.name ]);
       };
   };
   var clientHandler = function (ui) {
@@ -6009,19 +6015,19 @@ var PS = { };
               return function __do() {
                   Control_Monad_Eff_Console.log("Got a client")();
                   Signal.runSignal(Prelude["<$>"](Signal.functorSignal)(printPage(clientSocket))(ui))();
-                  Node_Net_Socket.onError(function (e) {
+                  onError$prime(clientSocket)(function (e) {
                       return Control_Monad_Eff_Console.log("Error: " + Prelude.show(Control_Monad_Eff_Exception.showError)(e));
-                  })(clientSocket)();
-                  Prelude.flip(Node_Net_Socket.onData)(clientSocket)(function (x) {
+                  })();
+                  onData$prime(clientSocket)(function (x) {
                       return function __do() {
-                          Control_Monad_Eff_Console.log("< " + Utils.toString(x))();
-                          Signal_Channel.send(inputChannel)(new Types.Navigate([ x ]))();
+                          Control_Monad_Eff_Console.log("Page request: >>>" + (Data_String.trim(Utils.toString(x)) + "<<<"))();
+                          Signal_Channel.send(inputChannel)(new Types.Navigate([ Data_String.trim(Utils.toString(x)) ]))();
                           return Prelude.unit;
                       };
                   })();
-                  Node_Net_Socket.onEvent("close")(function (_2) {
+                  onClose$prime(clientSocket)(function (_2) {
                       return Control_Monad_Eff_Console.log("Client disconnected");
-                  })(clientSocket)();
+                  })();
                   return Prelude.unit;
               };
           };
@@ -6034,16 +6040,16 @@ var PS = { };
                   var clientHandler$prime = clientHandler(ui)(inputChannel);
                   return function __do() {
                       var _0 = Node_Net_Socket.createServer(Node_Net_Socket.defaultServerOptions)();
-                      Node_Net_Socket.onError(function (e) {
+                      onError$prime(_0)(function (e) {
                           return Control_Apply["*>"](Control_Monad_Eff.applyEff)(Control_Monad_Eff_Console.log("Error: " + Prelude.show(Control_Monad_Eff_Exception.showError)(e)))($foreign.exit(1));
-                      })(_0)();
-                      Node_Net_Socket.onConnection(clientHandler$prime)(_0)();
-                      Node_Net_Socket.onEvent("listening")(function (_3) {
+                      })();
+                      onConnection$prime(_0)(clientHandler$prime)();
+                      onListening$prime(_0)(function (_3) {
                           return Control_Monad_Eff_Console.log("Listening...");
-                      })(_0)();
+                      })();
                       Node_Net_Socket.listenTCP(host_1)(port_1)(_0)();
                       Control_Monad_Eff_Console.log("Server started on " + (host_1 + (":" + Prelude.show(Prelude.showInt)(port_1))))();
-                      return Prelude["return"](Control_Monad_Eff.applicativeEff)(Prelude.unit)();
+                      return Prelude.unit;
                   };
               };
           };

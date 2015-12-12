@@ -5,6 +5,7 @@ import Prelude
 import Control.Monad.Eff.Console
 import Control.Monad.Eff (Eff())
 import Data.Maybe (Maybe(..))
+import Data.String (trim)
 
 import Signal (foldp, runSignal, filter, Signal())
 import Signal.Channel (channel, subscribe, send, Channel())
@@ -24,6 +25,12 @@ import Node.ReadLine
 host = "localhost" :: String
 port = 8888 :: Int
 
+onError'      = flip onError
+onData'       = flip onData
+onClose'      = flip $ onEvent "close"
+onListening'  = flip $ onEvent "listening"
+onConnection' = flip onConnection
+
 data UIState = UIState { text  :: String
                        , title :: String }
 
@@ -33,15 +40,17 @@ foreign import exit :: forall eff. Int -> Eff (process :: Process | eff) Unit
 clientHandler :: Signal UIState -> Channel Input -> Socket -> Eff _ Unit
 clientHandler ui inputChannel clientSocket = do
   log "Got a client"
-  runSignal ((printPage clientSocket) <$> ui)
+  runSignal ((printPage clientSocket) <$> ui) -- FIXME TODO runSignal once per ui, read value for each client separately
 
-  onError (\e -> log ("Error: " ++ show e)) clientSocket
-  (flip onData) clientSocket $ \x -> do
-    log $ "< " ++ toString x
-    send inputChannel $ Navigate [x]
+  onError' clientSocket $ \e ->
+    log ("Error: " ++ show e)
+
+  onData' clientSocket $ \x -> do
+    log $ "Page request: >>>" ++ (trim $ toString x) ++ "<<<"
+    send inputChannel $ Navigate [(trim $ toString x)]
     pure unit
 
-  onEvent "close" (\_ -> log "Client disconnected") clientSocket
+  onClose' clientSocket $ \_ -> log "Client disconnected"
 
   pure unit
 
@@ -55,14 +64,14 @@ startServer :: forall eff. String -> Int -> Signal UIState -> Channel Input -> E
 startServer host port ui inputChannel = do
   sock <- createServer defaultServerOptions
 
-  onError (\e -> log ("Error: " ++ (show e)) *> exit 1) sock
-  onConnection clientHandler' sock
-  onEvent "listening"  (\_ -> log "Listening...") sock
+  onError'      sock $ \e -> log ("Error: " ++ (show e)) *> exit 1
+  onConnection' sock clientHandler'
+  onListening'  sock $ \_ -> log "Listening..."
 
   listenTCP host port sock
   log $ "Server started on " ++ host ++ ":" ++ show port
 
-  return unit
+  pure unit
 
   where
   clientHandler' :: Socket -> Eff _ Unit
