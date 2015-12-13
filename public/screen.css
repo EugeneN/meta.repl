@@ -122,6 +122,9 @@ blockquote {
   padding-left: .5em;
   padding-right: .5em;
 }
+.code-line {
+  font-family: "Courier New", sans-serif;
+}
 
 ul li {
   list-style-type: circle;

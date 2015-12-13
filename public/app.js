@@ -1443,7 +1443,7 @@
 	          title: "WTF?", 
 	          path: "help", 
 	          children: [  ], 
-	          dataSource: new Types.MemorySource(Data_String.joinWith("\n")([ "This \xabweb site\xbb is a concept **application** aimed to explore ways to reach *The Holy Grail* of software engineering -", "*composability* and *reusability*.", "", "", "It can be run either in browser or under node.js - 100% *isomorphic* application :-)", "", "", "To run in a browser, just open [eugenen.github.io](http://eugenen.github.io/) and then follow instructions. ", "There are 2 distinct user interfaces for browsers: ", "- conventional HTML-based, rendered using virtual dom;", "- REPL based using Javascript console. After switching to this mode one has to open Javascript console and ", "  use functions provided to interact with the application.", "", "", "Another option is to run the application without browser. Just save the very same `app.js` file, which is used ", "in browsers, to your filesystem, then run it with `node.js` and connect using `telnet`:", "", "```", "$ node app.js", "```", "", "and in another terminal:", "", "```", "$ telnet localhost 8888", "```", "", "Then follow prompts and input commands to interact with the application :-)", "", "", "_", "", "", "Here be dragons." ]))
+	          dataSource: new Types.MemorySource(Data_String.joinWith("\n")([ "This \xabweb site\xbb is a concept **application** aimed to explore ways to reach *The Holy Grail* of software engineering -", "*composability* and *reusability*. Mostly it looks like following SOLID, GRASP, ", "and reinventing \xabOOP in a large\xbb using [purely functional language with powerful type system](http://www.purescript.org/), ", "high level abstractions, immutable data, messaging, some Category Theory and engineering approach for the win.", "", "", "It can be run either in browser or under node.js - 100% *isomorphic* application :-)", "", "", "To run it in a browser, just open [eugenen.github.io](http://eugenen.github.io/) and then follow instructions. ", "There are 2 distinct user interfaces for browsers: ", "- conventional HTML-based, rendered using virtual dom;", "- REPL-based using Javascript console. After switching to this mode one has to open Javascript console and ", "  use functions provided to interact with the application.", "", "", "Another option is to run the application without browser. Just save the very same [app.js](app.js) file, which is used ", "in browsers, to your filesystem, then run it with `node.js` and connect using `telnet`:", "", "```", "$ wget http://eugenen.github.io/app.js", "$ node app.js", "```", "", "and in another terminal:", "", "```", "$ telnet localhost 8888", "```", "", "Then follow prompts and input commands to interact with the application :-)", "", "", "_", "", "", "Here be dragons." ]))
 	      }) ]
 	  });
 	  var initialState = new Types.AppState({
@@ -5634,8 +5634,7 @@
 	  var VirtualDOM_VTree = PS["VirtualDOM.VTree"];
 	  var Types = PS["Types"];
 	  var Utils = PS["Utils"];
-	  var UI_HTML_VDom = PS["UI.HTML.VDom"];
-	  var Data_Unfoldable = PS["Data.Unfoldable"];     
+	  var UI_HTML_VDom = PS["UI.HTML.VDom"];     
 	  var MenuItem = (function () {
 	      function MenuItem(value0, value1) {
 	          this.value0 = value0;
@@ -5734,7 +5733,9 @@
 	          }));
 	      };
 	      if (_4 instanceof Text_Markdown_SlamDown.CodeBlock) {
-	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("code"))(Text_Smolder_Markup.text(Data_String.joinWith("<br>")(Data_List.fromList(Data_Unfoldable.unfoldableArray)(_4.value1))));
+	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("code"))(Data_Foldable.for_(Text_Smolder_Markup.applicativeMarkupM)(Data_List.foldableList)(_4.value1)(function (s) {
+	              return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.div)(Text_Smolder_HTML_Attributes.className("code-line"))(Text_Smolder_Markup.text(s));
+	          }));
 	      };
 	      if (_4 instanceof Text_Markdown_SlamDown.LinkReference) {
 	          return Text_Smolder_Markup["!"](Text_Smolder_Markup.attributableMarkupMF)(Text_Smolder_HTML.a)(Text_Smolder_HTML_Attributes.href(_4.value1))(Text_Smolder_Markup.text(_4.value0));
