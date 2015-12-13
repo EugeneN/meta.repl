@@ -82,7 +82,7 @@ theSite = Node {
                 , "Written to explore component models for web applications and usage of immutable cloud database for eventual consistency."
                 , ""
                 , ""
-                , "**meta.repl** (draft): this application. Experiments with better ways to build apllications."
+                , "*meta.repl* (draft): this application. Experiments with better ways to build apllications."
               ])
              }
       , Node { title: "Presentations"
@@ -123,12 +123,13 @@ theSite = Node {
              , children: []
              , dataSource: MemorySource (joinWith "\n" [
                   "This «web site» is a concept **application** aimed to explore ways to reach *The Holy Grail* of software engineering -"
-                , "*composability* and *reusability*. Mostly it looks like following SOLID, GRASP, "
+                , "*composability* and *reusability*. These ways look like following SOLID, GRASP, "
                 , "and reinventing «OOP in a large» using [purely functional language with powerful type system](http://www.purescript.org/), "
                 , "high level abstractions, immutable data, messaging, some Category Theory and engineering approach for the win."
+                , "Currently it is at a very early stage."
                 , ""
                 , ""
-                , "It can be run either in browser or under node.js - 100% *isomorphic* application :-)"
+                , "The application can be run either in browsers or under node.js - 100% *isomorphic* application :-)"
                 , ""
                 , ""
                 , "To run it in a browser, just open [eugenen.github.io](http://eugenen.github.io/) and then follow instructions. "
