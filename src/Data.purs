@@ -82,7 +82,7 @@ theSite = Node {
                 , "Written to explore component models for web applications and usage of immutable cloud database for eventual consistency."
                 , ""
                 , ""
-                , "**metarepl** (draft): this application. Experiments with better ways to build apllications."
+                , "**meta.repl** (draft): this application. Experiments with better ways to build apllications."
               ])
              }
       , Node { title: "Presentations"
