@@ -5,3 +5,4 @@
 /src/.webpack.js
 /dist/*.js
 /public/app.js
+.browserify-cache.json
