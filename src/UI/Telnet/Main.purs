@@ -116,5 +116,5 @@ footer (AppState s) =  "\n\n(c) 2015"
                     ++ "\nActions count: " ++ show s.actionsCount
                     ++ "\nEnter page name to navigate to the respective page,"
                     ++ "\nor `bye` to disconnect."
-                    ++ "\nAvailable pages: " ++ show (getChildNodes theSite)
+                    ++ "\nAvailable pages: " ++ show (getChildNodes appDNA)
                     ++ "\n\nEnter your choice: "

@@ -13,7 +13,7 @@ initialState = AppState {
 }
 
 
-theSite = Node {
+appDNA = Node {
     path: ""
   , title: "Eugene Naumenko"
   , dataSource: MemorySource "The root"

@@ -15,7 +15,7 @@ appLogic (Navigate path) (AppState s) = AppState (s { actionsCount = s.actionsCo
 appLogic Noop            (AppState s) = AppState (s { actionsCount = s.actionsCount + 1 })
 
 getCurrentNode appState =
-  findChildNodeByPath theSite (getCurrentPath appState)
+  findChildNodeByPath appDNA (getCurrentPath appState)
 
 getChildNodes (Node x) = x.children <#> \(Node y) -> y.path
 
@@ -28,4 +28,4 @@ findChildNodeByPath (Node x) path = case path of
 getCurrentPath (AppState s) = s.currentPath
 
 calcTitle appState =
-  joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle theSite)]
+  joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]

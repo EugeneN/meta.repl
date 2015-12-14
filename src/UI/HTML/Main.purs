@@ -39,7 +39,7 @@ import qualified UI.HTML.VDom as VDom
 
 page404 = parseMd "## 404 Not found"
 initialVDom = vNode2vTree $ VDom.render $ div $ text "initial vdom"
-defaultTitle = "Eugene Naumenko" -- read from theSite
+defaultTitle = "Eugene Naumenko" -- read from appDNA
 
 data UIState = UIState { rootNode    :: DT.Node
                        , title       :: String
@@ -94,10 +94,10 @@ renderHTML appState@(AppState s) =
     div ! className "section" $ do
       a ! className "text mode-menu" ! href "?ui=console" $ text "REPL mode"
       a ! className "text mode-menu" ! href "app.js" ! title "To use CLI/telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat" $ text "CLI/telnet mode"
-      h1 ! className "name" $ text (getTitle theSite)
+      h1 ! className "name" $ text (getTitle appDNA)
 
       div ! className "nav" $ do
-        for_ (getMenuItems theSite) $ \(MenuItem slug title) -> do
+        for_ (getMenuItems appDNA) $ \(MenuItem slug title) -> do
           if slug == currentPath
             then a ! className "current-menu-item" ! href ("#" ++ slug) $ text title
             else a ! href ("#" ++ slug) $ text title
