@@ -17,6 +17,8 @@ data UIActions = RenderState AppState | RenderNoop
 type UIInterface blActions uiActions uiEff = Channel blActions -> uiEff (Channel uiActions)
 type UnitInterface parentActions unitActions unitEff = Channel parentActions -> unitEff (Channel unitActions)
 
+type UI eff = UIInterface BLActions UIActions eff
+
 -- | Application core's types
 
 data AppState = AppState {

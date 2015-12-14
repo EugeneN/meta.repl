@@ -81,9 +81,9 @@ startServer host port ui inputChannel = do
   clientHandler' :: Socket -> Eff _ Unit
   clientHandler' = clientHandler ui inputChannel
 
-type TelnetEff a = forall e. Eff (console :: CONSOLE, chan :: Chan, socketio :: SocketIO | e ) a
+type TelnetUiEff a = forall e. Eff (console :: CONSOLE, chan :: Chan, socketio :: SocketIO | e ) a
 
-setupTelnetUi :: UIInterface BLActions UIActions TelnetEff
+setupTelnetUi :: UI TelnetUiEff
 setupTelnetUi inputChannel = do
 
   renderChan <- channel RenderNoop

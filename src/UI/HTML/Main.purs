@@ -62,7 +62,7 @@ uiLogic RenderNoop uiState = uiState
 
 type HtmlUiEff a = forall e. Eff (console :: CONSOLE, dom :: DOM, chan :: Chan | e) a
 
-setupHtmlUi :: UIInterface BLActions UIActions HtmlUiEff
+setupHtmlUi :: UI HtmlUiEff
 setupHtmlUi inputChannel = do
     let rootNode = createElement initialVDom
     appendToBody rootNode
