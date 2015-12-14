@@ -28,6 +28,7 @@ port = 8888 :: Int
 onError'      = flip onError
 onData'       = flip onData
 onClose'      = flip $ onEvent "close"
+onEnd'        = flip $ onEvent "end"
 onListening'  = flip $ onEvent "listening"
 onConnection' = flip onConnection
 
@@ -46,11 +47,14 @@ clientHandler ui inputChannel clientSocket = do
     log ("Error: " ++ show e)
 
   onData' clientSocket $ \x -> do
-    log $ "Page request: >>>" ++ (trim $ toString x) ++ "<<<"
-    send inputChannel $ Navigate [(trim $ toString x)]
+    let cmd = trim $ toString x
+    log $ "Page request: >" ++ cmd ++ "<"
+    if cmd == "bye" then end clientSocket
+                    else send inputChannel $ Navigate [cmd]
     pure unit
 
-  onClose' clientSocket $ \_ -> log "Client disconnected"
+  onClose' clientSocket $ \_ -> log "Connection interrupted"
+  onEnd'   clientSocket $ \_ -> log "Client disconnected"
 
   pure unit
 
@@ -64,7 +68,7 @@ startServer :: forall eff. String -> Int -> Signal UIState -> Channel Input -> E
 startServer host port ui inputChannel = do
   sock <- createServer defaultServerOptions
 
-  onError'      sock $ \e -> log ("Error: " ++ (show e)) *> exit 1
+  onError'      sock $ \e -> log ("General error: " ++ (show e)) *> exit 1
   onConnection' sock clientHandler'
   onListening'  sock $ \_ -> log "Listening..."
 
@@ -110,6 +114,7 @@ header              =  "\n\n"
 footer (AppState s) =  "\n\n(c) 2015"
                     ++ "\n\n-------------------------------------------------"
                     ++ "\nActions count: " ++ show s.actionsCount
-                    ++ "\nEnter page name to navigate to the respective page"
+                    ++ "\nEnter page name to navigate to the respective page,"
+                    ++ "\nor `bye` to disconnect."
                     ++ "\nAvailable pages: " ++ show (getChildNodes theSite)
                     ++ "\n\nEnter your choice: "
