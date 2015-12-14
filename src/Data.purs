@@ -20,7 +20,18 @@ appDNA = Node {
   , children: [
         Node { title: "About"
              , path: "about"
-             , children: []
+             , children: [
+                  Node { title: "Photos"
+                       , path: "photos"
+                       , children: []
+                       , dataSource: MemorySource "# Photos here"
+                       }
+                , Node { title: "Tweets"
+                     , path: "tweets"
+                     , children: []
+                     , dataSource: MemorySource "# Tweets here"
+                     }
+                ]
              , dataSource: MemorySource (joinWith "\n"[
                     "Hi, I'm Eugene."
                   , ""
