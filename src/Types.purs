@@ -4,9 +4,20 @@ import Prelude
 import Signal.DOM (CoordinatePair())
 import Data.Maybe (Maybe())
 
-data Input = Navigate (Array Url) | Noop
+import Signal.Channel (Channel())
+import Control.Monad.Eff (Eff())
 
+
+-- | Here is the specification for inter-component APIs
+-- | aka the heart of the application :-)
+
+data BLActions = Navigate (Array Url) | Noop
 data UIActions = RenderState AppState | RenderNoop
+
+type UIInterface blActions uiActions uiEff = Channel blActions -> uiEff (Channel uiActions)
+type UnitInterface parentActions unitActions unitEff = Channel parentActions -> unitEff (Channel unitActions)
+
+-- | Application core's types
 
 data AppState = AppState {
     actionsCount :: Int

@@ -5,9 +5,10 @@ import Prelude
 import Control.Monad.Eff.Console
 import Control.Monad.Eff (Eff())
 import Data.Maybe (Maybe(..))
+import DOM (DOM())
 
 import Signal (foldp, runSignal, filter)
-import Signal.Channel (channel, subscribe, send, Channel())
+import Signal.Channel (channel, subscribe, send, Channel(), Chan())
 
 import Text.Markdown.SlamDown.Pretty
 import Text.Markdown.SlamDown.Parser
@@ -23,7 +24,10 @@ foreign import exportGlobal :: forall e. String -> (String -> Eff e Unit) -> Eff
 data UIState = UIState { text  :: String
                        , title :: String }
 
-setupCliUi :: Channel Input -> Eff _ (Channel UIActions)
+
+type ConsoleUiEff a = forall e. Eff (console :: CONSOLE, dom :: DOM, chan :: Chan | e) a
+
+setupCliUi :: UIInterface BLActions UIActions ConsoleUiEff
 setupCliUi inputChannel = do
   injectBody "<h4 class=text>This site currently is in REPL interface mode.</h4><h4 class=text>Please open browser console to use the site, or switch to <a href='?ui=html#about'>html</a> or <a href='app.js'>CLI/telnet</a>* mode</h4><h6>*To use CLI/telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat.</h6>"
 

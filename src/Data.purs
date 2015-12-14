@@ -93,7 +93,7 @@ appDNA = Node {
                 , "Written to explore component models for web applications and usage of immutable cloud database for eventual consistency."
                 , ""
                 , ""
-                , "*meta.repl* (draft): this application. Experiments with better ways to build apllications."
+                , "__meta.repl__ (draft): this application. Experiments with better ways to build apllications."
               ])
              }
       , Node { title: "Presentations"
@@ -114,9 +114,9 @@ appDNA = Node {
              , children: []
              , dataSource: MemorySource (joinWith "\n" [
                   "G4 is a rich web application for managing geospatial data – GPS tracks, waypoints, geotagged items, custom maps etc. "
-                , "&nbsp;The application features complex geographical/geometric calculations, automatic categorization and clustering of data, "
-                , "&nbsp;real-time push based communications, external RESTful API, spatial search, uses advanced HTML5 "
-                , "&nbsp;features like drag-and-drop multi-file upload, sound effects, interactive svg charting etc."
+                , "The application features complex geographical/geometric calculations, automatic categorization and clustering of data, "
+                , "real-time push based communications, external RESTful API, spatial search, uses advanced HTML5 "
+                , "features like drag-and-drop multi-file upload, sound effects, interactive svg charting etc."
                 , ""
                 , ""
                 , "The application is currently offline, but you can see some screenshots here:"

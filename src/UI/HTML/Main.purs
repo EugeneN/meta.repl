@@ -5,6 +5,9 @@ import Prelude hiding (div, map, sub)
 import Control.Monad.Eff.Console
 import Control.Monad.Eff (Eff())
 
+import DOM (DOM())
+import Signal.Channel (Chan())
+
 import Data.Foldable (for_)
 import Data.List hiding (head, span)
 import Data.Maybe (Maybe(..), fromMaybe)
@@ -57,7 +60,9 @@ uiLogic (RenderState appState) (UIState u) =
 
 uiLogic RenderNoop uiState = uiState
 
-setupHtmlUi :: Channel Input -> Eff _ (Channel UIActions)
+type HtmlUiEff a = forall e. Eff (console :: CONSOLE, dom :: DOM, chan :: Chan | e) a
+
+setupHtmlUi :: UIInterface BLActions UIActions HtmlUiEff
 setupHtmlUi inputChannel = do
     let rootNode = createElement initialVDom
     appendToBody rootNode

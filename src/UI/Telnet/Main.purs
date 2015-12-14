@@ -8,7 +8,7 @@ import Data.Maybe (Maybe(..))
 import Data.String (trim)
 
 import Signal (foldp, runSignal, filter, Signal())
-import Signal.Channel (channel, subscribe, send, Channel())
+import Signal.Channel (channel, subscribe, send, Channel(), Chan())
 
 import Text.Markdown.SlamDown.Pretty
 import Text.Markdown.SlamDown.Parser
@@ -38,7 +38,7 @@ data UIState = UIState { text  :: String
 foreign import data Process :: !
 foreign import exit :: forall eff. Int -> Eff (process :: Process | eff) Unit
 
-clientHandler :: Signal UIState -> Channel Input -> Socket -> Eff _ Unit
+clientHandler :: Signal UIState -> Channel BLActions -> Socket -> Eff _ Unit
 clientHandler ui inputChannel clientSocket = do
   log "Got a client"
   runSignal ((printPage clientSocket) <$> ui) -- FIXME TODO runSignal once per ui, read value for each client separately
@@ -64,7 +64,7 @@ clientHandler ui inputChannel clientSocket = do
     write s.text (pure unit) clientSocket
     pure unit
 
-startServer :: forall eff. String -> Int -> Signal UIState -> Channel Input -> Eff ( console :: CONSOLE, socketio :: SocketIO | eff) Unit
+startServer :: forall eff. String -> Int -> Signal UIState -> Channel BLActions -> Eff ( console :: CONSOLE, socketio :: SocketIO | eff) Unit
 startServer host port ui inputChannel = do
   sock <- createServer defaultServerOptions
 
@@ -81,7 +81,9 @@ startServer host port ui inputChannel = do
   clientHandler' :: Socket -> Eff _ Unit
   clientHandler' = clientHandler ui inputChannel
 
-setupTelnetUi :: Channel Input -> Eff _ (Channel UIActions)
+type TelnetEff a = forall e. Eff (console :: CONSOLE, chan :: Chan, socketio :: SocketIO | e ) a
+
+setupTelnetUi :: UIInterface BLActions UIActions TelnetEff
 setupTelnetUi inputChannel = do
 
   renderChan <- channel RenderNoop

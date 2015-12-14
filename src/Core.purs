@@ -9,7 +9,7 @@ import Types
 import Data
 import Utils
 
-appLogic :: Input -> AppState -> AppState
+appLogic :: BLActions -> AppState -> AppState
 appLogic (Navigate path) (AppState s) = AppState (s { actionsCount = s.actionsCount + 1
                                                     , currentPath  = path })
 appLogic Noop            (AppState s) = AppState (s { actionsCount = s.actionsCount + 1 })
