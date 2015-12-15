@@ -18,7 +18,7 @@ appDNA = Node {
   , title: "Eugene Naumenko"
   , dataSource: MemorySource "The root"
   , children: [
-        Node { title: "About"
+        Node { title: "File"
              , path: "about"
              , children: [
                   Node { title: "Photos"
@@ -49,7 +49,7 @@ appDNA = Node {
                   , "> ![SoftServe](http://softserve.ua/html/img/softserve_logo-01.svg)"
                ])
              }
-      , Node { title: "Contact"
+      , Node { title: "Edit"
              , path: "contacts"
              , children: []
              , dataSource: MemorySource (joinWith "\n" [
@@ -71,12 +71,12 @@ appDNA = Node {
                 , "[plus.google.com/+EugeneNaumenko](https://plus.google.com/+EugeneNaumenko/)"
                ])
            }
-      , Node { title: "Blog"
+      , Node { title: "View"
              , path: "blog"
              , children: []
              , dataSource: MemorySource "Nothing as in Maybe"
              }
-      , Node { title: "Apps"
+      , Node { title: "Tools"
              , path: "apps"
              , children: []
              , dataSource: MemorySource (joinWith "\n" [
@@ -96,7 +96,7 @@ appDNA = Node {
                 , "__meta.repl__ (draft): this application. Experiments with better ways to build apllications."
               ])
              }
-      , Node { title: "Presentations"
+      , Node { title: "Window"
              , path: "presentations"
              , children: []
              , dataSource: MemorySource (joinWith "\n" [
@@ -129,7 +129,7 @@ appDNA = Node {
                 , "![Tracks comparison](http://eugenen.github.io/g4/g4r.jpg)"
               ])
              }
-      , Node { title: "WTF?"
+      , Node { title: "Help"
              , path: "help"
              , children: []
              , dataSource: MemorySource (joinWith "\n" [
