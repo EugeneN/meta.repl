@@ -23,7 +23,18 @@ appDNA = Node {
              , children: [
                   Node { title: "Photos"
                        , path: "photos"
-                       , children: []
+                       , children: [
+                            Node { title: "More"
+                                 , path: "more"
+                                 , children: []
+                                 , dataSource: MemorySource "# More photos here"
+                                 }
+                          , Node { title: "Lake"
+                                 , path: "lake"
+                                 , children: []
+                                 , dataSource: MemorySource "# Lake photos here"
+                                 }
+                       ]
                        , dataSource: MemorySource "# Photos here"
                        }
                 , Node { title: "Tweets"

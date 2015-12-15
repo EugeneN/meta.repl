@@ -26,6 +26,7 @@ import VirtualDOM.VTree
 
 import Types
 import Utils
+import Core
 import qualified UI.HTML.VDom as VDom
 
 

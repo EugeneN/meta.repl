@@ -5,7 +5,7 @@ import Prelude
 import Control.Monad.Eff.Console
 import Control.Monad.Eff (Eff())
 import Data.Maybe (Maybe(..))
-import Data.String (trim)
+import Data.String (trim, split)
 
 import Signal (foldp, runSignal, filter, Signal())
 import Signal.Channel (channel, subscribe, send, Channel(), Chan())
@@ -50,7 +50,7 @@ clientHandler ui inputChannel clientSocket = do
     let cmd = trim $ toString x
     log $ "Page request: >" ++ cmd ++ "<"
     if cmd == "bye" then end clientSocket
-                    else send inputChannel $ Navigate [cmd]
+                    else send inputChannel $ Navigate $ split "." cmd -- TODO implement stateful drill-down user workflow
     pure unit
 
   onClose' clientSocket $ \_ -> log "Connection interrupted"

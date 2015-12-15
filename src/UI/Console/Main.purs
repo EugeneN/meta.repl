@@ -18,7 +18,7 @@ import Types
 import Core
 import Utils
 
-foreign import exportGlobal :: forall e. String -> (String -> Eff e Unit) -> Eff e Unit
+foreign import exportGlobal :: forall e. String -> (Array String -> Eff e Unit) -> Eff e Unit
 
 
 data UIState = UIState { text  :: String
@@ -36,7 +36,7 @@ setupCliUi inputChannel = do
   let initialUIState = UIState { text: "", title: "<$>" }
   let ui = foldp uiLogic initialUIState renderSignal
 
-  exportGlobal "go" $ \x -> send inputChannel $ Navigate [x]
+  exportGlobal "go" $ \x -> send inputChannel $ Navigate x
   runSignal (printPage <$> ui)
   pure renderChan
 
@@ -62,5 +62,5 @@ header              = "\n\n"
 footer (AppState s) =  "\n\n(c) 2015"
                     ++ "\n\n-------------------------------------------------"
                     ++ "\nActions count: " ++ show s.actionsCount
-                    ++ "\nEnter `go(<page>)` to navigate to the respective page"
+                    ++ "\nEnter `go([<page>])` to navigate to the respective page"
                     ++ "\nAvailable pages: " ++ show (getChildNodes appDNA)

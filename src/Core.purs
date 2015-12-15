@@ -15,17 +15,27 @@ appLogic (Navigate path) (AppState s) = AppState (s { actionsCount = s.actionsCo
 appLogic Noop            (AppState s) = AppState (s { actionsCount = s.actionsCount + 1 })
 
 getCurrentNode appState =
-  findChildNodeByPath appDNA (getCurrentPath appState)
+  findChildNodeByPath (getCurrentPath appState) appDNA
 
 getChildNodes (Node x) = x.children <#> \(Node y) -> y.path
 
-findChildNodeByPath (Node x) path = case path of
-  [p] -> A.head $ A.filter (pred p) x.children
-  _   -> Nothing
+findChildNodeByPath :: Array Url -> Node -> Maybe Node
+findChildNodeByPath pathElements (Node node) = case A.uncons pathElements of
+  Nothing -> Nothing
+  Just {head: path0, tail: []}               -> find path0 node.children
+  Just {head: path0, tail: pathElementsTail} -> case find path0 node.children of
+    Nothing          -> Nothing
+    Just currentNode -> findChildNodeByPath pathElementsTail currentNode
+
   where
-  pred p (Node y) = y.path == p
+  find path_ nodes = A.head $ A.filter (match path_) nodes
+  match p (Node y) = y.path == p
 
 getCurrentPath (AppState s) = s.currentPath
 
 calcTitle appState =
   joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]
+
+readSource (MemorySource x) = x
+getTitle (Node x) = x.title
+getPath  (Node x) = x.path

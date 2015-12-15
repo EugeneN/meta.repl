@@ -31,7 +31,3 @@ platformDetect' = do
     "browser" -> Browser
     "nodejs"  -> Nodejs
     _         -> Unknown
-
-readSource (MemorySource x) = x
-getTitle (Node x) = x.title
-getPath  (Node x) = x.path

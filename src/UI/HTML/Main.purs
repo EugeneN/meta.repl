@@ -9,9 +9,11 @@ import DOM (DOM())
 import Signal.Channel (Chan())
 
 import Data.Foldable (for_)
-import Data.List hiding (head, span)
+import Data.Array (length, (!!), uncons)
+import Data.List hiding (head, span, length, (!!), uncons)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (mempty)
+import Data.String (split, joinWith)
 
 import qualified DOM.Node.Types as DT
 
@@ -79,7 +81,7 @@ setupHtmlUi inputChannel = do
 
     hashChanged $ \old new -> do
       log $ "hash changed: " ++ old ++ " -> " ++ new
-      send inputChannel $ Navigate [new]
+      send inputChannel $ Navigate $ split "/" new
       pure unit
 
     pure renderChan
@@ -93,6 +95,33 @@ patchVDom (UIState s) = do
 
   pure unit
 
+renderMenu :: Array Url -> Maybe Node -> Array String -> Markup
+renderMenu fullPath Nothing baseUrl = mempty
+renderMenu fullPath (Just node) baseUrl = case uncons fullPath of
+    Nothing                  -> drawNodeMenu (Just node) baseUrl Nothing
+
+    Just {head: h, tail: []} -> do
+      drawNodeMenu (Just node) baseUrl (Just h)
+      drawNodeMenu (findChildNodeByPath [h] node) (baseUrl <> [h]) (Just h)
+
+    Just {head: h, tail: t}  -> do
+      drawNodeMenu (Just node) baseUrl (Just h)
+      renderMenu t (findChildNodeByPath [h] node) (baseUrl <> [h])
+
+    where
+    drawNodeMenu Nothing baseUrl' selected = mempty
+    drawNodeMenu (Just node) baseUrl' selected = do
+      div $ do
+        for_ (getMenuItems node) $ \(MenuItem slug title) ->
+          case selected of
+            Nothing -> a ! href (makeUrl baseUrl' slug) $ text title
+            Just selected' ->
+              if slug == selected'
+                then a ! className "current-menu-item" ! href (makeUrl baseUrl' slug) $ text title
+                else a ! href (makeUrl baseUrl' slug) $ text title
+
+    makeUrl base_url slug = "#" <> (joinWith "/" (base_url <> [slug]))
+
 renderHTML :: AppState -> Markup
 renderHTML appState@(AppState s) =
   div ! className "content" $ do
@@ -102,10 +131,7 @@ renderHTML appState@(AppState s) =
       h1 ! className "name" $ text (getTitle appDNA)
 
       div ! className "nav" $ do
-        for_ (getMenuItems appDNA) $ \(MenuItem slug title) -> do
-          if slug == currentPath
-            then a ! className "current-menu-item" ! href ("#" ++ slug) $ text title
-            else a ! href ("#" ++ slug) $ text title
+        renderMenu fullPath (Just appDNA) []
 
       div ! className "section page"  $ do
         --h2 $ text $ fromMaybe "-no title-" $ getTitle <$> getCurrentNode appState
@@ -116,6 +142,7 @@ renderHTML appState@(AppState s) =
           span $ text "© 2015"
 
   where
-  markdownAST = fromMaybe page404 $ parseBody <$> (getCurrentNode appState)
+  fullPath = getCurrentPath appState
+  currentNode = getCurrentNode appState
+  markdownAST = fromMaybe page404 $ parseBody <$> currentNode
   payloadHtml = toHtml markdownAST
-  currentPath = fromMaybe "404" $ getPath <$> getCurrentNode appState

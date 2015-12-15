@@ -50,6 +50,11 @@ iframe {
   font-size: 14px;
   font-family: "Source Code Pro", sans-serif;
 }
+.sub-menu {
+  text-align: center;
+  font-size: 12px;
+  font-family: "Source Code Pro", sans-serif;
+}
 .nav a {
   display: inline-block;
   margin: 10px;
