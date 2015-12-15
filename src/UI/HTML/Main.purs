@@ -95,23 +95,23 @@ patchVDom (UIState s) = do
 
   pure unit
 
-renderMenu :: Array Url -> Maybe Node -> Array String -> Markup
-renderMenu fullPath Nothing baseUrl = mempty
-renderMenu fullPath (Just node) baseUrl = case uncons fullPath of
-    Nothing                  -> drawNodeMenu (Just node) baseUrl Nothing
+renderMenu :: Array Url -> Maybe Node -> Array String -> Int -> Markup
+renderMenu fullPath Nothing baseUrl level = mempty
+renderMenu fullPath (Just node) baseUrl level = case uncons fullPath of
+    Nothing                  -> drawNodeMenu (Just node) baseUrl Nothing level
 
     Just {head: h, tail: []} -> do
-      drawNodeMenu (Just node) baseUrl (Just h)
-      drawNodeMenu (findChildNodeByPath [h] node) (baseUrl <> [h]) (Just h)
+      drawNodeMenu (Just node) baseUrl (Just h) level
+      drawNodeMenu (findChildNodeByPath [h] node) (baseUrl <> [h]) (Just h) (level + 1)
 
     Just {head: h, tail: t}  -> do
-      drawNodeMenu (Just node) baseUrl (Just h)
-      renderMenu t (findChildNodeByPath [h] node) (baseUrl <> [h])
+      drawNodeMenu (Just node) baseUrl (Just h) level
+      renderMenu t (findChildNodeByPath [h] node) (baseUrl <> [h]) (level + 1)
 
     where
-    drawNodeMenu Nothing baseUrl' selected = mempty
-    drawNodeMenu (Just node) baseUrl' selected = do
-      div $ do
+    drawNodeMenu Nothing baseUrl' selected level = mempty
+    drawNodeMenu (Just node) baseUrl' selected level = do
+      div ! className ("menu-level-" <> show level <> " " <> if level > 0 then "sub-menu" else "") $ do
         for_ (getMenuItems node) $ \(MenuItem slug title) ->
           case selected of
             Nothing -> a ! href (makeUrl baseUrl' slug) $ text title
@@ -131,7 +131,7 @@ renderHTML appState@(AppState s) =
       h1 ! className "name" $ text (getTitle appDNA)
 
       div ! className "nav" $ do
-        renderMenu fullPath (Just appDNA) []
+        renderMenu fullPath (Just appDNA) [] 0
 
       div ! className "section page"  $ do
         --h2 $ text $ fromMaybe "-no title-" $ getTitle <$> getCurrentNode appState

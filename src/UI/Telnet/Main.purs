@@ -6,6 +6,7 @@ import Control.Monad.Eff.Console
 import Control.Monad.Eff (Eff())
 import Data.Maybe (Maybe(..))
 import Data.String (trim, split)
+import Data.Array (length)
 
 import Signal (foldp, runSignal, filter, Signal())
 import Signal.Channel (channel, subscribe, send, Channel(), Chan())
@@ -49,8 +50,10 @@ clientHandler ui inputChannel clientSocket = do
   onData' clientSocket $ \x -> do
     let cmd = trim $ toString x
     log $ "Page request: >" ++ cmd ++ "<"
-    if cmd == "bye" then end clientSocket
-                    else send inputChannel $ Navigate $ split "." cmd -- TODO implement stateful drill-down user workflow
+    case cmd of
+      "bye" -> end clientSocket
+      x     -> send inputChannel $ Navigate $ split "." x -- TODO implement stateful drill-down user workflow
+
     pure unit
 
   onClose' clientSocket $ \_ -> log "Connection interrupted"
@@ -109,6 +112,7 @@ showPage :: Maybe Node -> String
 showPage Nothing = "404 No such page"
 showPage (Just (Node x)) = formatPage x.title x.dataSource
 
+formatPage :: String -> DataSource String -> String
 formatPage title (MemorySource body) = prettyPrintMd <<< parseMd $ "#" ++ title ++ "\n\n" ++ body
 formatPage title _                   = prettyPrintMd <<< parseMd $ "#" ++ title ++ "\n\n-no data-"
 
