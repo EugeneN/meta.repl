@@ -52,8 +52,9 @@ appEffectsLogic uiChannel (AppState s) = case aff of
   applyProcessor ImgListProcessor (StringSource s) = pure $ mdImg s
   applyProcessor ImgListProcessor (ArraySource s) = pure $ unlines $ mdImg <$> s
 
-  applyProcessor GistProcessor (StringSource s) = do
-    res <- loadGist s
+  applyProcessor GistProcessor (StringSource ss) = do
+    liftEff $ send uiChannel $ RenderState (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading from Github..."})
+    res <- loadGist ss
     pure $ parseGistResponse res.response
 
   applyProcessor GistProcessor (ArraySource s) = pure "ArraySource not supported for gist"

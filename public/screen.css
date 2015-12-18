@@ -165,8 +165,15 @@ blockquote {
 }
 .code-line {
   font-family: "Courier New", sans-serif;
+  margin: 0px;
+  padding: 0px;
 }
 
 ul li {
   list-style-type: circle;
+}
+
+h6 img {
+  width: 16px;
+  margin: 2px;
 }

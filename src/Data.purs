@@ -27,30 +27,23 @@ appDNA = Node {
                   Node { title: "DNA Architecture"
                        , path: "dna-arch"
                        , processor: GistProcessor
-                       , children: [
-                            Node { title: "More"
-                                 , path: "more"
-                                 , processor: ImgListProcessor
-                                 , children: []
-                                 , dataSource: ArraySource [ "https://lh3.googleusercontent.com/-bD8uEjQ5QC8/Um_5YVL6Q4I/AAAAAAAAbbo/9HJcdtzoLy8/w1084-h610-n-rw-no/2012-02-25%2B16.46.32.jpg"
-                                                           , "https://lh3.googleusercontent.com/proxy/asUungBXSEW3MZDavjRMfFBK8cNT7YIIxP-BuaJfeCqBnqCUa16f0jLMnfcI6LN2O6uig6k2SoucRLSI9ip5nLlrCcyV45uHkXlQ2R_c8oOZw5mK92p8qC4aNudmmEumg3M=s530-p-rw"
-                                                           ]
-                                 }
-                          , Node { title: "Lake"
-                                 , path: "lake"
-                                 , processor: TextProcessor
-                                 , children: []
-                                 , dataSource: StringSource "# Lake photos here"
-                                 }
-                       ]
+                       , children: [ ]
                        , dataSource: StringSource "cdc388425dacf87cba71"
                        }
-                , Node { title: "Tweets"
-                     , path: "tweets"
-                     , processor: TextProcessor
-                     , children: []
-                     , dataSource: StringSource "# Tweets here"
-                     }
+                , Node { title: "Cats"
+                       , path: "cats"
+                       , processor: GistProcessor
+                       , children: []
+                       , dataSource: StringSource "6c6a56e4abb7ff7fa7fa"
+                       }
+                , Node { title: "Photos"
+                       , path: "photos"
+                       , processor: ImgListProcessor
+                       , children: []
+                       , dataSource: ArraySource [ "https://lh3.googleusercontent.com/-bD8uEjQ5QC8/Um_5YVL6Q4I/AAAAAAAAbbo/9HJcdtzoLy8/w1084-h610-n-rw-no/2012-02-25%2B16.46.32.jpg"
+                                                 , "https://lh3.googleusercontent.com/proxy/asUungBXSEW3MZDavjRMfFBK8cNT7YIIxP-BuaJfeCqBnqCUa16f0jLMnfcI6LN2O6uig6k2SoucRLSI9ip5nLlrCcyV45uHkXlQ2R_c8oOZw5mK92p8qC4aNudmmEumg3M=s530-p-rw"
+                                                 ]
+                      }
                 ]
              , dataSource: StringSource (joinWith "\n"[
                     "Hi, I'm Eugene."
