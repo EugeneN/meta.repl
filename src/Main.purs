@@ -34,12 +34,11 @@ setupUI app actionsChannel ui = do
   runSignal ((appEffectsLogic uiChannel) <~ app)
 
 
+
 appEffectsLogic :: Channel UIActions -> AppState -> Eff _ Unit
 appEffectsLogic uiChannel (AppState s) = case aff of
   Nothing -> send uiChannel $ RenderState (AppState s{currentContent = Nothing})
-  Just aff' -> runAff (\_ -> send uiChannel $ RenderState (AppState s{currentContent = Nothing}))
-                      (\x -> send uiChannel $ RenderState (AppState s{currentContent = Just x}))
-                      aff'
+  Just aff' -> runAff handleError handleResult aff'
   where
   currentNode = findChildNodeByPath s.currentPath appDNA
   ds = getDataSource <$> currentNode
@@ -55,13 +54,19 @@ appEffectsLogic uiChannel (AppState s) = case aff of
 
   applyProcessor GistProcessor (StringSource s) = do
     res <- loadGist s
-    pure res.response
+    pure $ parseGistResponse res.response
 
   applyProcessor GistProcessor (ArraySource s) = pure "ArraySource not supported for gist"
 
   mdImg s = "![" <> s <> "](" <> s <> ")"
 
   loadGist gid = get $ "https://api.github.com/gists/" <> gid
+
+  handleError e = send uiChannel $ RenderState (AppState s{currentContent = Just (toString e)})
+
+  handleResult x = do
+    send uiChannel $ RenderState (AppState s{currentContent = Just x})
+
 
 
 

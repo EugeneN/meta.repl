@@ -27,6 +27,8 @@ foreign import setTitle :: forall eff. String -> Eff (dom :: DOM | eff) Unit
 
 foreign import platformDetect :: forall e. Eff e String
 
+foreign import parseGistResponse :: String -> String
+
 platformDetect' :: Eff _ Platform
 platformDetect' = do
   p <- platformDetect

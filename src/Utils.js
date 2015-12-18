@@ -23,3 +23,9 @@ exports.getParameterByName = function (name) {
 }
 
 exports.setTitle = function(a) { return function() { document.title = a; return {}; } }
+
+exports.parseGistResponse = function(gist) {
+  var jsn = JSON.parse(gist);
+  var filenames = Object.keys(jsn.files);
+  return jsn.files[filenames[0]].content;
+}
