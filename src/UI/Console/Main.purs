@@ -55,7 +55,7 @@ showPage :: Maybe Node -> String
 showPage Nothing = "404 No such page"
 showPage (Just (Node x)) = formatPage x.title x.dataSource
 
-formatPage title (MemorySource body) = prettyPrintMd <<< parseMd $ "#" ++ title ++ "\n\n" ++ body
+formatPage title (StringSource body) = prettyPrintMd <<< parseMd $ "#" ++ title ++ "\n\n" ++ body
 formatPage title _                   = prettyPrintMd <<< parseMd $ "#" ++ title ++ "\n\n-no data-"
 
 header              = "\n\n"

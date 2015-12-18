@@ -24,6 +24,7 @@ type UI eff = UIInterface BLActions UIActions eff
 data AppState = AppState {
     actionsCount :: Int
   , currentPath  :: Array Url
+  , currentContent :: Maybe String
 }
 
 data Node = Node {
@@ -31,12 +32,15 @@ data Node = Node {
   , path       :: Url
   , children   :: Array Node
   , dataSource :: DataSource String
+  , processor  :: Processor
   -- , processors :: Array Processor
 }
 
+data Processor = GistProcessor | ImgListProcessor | TextProcessor
+
 type Url = String
 
-data DataSource a = MemorySource a | LocalSource a | RemoteSource a
+data DataSource a = StringSource a | ArraySource (Array a)
 
 -- data Processor a = forall a. a -> a
 

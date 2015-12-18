@@ -5,6 +5,10 @@ import Prelude
 import DOM (DOM(..))
 import Data.Maybe
 import Types
+import Data.String (joinWith)
+
+
+unlines = joinWith "\n"
 
 -- | Returns url's query parameters by name
 foreign import getParameterByName :: forall e. String -> Eff e String

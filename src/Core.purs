@@ -36,6 +36,8 @@ getCurrentPath (AppState s) = s.currentPath
 calcTitle appState =
   joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]
 
-readSource (MemorySource x) = x
+readSource (StringSource x) = x
 getTitle (Node x) = x.title
 getPath  (Node x) = x.path
+getDataSource (Node x) = x.dataSource
+getProcessor (Node x) = x.processor
