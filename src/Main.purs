@@ -53,7 +53,8 @@ appEffectsLogic uiChannel (AppState s) = case aff of
   applyProcessor ImgListProcessor (ArraySource s) = pure $ unlines $ mdImg <$> s
 
   applyProcessor GistProcessor (StringSource ss) = do
-    liftEff $ send uiChannel $ RenderState (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading from Github..."})
+    liftEff $ send uiChannel $ RenderState
+      (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading from Github..."})
     res <- loadGist ss
     pure $ parseGistResponse res.response
 
