@@ -24,15 +24,17 @@ appDNA = Node {
              , path: "about"
              , processor: TextProcessor
              , children: [
-                  Node { title: "Photos"
-                       , path: "photos"
-                       , processor: TextProcessor
+                  Node { title: "DNA Architecture"
+                       , path: "dna-arch"
+                       , processor: GistProcessor
                        , children: [
                             Node { title: "More"
                                  , path: "more"
-                                 , processor: GistProcessor
+                                 , processor: ImgListProcessor
                                  , children: []
-                                 , dataSource: StringSource "# More photos here"
+                                 , dataSource: ArraySource [ "https://lh3.googleusercontent.com/-bD8uEjQ5QC8/Um_5YVL6Q4I/AAAAAAAAbbo/9HJcdtzoLy8/w1084-h610-n-rw-no/2012-02-25%2B16.46.32.jpg"
+                                                           , "https://lh3.googleusercontent.com/proxy/asUungBXSEW3MZDavjRMfFBK8cNT7YIIxP-BuaJfeCqBnqCUa16f0jLMnfcI6LN2O6uig6k2SoucRLSI9ip5nLlrCcyV45uHkXlQ2R_c8oOZw5mK92p8qC4aNudmmEumg3M=s530-p-rw"
+                                                           ]
                                  }
                           , Node { title: "Lake"
                                  , path: "lake"
@@ -41,7 +43,7 @@ appDNA = Node {
                                  , dataSource: StringSource "# Lake photos here"
                                  }
                        ]
-                       , dataSource: StringSource "# Photos here"
+                       , dataSource: StringSource "cdc388425dacf87cba71"
                        }
                 , Node { title: "Tweets"
                      , path: "tweets"

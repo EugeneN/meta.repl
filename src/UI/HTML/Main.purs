@@ -144,5 +144,6 @@ renderHTML appState@(AppState s) =
   where
   fullPath = getCurrentPath appState
   currentNode = getCurrentNode appState
-  markdownAST = fromMaybe page404 $ parseBody <$> currentNode
+  -- markdownAST = fromMaybe page404 $ parseBody <$> currentNode
+  markdownAST = fromMaybe page404 $ parseContent <$> s.currentContent
   payloadHtml = toHtml markdownAST
