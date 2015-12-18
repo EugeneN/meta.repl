@@ -5,6 +5,7 @@ import Data.String (joinWith)
 import Data.Maybe (Maybe(..))
 import Data.Array
 import Types
+import Utils (unlines)
 
 initialState :: AppState
 initialState = AppState {
@@ -24,7 +25,7 @@ appDNA = Node {
              , path: "about"
              , processor: TextProcessor
              , children: [ ]
-             , dataSource: StringSource (joinWith "\n"[
+             , dataSource: StringSource (unlines[
                     "Hi, I'm Eugene."
                   , ""
                   , "Software {engineer, architect} with 10 years of experience in networking, distributed and high load systems, web development, software design and project management."
@@ -51,7 +52,7 @@ appDNA = Node {
                                , dataSource: StringSource "e1a6a166728f7d403fc4"
                                }
                          ]
-             , dataSource: StringSource (joinWith "\n" [
+             , dataSource: StringSource (unlines [
                   "[eugene.naumenko^at^gmail.com](mailto:eugene.naumenko^gmail.com)"
                 , ""
                 , ""
@@ -100,7 +101,7 @@ appDNA = Node {
              , path: "apps"
              , processor: TextProcessor
              , children: []
-             , dataSource: StringSource (joinWith "\n" [
+             , dataSource: StringSource (unlines [
                   "[C.MD gist editor](http://eugenen.github.io/C.MD): This is a rich markdown editor for Github Gists.&nbsp;"
                 , "This is a 100% client side application written in ClojureScript to explore offline mode and multiprocessing for web applications."
                 , ""
@@ -121,7 +122,7 @@ appDNA = Node {
              , path: "presentations"
              , processor: TextProcessor
              , children: []
-             , dataSource: StringSource (joinWith "\n" [
+             , dataSource: StringSource (unlines [
                   "[Purescript](https://docs.google.com/presentation/d/1IOM9A3Otxufs5xzvYb3yPrT7JDVPhkJVkdaWvVl8R_E/pub?start=false&loop=false&delayms=3000)"
                 , ""
                 , ""
@@ -135,7 +136,7 @@ appDNA = Node {
              , path: "g4"
              , processor: TextProcessor
              , children: []
-             , dataSource: StringSource (joinWith "\n" [
+             , dataSource: StringSource (unlines [
                   "G4 is a rich web application for managing geospatial data – GPS tracks, waypoints, geotagged items, custom maps etc. "
                 , "The application features complex geographical/geometric calculations, automatic categorization and clustering of data, "
                 , "real-time push based communications, external RESTful API, spatial search, uses advanced HTML5 "
@@ -156,7 +157,7 @@ appDNA = Node {
              , path: "help"
              , processor: TextProcessor
              , children: []
-             , dataSource: StringSource (joinWith "\n" [
+             , dataSource: StringSource (unlines [
                   "This «web site» is a concept **application** aimed to explore ways to reach *The Holy Grail* of software engineering -"
                 , "*composability* and *reusability*. These ways look like following SOLID, GRASP, "
                 , "and reinventing «OOP in a large» using [purely functional language with powerful type system](http://www.purescript.org/), "

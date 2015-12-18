@@ -7,8 +7,8 @@ import Control.Monad.Eff (Eff())
 
 import Data.Maybe
 
-import Signal (foldp, runSignal, (<~))
-import Signal.Channel (channel, subscribe, send, Channel())
+import Signal (foldp, runSignal, (~>))
+import Signal.Channel (channel, subscribe)
 
 import Types
 import Data
@@ -16,61 +16,26 @@ import Core
 import Utils
 import UI.Console.Main (setupCliUi)
 import UI.HTML.Main    (setupHtmlUi)
-import UI.Telnet.Main    (setupTelnetUi)
-
-import Control.Monad.Aff
-import Control.Monad.Eff.Class
-import Network.HTTP.Affjax
-import Network.HTTP.Affjax.Response
-import Network.HTTP.Affjax.Request
-
-setupUI app actionsChannel ui = do
-  uiChannel <- case ui of
-    "html"    -> setupHtmlUi   actionsChannel
-    "console" -> setupCliUi    actionsChannel
-    "telnet"  -> setupTelnetUi actionsChannel
-
-  -- runSignal ((\s -> send uiChannel $ RenderState s) <~ app)
-  runSignal ((appEffectsLogic uiChannel) <~ app)
+import UI.Telnet.Main  (setupTelnetUi)
 
 
+data UiParam = HTML | Console | Telnet
 
-appEffectsLogic :: Channel UIActions -> AppState -> Eff _ Unit
-appEffectsLogic uiChannel (AppState s) = case aff of
-  Nothing -> send uiChannel $ RenderState (AppState s{currentContent = Nothing})
-  Just aff' -> runAff handleError handleResult aff'
-  where
-  currentNode = findChildNodeByPath s.currentPath appDNA
-  ds = getDataSource <$> currentNode
-  proc = getProcessor <$> currentNode
-  aff = applyProcessor <$> proc <*> ds
+parseUiParam = do
+  x <- getParameterByName' "ui"
+  pure $ case x of
+    Just "html"    -> Just HTML
+    Just "console" -> Just Console
+    Just "telnet"  -> Just Telnet
+    _              -> Nothing
 
-  applyProcessor :: Processor -> (DataSource String) -> Aff _ String
-  applyProcessor TextProcessor (StringSource s) = pure s
-  applyProcessor TextProcessor (ArraySource s) = pure $ unlines s
+setupUI appSignal actionsChannel uiParam = do
+  uiChannel <- case uiParam of
+    HTML    -> setupHtmlUi   actionsChannel
+    Console -> setupCliUi    actionsChannel
+    Telnet  -> setupTelnetUi actionsChannel
 
-  applyProcessor ImgListProcessor (StringSource s) = pure $ mdImg s
-  applyProcessor ImgListProcessor (ArraySource s) = pure $ unlines $ mdImg <$> s
-
-  applyProcessor GistProcessor (StringSource ss) = do
-    liftEff $ send uiChannel $ RenderState
-      (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading from Github..."})
-    res <- loadGist ss
-    pure $ parseGistResponse res.response
-
-  applyProcessor GistProcessor (ArraySource s) = pure "ArraySource not supported for gist"
-
-  mdImg s = "![" <> s <> "](" <> s <> ")"
-
-  loadGist gid = get $ "https://api.github.com/gists/" <> gid
-
-  handleError e = send uiChannel $ RenderState (AppState s{currentContent = Just (toString e)})
-
-  handleResult x = do
-    send uiChannel $ RenderState (AppState s{currentContent = Just x})
-
-
-
+  runSignal (appSignal ~> (appEffectsLogic uiChannel))
 
 main = do
   platform <- platformDetect'
@@ -78,17 +43,17 @@ main = do
 
   uiParam <- case platform of
     Browser -> do
-      x <- getParameterByName' "ui"
-      pure $ Just $ fromMaybe "console" x
+      x <- parseUiParam
+      pure $ Just $ fromMaybe Console x
 
-    Nodejs  -> pure $ Just "telnet"
+    Nodejs  -> pure $ Just Telnet
     _       -> pure Nothing
 
   actionsChannel <- channel Noop
 
   let actionsSignal = subscribe actionsChannel
-  let app = foldp appLogic initialState actionsSignal
+  let appSignal = foldp appLogic initialState actionsSignal
 
   case uiParam of
-    Just ui    -> setupUI app actionsChannel ui
+    Just x     -> setupUI appSignal actionsChannel x
     Nothing    -> log "Error: No interface."

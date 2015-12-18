@@ -42,8 +42,6 @@ type Url = String
 
 data DataSource a = StringSource a | ArraySource (Array a)
 
--- data Processor a = forall a. a -> a
-
 data Platform = Browser | Nodejs | Unknown
 
 instance showPlatform :: Show Platform where
