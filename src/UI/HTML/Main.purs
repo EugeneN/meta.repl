@@ -126,8 +126,9 @@ renderHTML :: AppState -> Markup
 renderHTML appState@(AppState s) =
   div ! className "content" $ do
     div ! className "section" $ do
-      a ! className "text mode-menu" ! href "?ui=console" $ text "REPL mode"
-      a ! className "text mode-menu" ! href "app.js" ! title "To use CLI/telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat" $ text "CLI/telnet mode"
+      div ! className "mode-menu-toolbar" $ do
+        a ! className "text mode-menu" ! href "?ui=console" $ text "REPL mode"
+        a ! className "text mode-menu" ! href "app.js" ! title "To use CLI/telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat" $ text "CLI/telnet mode"
       -- h1 ! className "name" $ text (getTitle appDNA)
 
       div ! className "nav" $ do

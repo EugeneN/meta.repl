@@ -164,6 +164,14 @@ blockquote {
   text-align: center;
   z-index: 1000;
 }
+.mode-menu-toolbar {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: rotate(90deg);
+  margin-left: 350px;
+  margin-top: 10px;
+}
 
 .current-menu-item {
   text-decoration: underline !important;
@@ -171,6 +179,12 @@ blockquote {
 .mode-menu {
   font-size: 10pt;
   margin-right: 1em;
+  text-decoration: none;
+  color: #ccc;
+}
+.mode-menu:hover {
+  color: black;
+  text-decoration: underline;
 }
 .code {
   font-family: "Courier New", sans-serif;
