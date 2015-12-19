@@ -29,7 +29,18 @@ type ConsoleUiEff a = forall e. Eff (console :: CONSOLE, dom :: DOM, chan :: Cha
 
 setupCliUi :: UI ConsoleUiEff
 setupCliUi inputChannel = do
-  injectBody "<h4 class=text>This site currently is in REPL interface mode.</h4><h4 class=text>Please open browser console to use the site, or switch to <a href='?ui=html#about'>html</a> or <a href='app.js'>CLI/telnet</a>* mode</h4><h6>*To use CLI/telnet mode, please run `app.js` with Node.js and then connect to it with telnet or netcat.</h6>"
+  injectBody (unlines [
+      "<div class='repl-message'>"
+    , "<p>Application is in REPL interface mode.</p>"
+
+    , "<p>To use the aplication please open browser console and follow prompts. "
+    , "Alternatively switch to <a href='?ui=html#about'>HTML</a> or "
+    , "<a href='app.js'>CLI/telnet</a> mode.</p>"
+
+    , "<p>For CLI/telnet mode please run `app.js` with Node.js and "
+    , "connect to it with telnet or netcat.</p>"
+    , "</div>"
+    ])
 
   renderChan <- channel RenderNoop
   let renderSignal = subscribe renderChan
