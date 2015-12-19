@@ -206,3 +206,29 @@ h1 img {
   /*border: 1px solid #ccc;*/
   box-shadow: 0px 1px 10px #ccc;
 }
+
+blockquote h2 {
+  text-align: center;
+}
+
+blockquote ul li p {
+  margin: 0;
+  padding: 0;
+}
+blockquote {
+  margin: 0;
+  padding: 0;
+}
+blockquote ul {
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 100px;
+}
+blockquote ul li {
+  width: 49%;
+  margin: 10px 0 10px 0;
+  padding: 0;
+  list-style-type: none;
+  text-align: left;
+}

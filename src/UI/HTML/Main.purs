@@ -42,7 +42,7 @@ import UI.HTML.Utils
 import qualified UI.HTML.VDom as VDom
 
 
-page404 = parseMd "## 404 Not found"
+page404 = parseMd "> ## 404 Not found"
 initialVDom = vNode2vTree $ VDom.render $ div $ text "initial vdom"
 defaultTitle = "Eugene Naumenko" -- read from appDNA
 
