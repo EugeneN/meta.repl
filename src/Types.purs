@@ -36,7 +36,7 @@ data Node = Node {
   -- , processors :: Array Processor
 }
 
-data Processor = GistProcessor | ImgListProcessor | TextProcessor
+data Processor = GistProcessor | ImgListProcessor | TextProcessor | GithubProcessor
 
 type Url = String
 

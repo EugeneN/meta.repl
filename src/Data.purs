@@ -45,18 +45,24 @@ appDNA = Node {
       , Node { title: "Edit"
              , path: "contacts"
              , processor: TextProcessor
-             , children: [Node { title: "CV"
-                               , path: "cv"
-                               , processor: GistProcessor
-                               , children: []
-                               , dataSource: StringSource "e1a6a166728f7d403fc4"
-                               }
+             , children: [ Node { title: "CV"
+                                , path: "cv"
+                                , processor: GistProcessor
+                                , children: []
+                                , dataSource: StringSource "e1a6a166728f7d403fc4"
+                                }
+                         , Node { title: "github"
+                                , path: "github"
+                                , processor: GithubProcessor
+                                , children: []
+                                , dataSource: StringSource "https://raw.githubusercontent.com/slamdata/purescript-aff/master/README.md"
+                                }
                          ]
              , dataSource: StringSource (unlines [
                   "[eugene.naumenko^at^gmail.com](mailto:eugene.naumenko^gmail.com)"
                 , ""
                 , ""
-                , "[eugenen.github.io](htp://eugenen.github.io)"
+                , "[eugenen.github.io](http://eugenen.github.io)"
                 , ""
                 , ""
                 , "[Curriculum Vitae](https://drive.google.com/file/d/0B8speZLVOSYvYTZTMXVIbHVnZWM/view)"
@@ -115,7 +121,7 @@ appDNA = Node {
                 , "Written to explore component models for web applications and usage of immutable cloud database for eventual consistency."
                 , ""
                 , ""
-                , "__meta.repl__ (draft): this application. Experiments with better ways to build apllications."
+                , "[meta.repl](https://github.com/EugeneN/meta.repl) (draft): this application. Experiments with better ways to build apllications."
               ])
              }
       , Node { title: "Window"

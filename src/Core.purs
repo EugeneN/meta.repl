@@ -42,7 +42,13 @@ appEffectsLogic uiChannel (AppState s) = case aff of
     res <- loadGist ss
     pure $ parseGistResponse res.response
 
-  applyProcessor GistProcessor (ArraySource s) = pure "ArraySource not supported for gist"
+  applyProcessor GithubProcessor (StringSource url) = do
+    liftEff $ send uiChannel $ RenderState
+      (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading from Github..."})
+    res <- get url
+    pure $ res.response
+
+  applyProcessor _ _ = pure "Unsupported source and processor combination"
 
   mdImg s = "![" <> s <> "](" <> s <> ")"
 
