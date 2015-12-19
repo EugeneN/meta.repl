@@ -40,7 +40,7 @@ data Processor = GistProcessor | ImgListProcessor | TextProcessor | GithubProces
 
 type Url = String
 
-data DataSource a = StringSource a | ArraySource (Array a)
+data DataSource a = StringSource a | ArraySource (Array a) | ChildSource a
 
 data Platform = Browser | Nodejs | Unknown
 

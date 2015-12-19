@@ -15,16 +15,35 @@ body {
   text-align: center;
 }
 .text {
-  font-family: "Quattrocento Sans", sans-serif;
-  font-size: 14pt;
+  /*font-family: "Quattrocento Sans", sans-serif;*/
+  font-family: ff-tisa-web-pro, georgia, serif;
+  font-size: 21px;
   line-height: 1.5;
   padding-left: 0px;
+  color: rgb(50,50,50);
+}
+h1 {
+  /*font-family: "Source Code Pro", sans-serif;*/
+  font-family: ff-tisa-web-pro, georgia, serif;
+  font-size: 36px;
+  font-weight: 200;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 h2 {
-  font-family: "Source Code Pro", sans-serif;
-  font-size: 20pt;
+  /*font-family: "Source Code Pro", sans-serif;*/
+  font-family: ff-tisa-web-pro, georgia, serif;
+  font-size: 26px;
   font-weight: 200;
-  margin-bottom: 50px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+h3 {
+  font-family: ff-tisa-web-pro, georgia, serif;
+  font-size: 21px;
+  font-weight: 200;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 li {
   list-style-type: none;
@@ -45,10 +64,11 @@ iframe {
 }
 .nav {
   margin-top: 50px;
-  margin-bottom: 50px;
+  margin-bottom: 100px;
   text-align: center;
-  font-size: 14px;
-  font-family: "Source Code Pro", sans-serif;
+  font-size: 24px;
+  /*font-family: "Source Code Pro", sans-serif;*/
+  font-family: ff-tisa-web-pro, georgia, serif;
 }
 .sub-menu-x { font-size: 12px; }
 .sub-menu-x a {
@@ -93,10 +113,10 @@ iframe {
 .nav a {
   display: inline-block;
   margin: 10px;
-  color: #888;
+  color: #000;
   text-decoration: none;
   font-weight: lighter;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
 }
 .nav a:hover {
   color: #000;
@@ -124,8 +144,9 @@ blockquote {
 .footer {
   margin-top: 150px;
   text-align: center;
-  font-size: 14px;
-  font-family: "Source Code Pro", sans-serif;
+  font-size: 18px;
+  /*font-family: "Source Code Pro", sans-serif;*/
+  font-family: ff-tisa-web-pro, georgia, serif;
   font-weight: 200;
 }
 .footer span {
@@ -176,4 +197,12 @@ ul li {
 h6 img {
   width: 16px;
   margin: 2px;
+}
+
+h1 img {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /*border: 1px solid #ccc;*/
+  box-shadow: 0px 1px 10px #ccc;
 }

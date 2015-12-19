@@ -50,7 +50,7 @@ appEffectsLogic uiChannel (AppState s) = case aff of
 
   applyProcessor _ _ = pure "Unsupported source and processor combination"
 
-  mdImg s = "![" <> s <> "](" <> s <> ")"
+  mdImg s = "# ![" <> s <> "](" <> s <> ")"
 
   loadGist gid = get $ "https://api.github.com/gists/" <> gid
 
@@ -60,8 +60,14 @@ appEffectsLogic uiChannel (AppState s) = case aff of
 
 
 appLogic :: BLActions -> AppState -> AppState
-appLogic (Navigate path) (AppState s) = AppState (s { actionsCount = s.actionsCount + 1
-                                                    , currentPath  = path })
+appLogic (Navigate path) (AppState s) =
+  let mbNode = findChildNodeByPath path appDNA
+      mbSource = getDataSource <$> mbNode
+      newPath = case mbSource of
+            Just (ChildSource p) -> path <> [p]
+            _                    -> path
+  in AppState (s { actionsCount = s.actionsCount + 1, currentPath  = newPath })
+
 appLogic Noop            (AppState s) = AppState (s { actionsCount = s.actionsCount + 1 })
 
 getCurrentNode appState = findChildNodeByPath (getCurrentPath appState) appDNA
@@ -82,7 +88,7 @@ findChildNodeByPath pathElements (Node node) = case A.uncons pathElements of
 getCurrentPath (AppState s) = s.currentPath
 
 calcTitle appState =
-  "* " <> joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]
+  joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]
 
 readSource (StringSource x) = x
 getTitle (Node x) = x.title
