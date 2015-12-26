@@ -1,12 +1,19 @@
 module Core where
 
 import Control.Monad.Aff
+import Control.Monad.Aff.Par
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class
 
+import Control.Alt(Alt, (<|>))
+import Control.Monad.Eff.Exception(error)
+import Control.Monad.Error.Class(throwError)
+
 import qualified Data.Array as A
 import Data.Maybe (Maybe(..), fromMaybe)
-import Data.String (joinWith)
+import Data.String (joinWith, drop, take)
+import Data.String.Regex
+import Data.Traversable
 
 import Network.HTTP.Affjax
 
@@ -31,6 +38,7 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   ds = getDataSource <$> currentNode
   proc = getProcessor <$> currentNode
 
+  -- TODO lift this
   mbReadSource :: Maybe (DataSource String) -> Aff _ (Maybe Input)
   mbReadSource (Just ds) = readSource ds
   mbReadSource _         = pure Nothing
@@ -55,8 +63,23 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   callProcessor TextProcessor    (StringInput s)  = pure $ Just $ Md s
   callProcessor ImgListProcessor (StringInput s)  = pure $ Just $ Md $ mdImg s
   callProcessor ImgListProcessor (ArrayInput ss)  = pure $ Just $ Md $ unlines $ mdImg <$> ss
-  callProcessor BlogProcessor    (StringInput s)  = pure $ Just $ Md "Blog!"
+  callProcessor BlogProcessor    (StringInput s)  = do
+    let flags = noFlags{ global= true, ignoreCase= true, multiline= true }
+        idregex = regex "\\([a-f0-9]{20}\\)" flags
+        ids = match idregex s
+        justids = fromMaybe [] (A.catMaybes <$> ids)
+        clnids = (drop 1 >>> take 20) <$> justids
+
+    z <- runPar $ traverse (Par <$> loadNparseGist) clnids
+
+    let x = Just (Md (joinWith "\n\n***\n\n" z))
+    pure x
+
   callProcessor _ _                               = pure Nothing
+
+  loadNparseGist gid = do
+    g <- loadGist gid
+    pure $ parseGistResponse g.response
 
   readSource :: DataSource String -> Aff _ (Maybe Input)
   readSource (StringSource a) = pure $ Just $ StringInput a
