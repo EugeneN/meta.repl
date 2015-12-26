@@ -27,7 +27,6 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
               Nothing  -> pure Nothing
   let internal = fromMaybe Nothing $ callProcessor <$> proc <*> input
   liftEff $ setContent internal
-  pure "unit wtf" -- wtf?
 
   where
   currentNode = findChildNodeByPath s.currentPath appDNA
@@ -41,7 +40,7 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   setContent (Just (Md x)) = send uiChannel $ RenderState (AppState s{currentContent = Just x})
   setContent _             = send uiChannel $ RenderState (AppState s{currentContent = Nothing})
   handleError e   = setContent $ Just $ Md $ toString e
-  handleResult x  = pure unit -- setContent $ Just $ Md (x <> " lo lo")
+  handleResult x  = pure unit
 
   mdImg s = "# ![" <> s <> "](" <> s <> ")"
 
@@ -103,8 +102,6 @@ calcTitle :: AppState -> String
 calcTitle appState =
   joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]
 
-
--- readSource (StringSource x) = x
 
 getTitle :: Node -> String
 getTitle (Node x) = x.title
