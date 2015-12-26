@@ -31,13 +31,12 @@ appDNA = Node {
                   , "Software {engineer, architect} with 10 years of experience in networking, distributed and high load systems, web development, software design and project management."
                   , ""
                   , "Worked on online education systems, spam protection systems, online GIS systems, accounting and trading software, rich web applications, IT/network infrastructure systems."
-                  , ""
                   , "Created own small language for web development and a few open source utilities and applications."
                   , ""
+                  , "Contacts: [e-mail](mailto:eugene.naumenko@gmail.com), [github](https://github.com/EugeneN), [twitter](https://twitter.com/8gene)."
                   , ""
-                  , "> - [eugene.naumenko@gmail.com](mailto:eugene.naumenko@gmail.com)"
-                  , "> - [github.com/EugeneN](https://github.com/EugeneN)"
-                  , "> - [twitter.com/8gene](https://twitter.com/8gene)"
+                  , ""
+                  , "_"
                   , ""
                   , ""
                   , "> ![Prom.ua](promua.png)"
@@ -164,8 +163,8 @@ appDNA = Node {
                          ]
              , dataSource: ChildSource "cmd"
              }
-      , Node { title: "Slides"
-             , path: "slides"
+      , Node { title: "Talks"
+             , path: "talks"
              , processor: TextProcessor
              , children: []
              , dataSource: StringSource (unlines [

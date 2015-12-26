@@ -15,7 +15,7 @@
     , "purescript-signal": "*"
     , "purescript-generics": "*"
     , "purescript-strings": "*"
-    , "purescript-markdown": "*"
+    , "purescript-markdown": "EugeneN/purescript-markdown#6d3f86775ebcf62ebd31136566b2ec6062215203"
     , "purescript-smolder": "*"
     , "purescript-routing": "*"
     , "purescript-virtual-dom": "EugeneN/purescript-virtual-dom#a0461cdbe8b9b8cc003438c2d81fda5073b71264"
