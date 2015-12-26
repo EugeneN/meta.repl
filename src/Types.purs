@@ -36,11 +36,14 @@ data Node = Node {
   -- , processors :: Array Processor
 }
 
-data Processor = GistProcessor | ImgListProcessor | TextProcessor | GithubProcessor
+data Processor = MdProcessor | ImgListProcessor | TextProcessor | HtmlProcessor
 
 type Url = String
 
-data DataSource a = StringSource a | ArraySource (Array a) | ChildSource a
+data DataSource a = StringSource a | ArraySource (Array a) | ChildSource a | GistSource a | GithubSource a
+
+data Input = StringInput String | ArrayInput (Array String)
+data Internal = Md String 
 
 data Platform = Browser | Nodejs | Unknown
 

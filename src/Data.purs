@@ -23,7 +23,7 @@ appDNA = Node {
   , children: [
         Node { title: "About"
              , path: "about"
-             , processor: TextProcessor
+             , processor: MdProcessor
              , children: [ ]
              , dataSource: StringSource (unlines[
                     "Hi, I'm Eugene Naumenko."
@@ -48,24 +48,24 @@ appDNA = Node {
              }
       , Node { title: "CV"
              , path: "cv"
-             , processor: GistProcessor
+             , processor: MdProcessor
              , children: []
-             , dataSource: StringSource "e1a6a166728f7d403fc4"
+             , dataSource: GistSource "e1a6a166728f7d403fc4"
              }
       , Node { title: "Blog"
              , path: "blog"
              , processor: TextProcessor
              , children: [ Node { title: "DNA Architecture"
                                 , path: "dna-arch"
-                                , processor: GistProcessor
+                                , processor: MdProcessor
                                 , children: [ ]
-                                , dataSource: StringSource "cdc388425dacf87cba71"
+                                , dataSource: GistSource "cdc388425dacf87cba71"
                                 }
                          , Node { title: "Cats"
                                 , path: "cats"
-                                , processor: GistProcessor
+                                , processor: MdProcessor
                                 , children: []
-                                , dataSource: StringSource "6c6a56e4abb7ff7fa7fa"
+                                , dataSource: GistSource "6c6a56e4abb7ff7fa7fa"
                                 }
                          , Node { title: "Photos"
                                 , path: "photos"
@@ -91,7 +91,7 @@ appDNA = Node {
              , processor: TextProcessor
              , children: [ Node { title: "C.MD"
                                 , path: "cmd"
-                                , processor: TextProcessor
+                                , processor: MdProcessor
                                 , children: [ ]
                                 , dataSource: StringSource (unlines [
                                      "This is a rich markdown editor for Github Gists, a 100% client side application written in ClojureScript to explore offline mode and multiprocessing for web applications."
@@ -103,7 +103,7 @@ appDNA = Node {
                                 }
                          , Node { title: "pureGoL"
                                 , path: "pureGoL"
-                                , processor: TextProcessor
+                                , processor: MdProcessor
                                 , children: [ ]
                                 , dataSource: StringSource (unlines [
                                      "“Game of Life” game written in Purescript as a research on"
@@ -117,7 +117,7 @@ appDNA = Node {
                                 }
                          , Node { title: "twic"
                                 , path: "twic"
-                                , processor: TextProcessor
+                                , processor: MdProcessor
                                 , children: [ ]
                                 , dataSource: StringSource (unlines [
                                      "Experimental Twitter client written in Haskell and Purescript with clean UI and simple UX. "
@@ -130,7 +130,7 @@ appDNA = Node {
                                 }
                          , Node { title: "meta.repl"
                                 , path: "meta.repl"
-                                , processor: TextProcessor
+                                , processor: MdProcessor
                                 , children: [ ]
                                 , dataSource: StringSource (unlines [
                                      "This application. Experiments with better ways to build apllications."
@@ -141,7 +141,7 @@ appDNA = Node {
                                 }
                          , Node { title: "G4"
                                 , path: "g4"
-                                , processor: TextProcessor
+                                , processor: MdProcessor
                                 , children: []
                                 , dataSource: StringSource (unlines [
                                      "G4 is a rich web application for managing geospatial data – GPS tracks, waypoints, geotagged items, custom maps etc. "
@@ -165,7 +165,7 @@ appDNA = Node {
              }
       , Node { title: "Talks"
              , path: "talks"
-             , processor: TextProcessor
+             , processor: MdProcessor
              , children: []
              , dataSource: StringSource (unlines [
                   "[Purescript](https://docs.google.com/presentation/d/1IOM9A3Otxufs5xzvYb3yPrT7JDVPhkJVkdaWvVl8R_E/pub?start=false&loop=false&delayms=3000)"
@@ -180,10 +180,10 @@ appDNA = Node {
 
       , Node { title: "Help"
              , path: "help"
-             , processor: TextProcessor
+             , processor: MdProcessor
              , children: []
              , dataSource: StringSource (unlines [
-                  "This «web site» is a concept **application** aimed to explore ways to reach *The Holy Grail* of software engineering -"
+                  "This «web site» is a concept *application* aimed to explore ways to reach *The Holy Grail* of software engineering -"
                 , "*composability* and *reusability*. These ways look like following SOLID, GRASP, "
                 , "and reinventing «OOP in a large» using [purely functional language with powerful type system](http://www.purescript.org/), "
                 , "high level abstractions, immutable data, messaging, some Category Theory and engineering approach for the win."

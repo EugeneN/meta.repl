@@ -30,7 +30,7 @@ import Core
 import qualified UI.HTML.VDom as VDom
 
 
-parseBody (Node x) = parseMd <<< readSource $ x.dataSource
+-- parseBody (Node x) = parseMd <<< readSource $ x.dataSource
 
 parseContent = parseMd
 

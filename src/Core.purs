@@ -20,44 +20,52 @@ import Utils
 
 
 appEffectsLogic :: Channel UIActions -> AppState -> Eff _ Unit
-appEffectsLogic uiChannel (AppState s) = case aff of
-  Nothing -> send uiChannel $ RenderState (AppState s{currentContent = Nothing})
-  Just aff' -> runAff handleError handleResult aff'
+appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
+  liftEff $ setBusy
+  input <- case ds of
+              Just ds' -> readSource ds'
+              Nothing  -> pure Nothing
+  let internal = fromMaybe Nothing $ callProcessor <$> proc <*> input
+  liftEff $ setContent internal
+  pure "unit wtf" -- wtf?
+
   where
   currentNode = findChildNodeByPath s.currentPath appDNA
   ds = getDataSource <$> currentNode
   proc = getProcessor <$> currentNode
-  aff = applyProcessor <$> proc <*> ds
 
-  applyProcessor :: Processor -> (DataSource String) -> Aff _ String
-  applyProcessor TextProcessor (StringSource s) = pure s
-  applyProcessor TextProcessor (ArraySource s) = pure $ unlines s
+  setBusy :: Eff _ Unit
+  setBusy         = send uiChannel $ RenderState $ (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading from Github..."})
 
-  applyProcessor ImgListProcessor (StringSource s) = pure $ mdImg s
-  applyProcessor ImgListProcessor (ArraySource s) = pure $ unlines $ mdImg <$> s
-
-  applyProcessor GistProcessor (StringSource ss) = do
-    liftEff $ send uiChannel $ RenderState
-      (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading from Github..."})
-    res <- loadGist ss
-    pure $ parseGistResponse res.response
-
-  applyProcessor GithubProcessor (StringSource url) = do
-    liftEff $ send uiChannel $ RenderState
-      (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading from Github..."})
-    res <- get url
-    pure $ res.response
-
-  applyProcessor _ _ = pure "Unsupported source and processor combination"
+  setContent :: Maybe Internal -> Eff _ Unit
+  setContent (Just (Md x)) = send uiChannel $ RenderState (AppState s{currentContent = Just x})
+  setContent _             = send uiChannel $ RenderState (AppState s{currentContent = Nothing})
+  handleError e   = setContent $ Just $ Md $ toString e
+  handleResult x  = pure unit -- setContent $ Just $ Md (x <> " lo lo")
 
   mdImg s = "# ![" <> s <> "](" <> s <> ")"
 
+  callProcessor :: Processor -> Input -> Maybe Internal
+  callProcessor MdProcessor      (StringInput s)  = Just $ Md s
+  callProcessor TextProcessor    (StringInput s)  = Just $ Md s
+  callProcessor ImgListProcessor (StringInput s)  = Just $ Md $ mdImg s
+  callProcessor ImgListProcessor (ArrayInput ss)  = Just $ Md $ unlines $ mdImg <$> ss
+  callProcessor _ _                               = Nothing
+
+  readSource :: DataSource String -> Aff _ (Maybe Input)
+  readSource (StringSource a) = pure $ Just $ StringInput a
+  readSource (ArraySource as) = pure $ Just $ ArrayInput as
+  readSource (GistSource gid) = do
+    res <- loadGist gid
+    pure $ Just $ StringInput $ parseGistResponse res.response
+
+  readSource (GithubSource url) = do
+    res <- get url
+    pure $ Just $ StringInput res.response
+
+  readSource _ = pure Nothing
+
   loadGist gid = get $ "https://api.github.com/gists/" <> gid
-
-  handleError e = send uiChannel $ RenderState (AppState s{currentContent = Just (toString e)})
-  handleResult x = send uiChannel $ RenderState (AppState s{currentContent = Just x})
-
-
 
 appLogic :: BLActions -> AppState -> AppState
 appLogic (Navigate path) (AppState s) =
@@ -70,7 +78,10 @@ appLogic (Navigate path) (AppState s) =
 
 appLogic Noop            (AppState s) = AppState (s { actionsCount = s.actionsCount + 1 })
 
+getCurrentNode :: AppState -> Maybe Node
 getCurrentNode appState = findChildNodeByPath (getCurrentPath appState) appDNA
+
+getChildNodes :: Node -> Array String
 getChildNodes (Node x) = x.children <#> \(Node y) -> y.path
 
 findChildNodeByPath :: Array Url -> Node -> Maybe Node
@@ -85,13 +96,24 @@ findChildNodeByPath pathElements (Node node) = case A.uncons pathElements of
   find path_ nodes = A.head $ A.filter (match path_) nodes
   match p (Node y) = y.path == p
 
+getCurrentPath :: AppState -> Array String
 getCurrentPath (AppState s) = s.currentPath
 
+calcTitle :: AppState -> String
 calcTitle appState =
   joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]
 
-readSource (StringSource x) = x
+
+-- readSource (StringSource x) = x
+
+getTitle :: Node -> String
 getTitle (Node x) = x.title
+
+getPath :: Node -> String
 getPath  (Node x) = x.path
+
+getDataSource :: Node -> DataSource String
 getDataSource (Node x) = x.dataSource
+
+getProcessor :: Node -> Processor
 getProcessor (Node x) = x.processor
