@@ -34,7 +34,7 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   proc = getProcessor <$> currentNode
 
   setBusy :: Eff _ Unit
-  setBusy         = send uiChannel $ RenderState $ (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading from Github..."})
+  setBusy         = send uiChannel $ RenderState $ (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading..."})
 
   setContent :: Maybe Internal -> Eff _ Unit
   setContent (Just (Md x)) = send uiChannel $ RenderState (AppState s{currentContent = Just x})
