@@ -22,10 +22,8 @@ import Utils
 appEffectsLogic :: Channel UIActions -> AppState -> Eff _ Unit
 appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   liftEff $ setBusy
-  input <- case ds of
-              Just ds' -> readSource ds'
-              Nothing  -> pure Nothing
-  let internal = fromMaybe Nothing $ callProcessor <$> proc <*> input
+  input <- mbReadSource ds
+  internal <- mbCallProcessor proc input
   liftEff $ setContent internal
 
   where
@@ -33,8 +31,16 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   ds = getDataSource <$> currentNode
   proc = getProcessor <$> currentNode
 
+  mbReadSource :: Maybe (DataSource String) -> Aff _ (Maybe Input)
+  mbReadSource (Just ds) = readSource ds
+  mbReadSource _         = pure Nothing
+
+  mbCallProcessor :: Maybe Processor -> Maybe Input -> Aff _ (Maybe Internal)
+  mbCallProcessor (Just proc) (Just input) = callProcessor proc input
+  mbCallProcessor _ _                      =  pure Nothing
+
   setBusy :: Eff _ Unit
-  setBusy         = send uiChannel $ RenderState $ (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading..."})
+  setBusy = send uiChannel $ RenderState $ (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading..."})
 
   setContent :: Maybe Internal -> Eff _ Unit
   setContent (Just (Md x)) = send uiChannel $ RenderState (AppState s{currentContent = Just x})
@@ -44,12 +50,13 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
 
   mdImg s = "# ![" <> s <> "](" <> s <> ")"
 
-  callProcessor :: Processor -> Input -> Maybe Internal
-  callProcessor MdProcessor      (StringInput s)  = Just $ Md s
-  callProcessor TextProcessor    (StringInput s)  = Just $ Md s
-  callProcessor ImgListProcessor (StringInput s)  = Just $ Md $ mdImg s
-  callProcessor ImgListProcessor (ArrayInput ss)  = Just $ Md $ unlines $ mdImg <$> ss
-  callProcessor _ _                               = Nothing
+  callProcessor :: Processor -> Input -> Aff _ (Maybe Internal)
+  callProcessor MdProcessor      (StringInput s)  = pure $ Just $ Md s
+  callProcessor TextProcessor    (StringInput s)  = pure $ Just $ Md s
+  callProcessor ImgListProcessor (StringInput s)  = pure $ Just $ Md $ mdImg s
+  callProcessor ImgListProcessor (ArrayInput ss)  = pure $ Just $ Md $ unlines $ mdImg <$> ss
+  callProcessor BlogProcessor    (StringInput s)  = pure $ Just $ Md "Blog!"
+  callProcessor _ _                               = pure Nothing
 
   readSource :: DataSource String -> Aff _ (Maybe Input)
   readSource (StringSource a) = pure $ Just $ StringInput a

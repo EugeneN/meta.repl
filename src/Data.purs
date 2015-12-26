@@ -54,18 +54,18 @@ appDNA = Node {
              }
       , Node { title: "Blog"
              , path: "blog"
-             , processor: TextProcessor
+             , processor: BlogProcessor
              , children: [ Node { title: "DNA Architecture"
                                 , path: "dna-arch"
                                 , processor: MdProcessor
                                 , children: [ ]
                                 , dataSource: GistSource "cdc388425dacf87cba71"
                                 }
-                         , Node { title: "Cats"
-                                , path: "cats"
+                         , Node { title: "TOC"
+                                , path: "toc"
                                 , processor: MdProcessor
                                 , children: []
-                                , dataSource: GistSource "6c6a56e4abb7ff7fa7fa"
+                                , dataSource: GistSource "ff3d182ce385cebb1774"
                                 }
                          , Node { title: "Photos"
                                 , path: "photos"
@@ -84,7 +84,7 @@ appDNA = Node {
                                                           ]
                                 }
                          ]
-             , dataSource: ChildSource "dna-arch"
+             , dataSource: GistSource "ff3d182ce385cebb1774"
              }
       , Node { title: "Apps"
              , path: "apps"
