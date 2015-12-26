@@ -59,11 +59,11 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   mdImg s = "# ![" <> s <> "](" <> s <> ")"
 
   callProcessor :: Processor -> Input -> Aff _ (Maybe Internal)
-  callProcessor MdProcessor      (StringInput s)  = pure $ Just $ Md s
-  callProcessor TextProcessor    (StringInput s)  = pure $ Just $ Md s
-  callProcessor ImgListProcessor (StringInput s)  = pure $ Just $ Md $ mdImg s
-  callProcessor ImgListProcessor (ArrayInput ss)  = pure $ Just $ Md $ unlines $ mdImg <$> ss
-  callProcessor BlogProcessor    (StringInput toc)  = do
+  callProcessor MdProcessor      (StringInput s)   = pure $ Just $ Md s
+  callProcessor TextProcessor    (StringInput s)   = pure $ Just $ Md s
+  callProcessor ImgListProcessor (StringInput s)   = pure $ Just $ Md $ mdImg s
+  callProcessor ImgListProcessor (ArrayInput ss)   = pure $ Just $ Md $ unlines $ mdImg <$> ss
+  callProcessor BlogProcessor    (StringInput toc) = do
     let gids = getBlogPostsIds toc
     blogPosts <- runPar $ traverse (Par <$> loadNparseGist) gids
 
@@ -76,10 +76,10 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   getBlogPostsIds toc = cleanIds
     where
     regexFlags = noFlags{ global= true, ignoreCase= true, multiline= true }
-    idRegex = regex "\\([a-f0-9]{20}\\)" regexFlags
-    rawIds = match idRegex toc
-    justIds = fromMaybe [] (A.catMaybes <$> rawIds)
-    cleanIds = (drop 1 >>> take 20) <$> justIds
+    idRegex    = regex "\\([a-f0-9]{20}\\)" regexFlags
+    rawIds     = match idRegex toc
+    justIds    = fromMaybe [] (A.catMaybes <$> rawIds)
+    cleanIds   = (drop 1 >>> take 20) <$> justIds
 
   loadNparseGist gid = do
     g <- loadGist gid
