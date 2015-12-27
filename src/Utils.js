@@ -26,6 +26,7 @@ exports.setTitle = function(a) { return function() { document.title = a; return 
 
 exports.parseGistResponse = function(gist) {
   var jsn = JSON.parse(gist);
+  console.log(jsn);
   var filenames = Object.keys(jsn.files);
   return jsn.files[filenames[0]].content;
 }

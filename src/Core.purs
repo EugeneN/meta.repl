@@ -24,6 +24,7 @@ import Signal.Channel (send, Channel())
 import Types
 import Data
 import Utils
+import Processors.Blog.Main (blogProcessor)
 
 
 appEffectsLogic :: Channel UIActions -> AppState -> Eff _ Unit
@@ -63,27 +64,9 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   callProcessor TextProcessor    (StringInput s)   = pure $ Just $ Md s
   callProcessor ImgListProcessor (StringInput s)   = pure $ Just $ Md $ mdImg s
   callProcessor ImgListProcessor (ArrayInput ss)   = pure $ Just $ Md $ unlines $ mdImg <$> ss
-  callProcessor BlogProcessor    (StringInput toc) = do
-    let gids = getBlogPostsIds toc
-    blogPosts <- runPar $ traverse (Par <$> loadNparseGist) gids
-
-    pure $ formatBlogPosts blogPosts
+  callProcessor BlogProcessor    i                 = blogProcessor i
 
   callProcessor _ _                               = pure Nothing
-
-  formatBlogPosts ps = Just (Md (joinWith "\n\n***\n\n" ps))
-
-  getBlogPostsIds toc = cleanIds
-    where
-    regexFlags = noFlags{ global= true, ignoreCase= true, multiline= true }
-    idRegex    = regex "\\([a-f0-9]{20}\\)" regexFlags
-    rawIds     = match idRegex toc
-    justIds    = fromMaybe [] (A.catMaybes <$> rawIds)
-    cleanIds   = (drop 1 >>> take 20) <$> justIds
-
-  loadNparseGist gid = do
-    g <- loadGist gid
-    pure $ parseGistResponse g.response
 
   readSource :: DataSource String -> Aff _ (Maybe Input)
   readSource (StringSource a) = pure $ Just $ StringInput a
