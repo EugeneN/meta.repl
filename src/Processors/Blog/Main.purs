@@ -23,6 +23,7 @@ import Network.HTTP.StatusCode
 import Data.Foreign
 import Data.Foreign.Class
 import Data.Foreign.Keys (keys)
+import Data.Either
 
 import Prelude
 
@@ -98,9 +99,14 @@ blogProcessor (StringInput toc) = do
 
   pure $ formatBlogPosts blogPosts
 
-formatBlogPosts ps = Just (Md (joinWith "\n\n***\n\n" snippets))
+formatBlogPosts :: Array (Either ForeignError Article) -> Maybe Internal
+formatBlogPosts ps = Just (Md (joinWith "\n\n***\n***\n***\n\n" snippets))
   where
-  snippets = (take 500 >>> (\s -> s <> "...\n\n[Read more](?ui=html#blog/" <> "hashhash" <>")\n\n")) <$> ps
+  snippets = (render >>> take 500 >>> (\s -> s <> "...\n\n[Read more](?ui=html#blog/" <> "hashhash" <>")\n\n")) <$> ps
+
+  render :: Either ForeignError Article -> String
+  render (Left e) = show e
+  render (Right art) = renderArticle art
 
 getBlogPostsIds toc = cleanIds
   where
@@ -112,7 +118,20 @@ getBlogPostsIds toc = cleanIds
 
 loadNparseGist gid = do
   g <- loadGist' gid
-  pure $ parseGistResponse g.response
+  pure $ parseJsonGistResponse g.response
+
+parseJsonGistResponse :: String -> Either ForeignError Article
+parseJsonGistResponse respJson = readJSON respJson :: F Article
+
+renderArticle :: Article -> String
+renderArticle (Article a) = "# Entry " <> a.id
+                         <> "\n\n"
+                         <> joinWith "\n\n***\n\n" (renderFiles a.files)
+
+renderFiles (Files fs) = renderFile <$> fs
+
+renderFile :: File -> String
+renderFile (File f) = "# " <> f.name <> "\n\n" <> f.content
 
 loadGist' :: String -> Aff _ { response :: String
                                        , headers :: Array ResponseHeader
