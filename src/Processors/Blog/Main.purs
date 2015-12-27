@@ -40,7 +40,7 @@ instance isForeignMymetype :: IsForeign Mimetype where
     x <- read raw
     pure $ case x of
       "text/plain" -> Plaintext
-      _ -> UnknownMimetype x
+      _            -> UnknownMimetype x
 
 type HexString = String
 
@@ -54,32 +54,28 @@ instance isForeignFiles :: IsForeign Files where
       pure file
     pure $ Files files
 
-data File = File { content :: String
-                 , name :: String
-                 , lang :: String
-                 , size :: Int
-                 , mimetype :: Mimetype
-                 }
+data File = File { content  :: String
+                 , name     :: String
+                 , lang     :: String
+                 , size     :: Int
+                 , mimetype :: Mimetype }
 
 instance isForeignFile :: IsForeign File where
   read raw = do
-    c <- readProp "content" raw
+    c <- readProp "content"  raw
     n <- readProp "filename" raw
     l <- readProp "language" raw
-    s <- readProp "size" raw
-    m <- readProp "type" raw
-    pure $ File {
-      content: c
-      , name: n
-      , lang: l
-      , size: s
-      , mimetype: m
-    }
+    s <- readProp "size"     raw
+    m <- readProp "type"     raw
+    pure $ File { content:  c
+                , name:     n
+                , lang:     l
+                , size:     s
+                , mimetype: m }
 
 data Article = Article { updatedAt :: String
-                       , id :: HexString
-                       , files :: Files
-                       }
+                       , id        :: HexString
+                       , files     :: Files }
 
 instance isForeignArticle :: IsForeign Article where
   read raw = do
@@ -88,8 +84,8 @@ instance isForeignArticle :: IsForeign Article where
     files <- readProp "files" raw
 
     pure $ Article { updatedAt: updatedAt
-                   , id: id
-                   , files: files }
+                   , id:        id
+                   , files:     files }
 
 
 blogProcessor :: Input -> Aff _ (Maybe Internal)
@@ -100,13 +96,17 @@ blogProcessor (StringInput toc) = do
   pure $ formatBlogPosts blogPosts
 
 formatBlogPosts :: Array (Either ForeignError Article) -> Maybe Internal
-formatBlogPosts ps = Just (Md (joinWith "\n\n***\n***\n***\n\n" snippets))
+formatBlogPosts ps = Just (Md (joinWith articlesSeparator snippets))
   where
-  snippets = (render >>> take 500 >>> (\s -> s <> "...\n\n[Read more](?ui=html#blog/" <> "hashhash" <>")\n\n")) <$> ps
+  snippets = (render >>> take 500 >>> appendFooter) <$> ps
 
   render :: Either ForeignError Article -> String
   render (Left e) = show e
   render (Right art) = renderArticle art
+
+  appendFooter s = s <> "...\n\n[Read more](?ui=html#blog/" <> "hashhash" <>")\n\n"
+
+  articlesSeparator = "\n\n-\n\n-\n\n"
 
 getBlogPostsIds toc = cleanIds
   where
@@ -124,17 +124,16 @@ parseJsonGistResponse :: String -> Either ForeignError Article
 parseJsonGistResponse respJson = readJSON respJson :: F Article
 
 renderArticle :: Article -> String
-renderArticle (Article a) = "# Entry " <> a.id
+renderArticle (Article a) = "> # Entry " <> a.id
                          <> "\n\n"
                          <> joinWith "\n\n***\n\n" (renderFiles a.files)
 
 renderFiles (Files fs) = renderFile <$> fs
 
 renderFile :: File -> String
-renderFile (File f) = "# " <> f.name <> "\n\n" <> f.content
+renderFile (File f) = "> ## " <> f.name <> "\n\n" <> f.content
 
 loadGist' :: String -> Aff _ { response :: String
-                                       , headers :: Array ResponseHeader
-                                       , status :: StatusCode
-                                       }
+                             , headers :: Array ResponseHeader
+                             , status :: StatusCode }
 loadGist' gid = get $ "https://api.github.com/gists/" <> gid
