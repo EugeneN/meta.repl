@@ -62,10 +62,10 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
 
 
   callProcessor :: Processor -> Input -> Aff _ (Maybe Internal)
-  callProcessor MdProcessor      i = textProcessor i
-  callProcessor TextProcessor    i = textProcessor i
+  callProcessor MdProcessor i      = textProcessor i
+  callProcessor TextProcessor i    = textProcessor i
   callProcessor ImgListProcessor i = imgListProcessor i
-  callProcessor BlogProcessor    i = blogProcessor i
+  callProcessor BlogProcessor i    = blogProcessor i
 
   callProcessor _ _                = pure Nothing
 

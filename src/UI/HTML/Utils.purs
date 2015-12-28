@@ -29,9 +29,9 @@ import Core
 import qualified UI.HTML.VDom as VDom
 
 
-parseContent :: Internal -> SlamDown
-parseContent (Md x) = parseMd x
-parseContent (HTML h) = parseMd $ "html not ready yet: " <> toString h
+parseContent :: Internal -> Markup
+parseContent (Md x) = toHtml $ parseMd x
+parseContent (HTML h) = h
 
 foreign import vNode2vTree :: VDom.VNode -> VTree
 foreign import appendToBody :: forall e. DT.Node -> Eff e Unit

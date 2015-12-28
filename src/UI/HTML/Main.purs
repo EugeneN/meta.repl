@@ -42,8 +42,8 @@ import UI.HTML.Utils
 import qualified UI.HTML.VDom as VDom
 
 
-page404 = parseMd "> ## 404 Not found"
-initialVDom = vNode2vTree $ VDom.render $ div $ text "initial vdom"
+page404 = toHtml <<< parseMd $ "> ## 404 Not found"
+initialVDom = vNode2vTree $ VDom.render $ div $ text "One moment please"
 defaultTitle = "Eugene Naumenko" -- read from appDNA
 
 data UIState = UIState { rootNode    :: DT.Node
@@ -145,6 +145,5 @@ renderHTML appState@(AppState s) =
   where
   fullPath = getCurrentPath appState
   currentNode = getCurrentNode appState
-  -- markdownAST = fromMaybe page404 $ parseBody <$> currentNode
-  markdownAST = fromMaybe page404 $ parseContent <$> s.currentContent
-  payloadHtml = toHtml markdownAST
+  internalAST = fromMaybe page404 $ parseContent <$> s.currentContent
+  payloadHtml = internalAST
