@@ -25,6 +25,8 @@ import Types
 import Data
 import Utils
 import Processors.Blog.Main (blogProcessor)
+import Processors.ImgList.Main (imgListProcessor)
+import Processors.PlainText.Main (textProcessor)
 
 
 appEffectsLogic :: Channel UIActions -> AppState -> Eff _ Unit
@@ -57,16 +59,15 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   handleError e   = setContent $ Just $ Md $ toString e
   handleResult x  = pure unit
 
-  mdImg s = "# ![" <> s <> "](" <> s <> ")"
+
 
   callProcessor :: Processor -> Input -> Aff _ (Maybe Internal)
-  callProcessor MdProcessor      (StringInput s)   = pure $ Just $ Md s
-  callProcessor TextProcessor    (StringInput s)   = pure $ Just $ Md s
-  callProcessor ImgListProcessor (StringInput s)   = pure $ Just $ Md $ mdImg s
-  callProcessor ImgListProcessor (ArrayInput ss)   = pure $ Just $ Md $ unlines $ mdImg <$> ss
-  callProcessor BlogProcessor    i                 = blogProcessor i
+  callProcessor MdProcessor      i = textProcessor i
+  callProcessor TextProcessor    i = textProcessor i
+  callProcessor ImgListProcessor i = imgListProcessor i
+  callProcessor BlogProcessor    i = blogProcessor i
 
-  callProcessor _ _                               = pure Nothing
+  callProcessor _ _                = pure Nothing
 
   readSource :: DataSource String -> Aff _ (Maybe Input)
   readSource (StringSource a) = pure $ Just $ StringInput a
