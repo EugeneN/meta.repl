@@ -28,10 +28,12 @@ import Data.Either
 import Prelude
 
 import Signal.Channel (send, Channel())
+import Text.Markdown.SlamDown.Parser
 
 
 import Types
 import Utils
+import Internal
 
 data Mimetype = Plaintext | UnknownMimetype String
 
@@ -96,7 +98,7 @@ blogProcessor (StringInput toc) = do
   pure $ formatBlogPosts blogPosts
 
 formatBlogPosts :: Array (Either ForeignError Article) -> Maybe Internal
-formatBlogPosts ps = Just (Md (joinWith articlesSeparator snippets))
+formatBlogPosts ps = Just <<< HTML <<< toHtml <<< parseMd <<< joinWith articlesSeparator $ snippets
   where
   snippets = (render >>> take 500 >>> appendFooter) <$> ps
 

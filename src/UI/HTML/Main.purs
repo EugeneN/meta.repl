@@ -38,6 +38,7 @@ import Core
 import Data
 import Types
 import Utils
+import Internal
 import UI.HTML.Utils
 import qualified UI.HTML.VDom as VDom
 
