@@ -51,13 +51,13 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   mbCallProcessor _ _                      =  pure Nothing
 
   setBusy :: Eff _ Unit
-  setBusy = send uiChannel $ RenderState $ (AppState s{currentContent = Just "###### ![...](ajax-loader.gif) Loading..."})
+  setBusy = send uiChannel $ RenderState $ (AppState s{currentContent = Just (Md "###### ![...](ajax-loader.gif) Loading...")})
 
   setContent :: Maybe Internal -> Eff _ Unit
-  setContent (Just (Md x)) = send uiChannel $ RenderState (AppState s{currentContent = Just x})
-  setContent _             = send uiChannel $ RenderState (AppState s{currentContent = Nothing})
-  handleError e   = setContent $ Just $ Md $ toString e
-  handleResult x  = pure unit
+  setContent x   = send uiChannel $ RenderState (AppState s{currentContent = x})
+
+  handleError e  = setContent $ Just $ Md $ toString e
+  handleResult x = pure unit
 
 
 

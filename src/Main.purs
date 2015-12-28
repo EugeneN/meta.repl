@@ -19,21 +19,21 @@ import UI.HTML.Main    (setupHtmlUi)
 import UI.Telnet.Main  (setupTelnetUi)
 
 
-data UiParam = HTML | Console | Telnet
+data UiParam = HtmlUI | ConsoleUI | TelnetUI
 
 parseUiParam = do
   x <- getParameterByName' "ui"
   pure $ case x of
-    Just "html"    -> Just HTML
-    Just "console" -> Just Console
-    Just "telnet"  -> Just Telnet
+    Just "html"    -> Just HtmlUI
+    Just "console" -> Just ConsoleUI
+    Just "telnet"  -> Just TelnetUI
     _              -> Nothing
 
 setupUI appSignal actionsChannel uiParam = do
   uiChannel <- case uiParam of
-    HTML    -> setupHtmlUi   actionsChannel
-    Console -> setupCliUi    actionsChannel
-    Telnet  -> setupTelnetUi actionsChannel
+    HtmlUI    -> setupHtmlUi   actionsChannel
+    ConsoleUI -> setupCliUi    actionsChannel
+    TelnetUI  -> setupTelnetUi actionsChannel
 
   runSignal (appSignal ~> (appEffectsLogic uiChannel))
 
@@ -44,9 +44,9 @@ main = do
   uiParam <- case platform of
     Browser -> do
       x <- parseUiParam
-      pure $ Just $ fromMaybe Console x
+      pure $ Just $ fromMaybe ConsoleUI x
 
-    Nodejs  -> pure $ Just Telnet
+    Nodejs  -> pure $ Just TelnetUI
     _       -> pure Nothing
 
   actionsChannel <- channel Noop

@@ -7,6 +7,8 @@ import Data.Maybe (Maybe())
 import Signal.Channel (Channel())
 import Control.Monad.Eff (Eff())
 
+import Text.Smolder.Markup
+
 
 -- | Here is the specification for inter-component APIs
 -- | aka the heart of the application :-)
@@ -24,7 +26,7 @@ type UI eff = UIInterface BLActions UIActions eff
 data AppState = AppState {
     actionsCount :: Int
   , currentPath  :: Array Url
-  , currentContent :: Maybe String
+  , currentContent :: Maybe Internal
 }
 
 data Node = Node {
@@ -43,7 +45,7 @@ type Url = String
 data DataSource a = StringSource a | ArraySource (Array a) | ChildSource a | GistSource a | GithubSource a
 
 data Input = StringInput String | ArrayInput (Array String)
-data Internal = Md String
+data Internal = Md String | HTML Markup
 
 data Platform = Browser | Nodejs | Unknown
 

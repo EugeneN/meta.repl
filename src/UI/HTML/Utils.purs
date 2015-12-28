@@ -21,7 +21,6 @@ import Text.Smolder.HTML.Attributes (href, className, src, lang, charset, name, 
 import Text.Smolder.Markup
 import Text.Smolder.Renderer.String (render)
 
-import VirtualDOM
 import VirtualDOM.VTree
 
 import Types
@@ -30,7 +29,9 @@ import Core
 import qualified UI.HTML.VDom as VDom
 
 
-parseContent = parseMd
+parseContent :: Internal -> SlamDown
+parseContent (Md x) = parseMd x
+parseContent (HTML h) = parseMd $ "html not ready yet: " <> toString h
 
 foreign import vNode2vTree :: VDom.VNode -> VTree
 foreign import appendToBody :: forall e. DT.Node -> Eff e Unit
