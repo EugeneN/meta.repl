@@ -13,7 +13,7 @@ import Control.Monad.Error.Class(throwError)
 import qualified Data.Array as A
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String (joinWith, drop, take)
-import Data.String.Regex
+import Data.String.Regex hiding (source)
 import Data.Traversable
 
 import Network.HTTP.Affjax
@@ -25,11 +25,16 @@ import Data.Foreign.Class
 import Data.Foreign.Keys (keys)
 import Data.Either
 
-import Prelude
+import Prelude hiding (div, map, sub)
 
 import Signal.Channel (send, Channel())
 import Text.Markdown.SlamDown.Parser
 
+import Text.Smolder.HTML
+import Text.Smolder.HTML.Attributes (href, className, src, lang, charset, name, content, rel)
+import Text.Smolder.Markup
+
+import Data.Foldable (for_)
 
 import Types
 import Utils
@@ -89,7 +94,6 @@ instance isForeignArticle :: IsForeign Article where
                    , id:        id
                    , files:     files }
 
-
 blogProcessor :: Input -> Aff _ (Maybe Internal)
 blogProcessor (StringInput toc) = do
   let gids = getBlogPostsIds toc
@@ -98,17 +102,34 @@ blogProcessor (StringInput toc) = do
   pure $ formatBlogPosts blogPosts
 
 formatBlogPosts :: Array (Either ForeignError Article) -> Maybe Internal
-formatBlogPosts ps = Just <<< HTML <<< toHtml <<< parseMd <<< joinWith articlesSeparator $ snippets
+formatBlogPosts ps = Just <<< HTML <<< renderListH $ ps
   where
-  snippets = (render >>> take 500 >>> appendFooter) <$> ps
 
-  render :: Either ForeignError Article -> String
-  render (Left e) = show e
-  render (Right art) = renderArticle art
+  renderListH :: Array (Either ForeignError Article) -> Markup
+  renderListH ps =
+    div ! className "articles-list" $ do
+      for_ ps renderEitherH
 
-  appendFooter s = s <> "...\n\n[Read more](?ui=html#blog/" <> "hashhash" <>")\n\n"
+  renderEitherH :: Either ForeignError Article -> Markup
+  renderEitherH (Left e) = div ! className "error" $ text (show e)
+  renderEitherH (Right art) = renderArticleH art
 
-  articlesSeparator = "\n\n-\n\n-\n\n"
+  renderArticleH :: Article -> Markup
+  renderArticleH (Article art) =
+    div ! className "article" $ do
+      div ! className "article-title" $ do
+        a ! href ("?ui=html#blog/" <> art.id) $ text $ "Entry: " <> art.id
+      renderFilesH art.files
+
+  renderFilesH :: Files -> Markup
+  renderFilesH (Files fs) = for_ fs renderFileH
+
+  renderFileH :: File -> Markup
+  renderFileH (File f) =
+    div ! className "article-file" $ do
+      h2 ! className "article-file-name" $ text f.name
+      div ! className "article-file-body" $ do
+        toHtml <<< parseMd <<< take 500 $ f.content
 
 getBlogPostsIds toc = cleanIds
   where
@@ -124,16 +145,6 @@ loadNparseGist gid = do
 
 parseJsonGistResponse :: String -> Either ForeignError Article
 parseJsonGistResponse respJson = readJSON respJson :: F Article
-
-renderArticle :: Article -> String
-renderArticle (Article a) = "> # Entry " <> a.id
-                         <> "\n\n"
-                         <> joinWith "\n\n***\n\n" (renderFiles a.files)
-
-renderFiles (Files fs) = renderFile <$> fs
-
-renderFile :: File -> String
-renderFile (File f) = "> ## " <> f.name <> "\n\n" <> f.content
 
 loadGist' :: String -> Aff _ { response :: String
                              , headers :: Array ResponseHeader

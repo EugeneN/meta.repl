@@ -280,3 +280,28 @@ blockquote ul li {
   width: 800px;
   margin: auto;
 }
+
+
+.articles-list {
+
+}
+
+.article-file {
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.article-title {
+  font-size: 8px;
+}
+
+.article-file-name {
+  font-size: 28px;
+}
+
+.article {
+  padding-top: 25px;
+  padding-bottom: 25px;
+  margin-bottom: 50px;
+  border-bottom: 0px solid #ccc;
+}
