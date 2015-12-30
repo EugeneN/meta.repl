@@ -35,10 +35,13 @@ data Node = Node {
   , children   :: Array Node
   , dataSource :: DataSource String
   , processor  :: Processor
+  , pathProcessor :: PathProcessor
   -- , processors :: Array Processor
 }
 
 data Processor = MdProcessor | ImgListProcessor | TextProcessor | BlogProcessor
+
+data PathProcessor = GlobalPP | ProcessorInternalPP
 
 type Url = String
 

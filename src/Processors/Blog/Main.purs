@@ -123,7 +123,11 @@ formatBlogPosts ps = Just <<< HTML <<< renderListH $ ps
       -- div ! className "article-title" $ do
         -- a ! href ("?ui=html#blog/" <> art.id) $ text $ "Entry: " <> art.id
       div ! className "article-file-body" $ do
-        span ! className "entry" $ text ("Entry " <> art.id <> ": ")
+        span $ text "Entry "
+        -- a ! href ("#blog/" <> art.id) $ text art.id
+        a ! href ("https://eugenen.github.io/C.MD/#!" <> art.id <> ";p") $ text art.id
+        span $ text ": "
+
         toHtml <<< parseMd $ art.description
       -- renderFilesH art.files
 
