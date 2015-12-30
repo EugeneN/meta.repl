@@ -80,18 +80,21 @@ instance isForeignFile :: IsForeign File where
                 , size:     s
                 , mimetype: m }
 
-data Article = Article { updatedAt :: String
-                       , id        :: HexString
-                       , files     :: Files }
+data Article = Article { updatedAt   :: String
+                       , id          :: HexString
+                       , description :: String
+                       , files       :: Files }
 
 instance isForeignArticle :: IsForeign Article where
   read raw = do
     updatedAt <- readProp "updated_at" raw
     id <- readProp "id" raw
+    desc <- readProp "description" raw
     files <- readProp "files" raw
 
     pure $ Article { updatedAt: updatedAt
                    , id:        id
+                   , description: desc
                    , files:     files }
 
 blogProcessor :: Input -> Aff _ (Maybe Internal)
@@ -117,9 +120,12 @@ formatBlogPosts ps = Just <<< HTML <<< renderListH $ ps
   renderArticleH :: Article -> Markup
   renderArticleH (Article art) =
     div ! className "article" $ do
-      div ! className "article-title" $ do
-        a ! href ("?ui=html#blog/" <> art.id) $ text $ "Entry: " <> art.id
-      renderFilesH art.files
+      -- div ! className "article-title" $ do
+        -- a ! href ("?ui=html#blog/" <> art.id) $ text $ "Entry: " <> art.id
+      div ! className "article-file-body" $ do
+        span ! className "entry" $ text ("Entry " <> art.id <> ": ")
+        toHtml <<< parseMd $ art.description
+      -- renderFilesH art.files
 
   renderFilesH :: Files -> Markup
   renderFilesH (Files fs) = for_ fs renderFileH
@@ -127,7 +133,7 @@ formatBlogPosts ps = Just <<< HTML <<< renderListH $ ps
   renderFileH :: File -> Markup
   renderFileH (File f) =
     div ! className "article-file" $ do
-      h2 ! className "article-file-name" $ text f.name
+      -- h2 ! className "article-file-name" $ text f.name
       div ! className "article-file-body" $ do
         toHtml <<< parseMd <<< take 500 $ f.content
 

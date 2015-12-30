@@ -248,6 +248,14 @@ h1 img {
   box-shadow: 0px 1px 10px #ccc;
 }
 
+h2 img {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /*border: 1px solid #ccc;*/
+  /*box-shadow: 0px 1px 10px #ccc;*/
+}
+
 blockquote h2 {
   text-align: center;
 }
@@ -304,4 +312,7 @@ blockquote ul li {
   padding-bottom: 25px;
   margin-bottom: 50px;
   border-bottom: 0px solid #ccc;
+}
+.entry {
+  text-decoration: underline;
 }
