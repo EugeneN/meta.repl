@@ -112,8 +112,14 @@ blogProcessor (StringInput toc) apst@(AppState s) = do
       pure $ formatBlogPosts blogPosts apst
 
     [x] -> do
-      cont <- loadNparseGist x
-      pure $ Just <<< HTML $ either (errorMsg <<< show) renderFullArticle cont
+      -- basic security check
+      let gids = getBlogPostsIds toc
+      case A.elemIndex x gids of
+        Just _ -> do
+          cont <- loadNparseGist x
+          pure $ Just <<< HTML $ either (errorMsg <<< show) renderFullArticle cont
+
+        _ -> pure $ Just <<< HTML <<< errorMsg $ ("access denied for id: " <> show x)
 
     _ -> pure $ Just <<< HTML <<< errorMsg $ ("unknown request: " <> show s.currentPath)
 
