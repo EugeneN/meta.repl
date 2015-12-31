@@ -75,7 +75,7 @@ appDNA = Node {
       , Node { title: "Blog"
              , path: "blog"
              , processor: BlogProcessor
-             , pathProcessor: ProcessorInternalPP
+             , pathProcessor: ChildPP
              , children: [ ]
              , dataSource: GistSource "ff3d182ce385cebb1774"
              }

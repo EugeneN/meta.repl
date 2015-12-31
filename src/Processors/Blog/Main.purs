@@ -109,9 +109,21 @@ formatBlogPosts ps = Just <<< HTML <<< renderListH $ ps
   where
 
   renderListH :: Array (Either ForeignError Article) -> Markup
-  renderListH ps =
+  renderListH ps = do
+    div ! className "blog-note" $ blogNote
+    hr
     div ! className "articles-list" $ do
       for_ ps renderEitherH
+
+  blogNote = toHtml <<< parseMd <<< unlines $
+    [ "*NB*: Posts for this blog are written and persisted in Github's Gists. "
+    , "Individual entries will open in C.MD gist viewer. Here is just an index."
+    , ""
+    , ""
+    , "Thus, the blog is a symbiosis between 2 *pure clientside* "
+    , "applications and 3rd-party API/service via CORS. There is no backend, "
+    , "and no databases were harmed in making this blog :-)"
+    ]
 
   renderEitherH :: Either ForeignError Article -> Markup
   renderEitherH (Left e) = div ! className "error" $ text (show e)

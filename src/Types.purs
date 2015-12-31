@@ -41,7 +41,7 @@ data Node = Node {
 
 data Processor = MdProcessor | ImgListProcessor | TextProcessor | BlogProcessor
 
-data PathProcessor = GlobalPP | ProcessorInternalPP
+data PathProcessor = GlobalPP | ChildPP
 
 type Url = String
 

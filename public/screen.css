@@ -316,3 +316,8 @@ blockquote ul li {
 .entry {
   text-decoration: underline;
 }
+
+.blog-note {
+  font-size: 80%;
+  margin-bottom: 30px;
+}
