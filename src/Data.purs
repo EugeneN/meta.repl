@@ -11,6 +11,8 @@ initialState :: AppState
 initialState = AppState {
     actionsCount: 0
   , currentPath: ["about"]
+  , menuPath: ["about"]
+  , currentNode: Nothing
   , currentContent: Nothing
 }
 
@@ -184,7 +186,7 @@ appDNA = Node {
              , pathProcessor: GlobalPP
              , children: []
              , dataSource: StringSource (unlines [
-                  "This «web site» is a concept *application* aimed to explore ways to reach *The Holy Grail* of software engineering -"
+                  "This «web site» is a *concept application* aimed to explore ways to reach *The Holy Grail* of software engineering -"
                 , "*composability* and *reusability*. These ways look like following SOLID, GRASP, "
                 , "and reinventing «OOP in a large» using [purely functional language with powerful type system](http://www.purescript.org/), "
                 , "high level abstractions, immutable data, messaging, some Category Theory and engineering approach for the win."

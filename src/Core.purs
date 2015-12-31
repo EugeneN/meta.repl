@@ -14,6 +14,7 @@ import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String (joinWith, drop, take)
 import Data.String.Regex
 import Data.Traversable
+import Data.Tuple
 
 import Network.HTTP.Affjax
 
@@ -37,7 +38,8 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   liftEff $ setContent internal
 
   where
-  currentNode = findChildNodeByPath s.currentPath appDNA
+  -- currentNode = findChildNodeByPath s.currentPath appDNA
+  currentNode = s.currentNode
   ds = getDataSource <$> currentNode
   proc = getProcessor <$> currentNode
 
@@ -84,14 +86,35 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
 
   loadGist gid = get $ "https://api.github.com/gists/" <> gid
 
+findTargetNode path parent = do
+  {head: h, tail: t} <- A.uncons path
+  node <- findChildNodeByPath [h] parent
+  case getPathProcessor node of
+    ChildPP  -> pure (Tuple node t)
+    GlobalPP -> if t == [] then pure (Tuple node [])
+                           else findTargetNode t node
+
 appLogic :: BLActions -> AppState -> AppState
 appLogic (Navigate path) (AppState s) =
-  let mbNode = findChildNodeByPath path appDNA
-      mbSource = getDataSource <$> mbNode
-      newPath = case mbSource of
-            Just (ChildSource p) -> path <> [p]
-            _                    -> path
-  in AppState (s { actionsCount = s.actionsCount + 1, currentPath  = newPath })
+  case findTargetNode path appDNA of
+    Nothing -> AppState (s { actionsCount = s.actionsCount + 1
+                           , currentPath = path
+                           , menuPath = path
+                           , currentNode = Nothing })
+    Just (Tuple targetNode pathTail) ->
+      let newPath = case getDataSource targetNode of
+                      ChildSource p -> path <> [p]
+                      _             -> pathTail
+          menuPath = case getDataSource targetNode of
+                          ChildSource p -> path <> [p]
+                          _             -> path
+          newTargetNode = case getDataSource targetNode of
+                          ChildSource p -> findChildNodeByPath [p] targetNode
+                          _             -> Just targetNode
+      in AppState (s { actionsCount = s.actionsCount + 1
+                     , currentPath = newPath
+                     , menuPath = menuPath
+                     , currentNode = newTargetNode })
 
 appLogic Noop            (AppState s) = AppState (s { actionsCount = s.actionsCount + 1 })
 
@@ -116,6 +139,9 @@ findChildNodeByPath pathElements (Node node) = case A.uncons pathElements of
 getCurrentPath :: AppState -> Array String
 getCurrentPath (AppState s) = s.currentPath
 
+getMenuPath :: AppState -> Array String
+getMenuPath (AppState s) = s.menuPath
+
 calcTitle :: AppState -> String
 calcTitle appState =
   joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]
@@ -132,3 +158,5 @@ getDataSource (Node x) = x.dataSource
 
 getProcessor :: Node -> Processor
 getProcessor (Node x) = x.processor
+
+getPathProcessor (Node x) = x.pathProcessor

@@ -133,7 +133,7 @@ renderHTML appState@(AppState s) =
       -- h1 ! className "name" $ text (getTitle appDNA)
 
       div ! className "nav" $ do
-        renderMenu fullPath (Just appDNA) [] 0
+        renderMenu menuPath (Just appDNA) [] 0
 
       div ! className "section page"  $ do
         --h2 $ text $ fromMaybe "-no title-" $ getTitle <$> getCurrentNode appState
@@ -144,7 +144,7 @@ renderHTML appState@(AppState s) =
           -- span $ text "© 2015"
 
   where
-  fullPath = getCurrentPath appState
+  menuPath = getMenuPath appState
   currentNode = getCurrentNode appState
   internalAST = fromMaybe page404 $ parseContent <$> s.currentContent
   payloadHtml = internalAST
