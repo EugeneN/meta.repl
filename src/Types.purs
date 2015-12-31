@@ -6,6 +6,9 @@ import Data.Maybe (Maybe())
 
 import Signal.Channel (Channel())
 import Control.Monad.Eff (Eff())
+import Control.Monad.Aff
+import Control.Monad.Aff.AVar (AVAR())
+import Network.HTTP.Affjax (AJAX())
 
 import Text.Smolder.Markup
 
@@ -51,6 +54,8 @@ instance showNode :: Show Node where
                     <> " }"
 
 data Processor = MdProcessor | ImgListProcessor | TextProcessor | BlogProcessor
+
+type ProcessorAPI = forall e. Input -> AppState -> Aff ( ajax :: AJAX, avar :: AVAR | e) (Maybe Internal)
 
 instance showProcessor :: Show Processor where
   show MdProcessor = "MdProcessor"

@@ -97,15 +97,15 @@ instance isForeignArticle :: IsForeign Article where
                    , description: desc
                    , files:     files }
 
-blogProcessor :: Input -> Aff _ (Maybe Internal)
-blogProcessor (StringInput toc) = do
+blogProcessor :: ProcessorAPI
+blogProcessor (StringInput toc) apst = do
   let gids = getBlogPostsIds toc
   blogPosts <- runPar $ traverse (Par <$> loadNparseGist) gids
 
-  pure $ formatBlogPosts blogPosts
+  pure $ formatBlogPosts blogPosts apst
 
-formatBlogPosts :: Array (Either ForeignError Article) -> Maybe Internal
-formatBlogPosts ps = Just <<< HTML <<< renderListH $ ps
+formatBlogPosts :: Array (Either ForeignError Article) -> AppState -> Maybe Internal
+formatBlogPosts ps apst = Just <<< HTML <<< renderListH $ ps
   where
 
   renderListH :: Array (Either ForeignError Article) -> Markup
@@ -136,8 +136,8 @@ formatBlogPosts ps = Just <<< HTML <<< renderListH $ ps
         -- a ! href ("?ui=html#blog/" <> art.id) $ text $ "Entry: " <> art.id
       div ! className "article-file-body" $ do
         span $ text "Entry "
-        -- a ! href ("#blog/" <> art.id) $ text art.id
-        a ! href ("https://eugenen.github.io/C.MD/#!" <> art.id <> ";p") $ text art.id
+        a ! href ("#blog/" <> art.id) $ text art.id
+        -- a ! href ("https://eugenen.github.io/C.MD/#!" <> art.id <> ";p") $ text art.id
         span $ text ": "
 
         toHtml <<< parseMd $ art.description

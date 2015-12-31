@@ -15,5 +15,5 @@ import Types
 import Utils
 
 
-textProcessor :: Input -> Aff _ (Maybe Internal)
-textProcessor (StringInput s)   = pure $ Just $ Md s
+textProcessor :: ProcessorAPI
+textProcessor (StringInput s) _   = pure $ Just $ Md s

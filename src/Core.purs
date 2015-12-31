@@ -31,10 +31,10 @@ import Processors.PlainText.Main (textProcessor)
 
 
 appEffectsLogic :: Channel UIActions -> AppState -> Eff _ Unit
-appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
+appEffectsLogic uiChannel apst@(AppState s) = runAff handleError handleResult $ do
   liftEff $ setBusy
   input <- mbReadSource ds
-  internal <- mbCallProcessor proc input
+  internal <- mbCallProcessor proc input apst
   liftEff $ setContent internal
 
   where
@@ -48,9 +48,9 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   mbReadSource (Just ds) = readSource ds
   mbReadSource _         = pure Nothing
 
-  mbCallProcessor :: Maybe Processor -> Maybe Input -> Aff _ (Maybe Internal)
-  mbCallProcessor (Just proc) (Just input) = callProcessor proc input
-  mbCallProcessor _ _                      =  pure Nothing
+  mbCallProcessor :: Maybe Processor -> Maybe Input -> AppState -> Aff _ (Maybe Internal)
+  mbCallProcessor (Just proc) (Just input) apst = callProcessor proc input apst
+  mbCallProcessor _ _ _                         = pure Nothing
 
   setBusy :: Eff _ Unit
   setBusy = send uiChannel $ RenderState $ (AppState s{currentContent = Just (Md "###### ![...](ajax-loader.gif) Loading...")})
@@ -61,15 +61,13 @@ appEffectsLogic uiChannel (AppState s) = runAff handleError handleResult $ do
   handleError e  = setContent $ Just $ Md $ toString e
   handleResult x = pure unit
 
+  callProcessor :: Processor -> Input -> AppState -> Aff _ (Maybe Internal)
+  callProcessor MdProcessor i apst      = textProcessor i apst
+  callProcessor TextProcessor i apst    = textProcessor i apst
+  callProcessor ImgListProcessor i apst = imgListProcessor i apst
+  callProcessor BlogProcessor i apst    = blogProcessor i apst
 
-
-  callProcessor :: Processor -> Input -> Aff _ (Maybe Internal)
-  callProcessor MdProcessor i      = textProcessor i
-  callProcessor TextProcessor i    = textProcessor i
-  callProcessor ImgListProcessor i = imgListProcessor i
-  callProcessor BlogProcessor i    = blogProcessor i
-
-  callProcessor _ _                = pure Nothing
+  callProcessor _ _ _                   = pure Nothing
 
   readSource :: DataSource String -> Aff _ (Maybe Input)
   readSource (StringSource a) = pure $ Just $ StringInput a

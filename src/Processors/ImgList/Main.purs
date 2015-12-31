@@ -15,9 +15,9 @@ import Types
 import Utils
 
 
-imgListProcessor :: Input -> Aff _ (Maybe Internal)
-imgListProcessor (StringInput s)   = pure $ Just $ Md $ mdImg s
-imgListProcessor (ArrayInput ss)   = pure $ Just $ Md $ unlines $ mdImg <$> ss
+imgListProcessor :: ProcessorAPI
+imgListProcessor (StringInput s) _ = pure $ Just $ Md $ mdImg s
+imgListProcessor (ArrayInput ss) _ = pure $ Just $ Md $ unlines $ mdImg <$> ss
 
 
 mdImg s = "# ![" <> s <> "](" <> s <> ")"
