@@ -326,6 +326,7 @@ blockquote ul li {
 
 .error {
   color: red;
+  text-align: center;
 }
 
 .info {

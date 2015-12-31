@@ -58,16 +58,16 @@ data Processor = MdProcessor | ImgListProcessor | TextProcessor | BlogProcessor
 type ProcessorAPI = forall e. Input -> AppState -> Aff ( ajax :: AJAX, avar :: AVAR | e) (Maybe Internal)
 
 instance showProcessor :: Show Processor where
-  show MdProcessor = "MdProcessor"
+  show MdProcessor      = "MdProcessor"
   show ImgListProcessor = "ImgListProcessor"
-  show TextProcessor = "TextProcessor"
-  show BlogProcessor = "BlogProcessor"
+  show TextProcessor    = "TextProcessor"
+  show BlogProcessor    = "BlogProcessor"
 
 data PathProcessor = GlobalPP | ChildPP
 
 instance showPathProcessor :: Show PathProcessor where
   show GlobalPP = "GlobalPP"
-  show ChildPP = "ChildPP"
+  show ChildPP  = "ChildPP"
 
 type Url = String
 
@@ -75,10 +75,10 @@ data DataSource a = StringSource a | ArraySource (Array a) | ChildSource a | Gis
 
 instance showDataSource :: Show (DataSource String) where
   show (StringSource a) = "<StringSource " <> show a <> ">"
-  show (ChildSource a) = "<ChildSource " <> show a <> ">"
-  show (GistSource a) = "<GistSource " <> show a <> ">"
+  show (ChildSource a)  = "<ChildSource " <> show a <> ">"
+  show (GistSource a)   = "<GistSource " <> show a <> ">"
   show (GithubSource a) = "<GithubSource " <> show a <> ">"
-  show (ArraySource a) = "<ArraySource " <> show a <> ">"
+  show (ArraySource a)  = "<ArraySource " <> show a <> ">"
 
 data Input = StringInput String | ArrayInput (Array String)
 data Internal = Md String | HTML Markup
