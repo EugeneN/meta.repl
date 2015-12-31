@@ -98,11 +98,22 @@ instance isForeignArticle :: IsForeign Article where
                    , files:     files }
 
 blogProcessor :: ProcessorAPI
-blogProcessor (StringInput toc) apst = do
-  let gids = getBlogPostsIds toc
-  blogPosts <- runPar $ traverse (Par <$> loadNparseGist) gids
+blogProcessor (StringInput toc) apst@(AppState s) = do
+  case s.currentPath of
+    [] -> do
+      let gids = getBlogPostsIds toc
+      blogPosts <- runPar $ traverse (Par <$> loadNparseGist) gids
 
-  pure $ formatBlogPosts blogPosts apst
+      pure $ formatBlogPosts blogPosts apst
+
+    [x] -> do
+      cont <- loadNparseGist x
+      pure $ Just <<< HTML $ either (errorMsg <<< show) renderFullArticle cont
+
+    _ -> pure $ Just <<< HTML <<< errorMsg $ ("unknown request: " <> show s.currentPath)
+
+errorMsg m = div ! className "error" $ text ("Error: " <> m)
+infoMsg m = div ! className "info" $ text ("NB: " <> m)
 
 formatBlogPosts :: Array (Either ForeignError Article) -> AppState -> Maybe Internal
 formatBlogPosts ps apst = Just <<< HTML <<< renderListH $ ps
@@ -113,45 +124,50 @@ formatBlogPosts ps apst = Just <<< HTML <<< renderListH $ ps
     div ! className "blog-note" $ blogNote
     hr
     div ! className "articles-list" $ do
-      for_ ps renderEitherH
+      for_ ps (either (errorMsg <<< show) renderArticleH)
 
   blogNote = toHtml <<< parseMd <<< unlines $
-    [ "*NB*: Posts for this blog are written and persisted in Github's Gists. "
-    , "Individual entries will open in C.MD gist viewer. Here is just an index."
+    [ "*NB*: Posts for this blog are written in [C.MD gist editor](http://eugenen.github.io/C.MD) "
+    , "and persisted in [Github Gists](https://gist.github.com/). "
     , ""
     , ""
     , "Thus, the blog is a symbiosis between 2 *pure clientside* "
-    , "applications and 3rd-party API/service via CORS. There is no backend, "
-    , "and no databases were harmed in making this blog :-)"
+    , "applications and 3rd-party API/service via CORS. There is no «classical» backend, "
+    , "and no databases were harmed while making this blog :-)"
     ]
 
-  renderEitherH :: Either ForeignError Article -> Markup
-  renderEitherH (Left e) = div ! className "error" $ text (show e)
-  renderEitherH (Right art) = renderArticleH art
+renderFullArticle :: Article -> Markup
+renderFullArticle (Article art) = do
+  div ! className "sub-nav" $ do
+    a ! href "#blog" $ text "↑up to index"
+  div ! className "article" $ do
+    div ! className "article-file-body" $ do
+      toHtml <<< parseMd $ art.description
+      renderFilesH art.files
 
-  renderArticleH :: Article -> Markup
-  renderArticleH (Article art) =
-    div ! className "article" $ do
-      -- div ! className "article-title" $ do
-        -- a ! href ("?ui=html#blog/" <> art.id) $ text $ "Entry: " <> art.id
-      div ! className "article-file-body" $ do
-        span $ text "Entry "
-        a ! href ("#blog/" <> art.id) $ text art.id
-        -- a ! href ("https://eugenen.github.io/C.MD/#!" <> art.id <> ";p") $ text art.id
-        span $ text ": "
+renderArticleH :: Article -> Markup
+renderArticleH (Article art) =
+  div ! className "article" $ do
+    -- div ! className "article-title" $ do
+      -- a ! href ("?ui=html#blog/" <> art.id) $ text $ "Entry: " <> art.id
+    div ! className "article-file-body" $ do
+      span $ text "Entry "
+      a ! href ("#blog/" <> art.id) $ text art.id
+      -- a ! href ("https://eugenen.github.io/C.MD/#!" <> art.id <> ";p") $ text art.id
+      span $ text ": "
 
-        toHtml <<< parseMd $ art.description
-      -- renderFilesH art.files
+      toHtml <<< parseMd $ art.description
+    -- renderFilesH art.files
 
-  renderFilesH :: Files -> Markup
-  renderFilesH (Files fs) = for_ fs renderFileH
+renderFilesH :: Files -> Markup
+renderFilesH (Files fs) = for_ fs renderFileH
 
-  renderFileH :: File -> Markup
-  renderFileH (File f) =
-    div ! className "article-file" $ do
-      -- h2 ! className "article-file-name" $ text f.name
-      div ! className "article-file-body" $ do
-        toHtml <<< parseMd <<< take 500 $ f.content
+renderFileH :: File -> Markup
+renderFileH (File f) =
+  div ! className "article-file" $ do
+    -- h2 ! className "article-file-name" $ text f.name
+    div ! className "article-file-body" $ do
+      toHtml <<< parseMd $ f.content
 
 getBlogPostsIds toc = cleanIds
   where

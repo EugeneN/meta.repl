@@ -137,7 +137,7 @@ iframe {
 .menu-level-4-x { font-size: 10px; }
 .menu-level-5-x { font-size: 10px; }
 
-.nav a {
+.nav a, .sub-nav a {
   display: inline-block;
   margin: 10px;
   color: #000;
@@ -145,7 +145,7 @@ iframe {
   font-weight: lighter;
   /*text-transform: uppercase;*/
 }
-.nav a:hover {
+.nav a:hover, , .sub-nav a:hover {
   color: #000;
   text-decoration: underline;
 }
@@ -217,6 +217,8 @@ blockquote {
   font-family: "Courier New", sans-serif;
   background-color: #eee;
   padding: 10px;
+  font-size: 80%;
+  overflow: auto;
 }
 .inline-code {
   display: inline-block;
@@ -320,4 +322,18 @@ blockquote ul li {
 .blog-note {
   font-size: 80%;
   margin-bottom: 30px;
+}
+
+.error {
+  color: red;
+}
+
+.info {
+  color: blue;
+}
+.sub-nav {
+  text-align: center;
+  text-align: center;
+  font-size: 18px;
+  font-family: ff-tisa-web-pro, georgia, serif;
 }
