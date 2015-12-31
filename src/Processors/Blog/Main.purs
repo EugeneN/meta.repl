@@ -40,6 +40,11 @@ import Types
 import Utils
 import Internal
 
+data Error = Error String
+
+instance showError :: Show Error where
+  show (Error e) = e
+
 data Mimetype = Plaintext | UnknownMimetype String
 
 instance isForeignMymetype :: IsForeign Mimetype where
@@ -115,11 +120,11 @@ blogProcessor (StringInput toc) apst@(AppState s) = do
 errorMsg m = div ! className "error" $ text ("Error: " <> m)
 infoMsg m = div ! className "info" $ text ("NB: " <> m)
 
-formatBlogPosts :: Array (Either ForeignError Article) -> AppState -> Maybe Internal
+formatBlogPosts :: Array (Either Error Article) -> AppState -> Maybe Internal
 formatBlogPosts ps apst = Just <<< HTML <<< renderListH $ ps
   where
 
-  renderListH :: Array (Either ForeignError Article) -> Markup
+  renderListH :: Array (Either Error Article) -> Markup
   renderListH ps = do
     div ! className "blog-note" $ blogNote
     hr
@@ -179,10 +184,15 @@ getBlogPostsIds toc = cleanIds
 
 loadNparseGist gid = do
   g <- loadGist' gid
-  pure $ parseJsonGistResponse g.response
+  case g.status of
+    StatusCode 200 -> pure $ parseJsonGistResponse g.response
+    StatusCode x   -> pure <<< Left <<< Error $ ("Bad response: " <> show x)
 
-parseJsonGistResponse :: String -> Either ForeignError Article
-parseJsonGistResponse respJson = readJSON respJson :: F Article
+
+parseJsonGistResponse :: String -> Either Error Article
+parseJsonGistResponse respJson = case readJSON respJson :: F Article of
+  Left e -> Left <<< Error <<< show $ e
+  Right x -> Right x
 
 loadGist' :: String -> Aff _ { response :: String
                              , headers :: Array ResponseHeader
