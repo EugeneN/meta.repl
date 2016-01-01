@@ -132,20 +132,8 @@ formatBlogPosts ps apst = Just <<< HTML <<< renderListH $ ps
 
   renderListH :: Array (Either Error Article) -> Markup
   renderListH ps = do
-    div ! className "blog-note" $ blogNote
-    hr
     div ! className "articles-list" $ do
       for_ ps (either (errorMsg <<< show) renderArticleH)
-
-  blogNote = toHtml <<< parseMd <<< unlines $
-    [ "*NB*: Posts for this blog are written in [C.MD gist editor](http://eugenen.github.io/C.MD) "
-    , "and persisted in [Github Gists](https://gist.github.com/). "
-    , ""
-    , ""
-    , "Thus, the blog is a symbiosis between 2 *pure clientside* "
-    , "applications and 3rd-party API/service via CORS. There is no «classical» backend, "
-    , "and no databases were harmed while making this blog :-)"
-    ]
 
 renderFullArticle :: Article -> Markup
 renderFullArticle (Article art) = do
