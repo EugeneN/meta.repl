@@ -34,19 +34,17 @@ imgListProcessor (ArrayInput ss) apst = go ss apst
 go :: forall e. Array String -> AppState -> Aff (avar :: AVAR, ajax :: AJAX | e) (Maybe Internal)
 go srcs apst@(AppState s) =
   case s.currentPath of
-    [] -> do
+    [] -> pure <<< Just <<< HTML <<< (renderImgList baseUrl) $ srcs
 
-      pure <<< Just <<< HTML <<< (renderImgList baseUrl) $ srcs
-
-    [x] -> do
+    [x] ->
       -- basic security check
       case fromString x of
         Just n -> if n >= 0 && n < A.length srcs
-                    then pure <<< Just <<< HTML $ fromMaybe (errorMsg ("access denied for: " <> show x))
+                    then pure <<< Just <<< HTML $ fromMaybe (errorMsg (noAccess x))
                                                             ((renderImgSingle baseUrl (prevUrl n) (nextUrl n)) <$> (srcs A.!! n))
-                    else pure <<< Just <<< HTML <<< errorMsg $ ("access denied for: " <> show x)
+                    else pure <<< Just <<< HTML <<< errorMsg <<< noAccess $ x
 
-        _ -> pure <<< Just <<< HTML <<< errorMsg $ ("access denied for: " <> show x)
+        _ -> pure <<< Just <<< HTML <<< errorMsg <<< noAccess $ x
 
     _ -> pure <<< Just <<< HTML <<< errorMsg $ ("unknown request: " <> show s.currentPath)
 
@@ -55,6 +53,7 @@ go srcs apst@(AppState s) =
     baseUrl = currentPathToUrl apst
     prevUrl n = prevImgLink baseUrl imgsCount n
     nextUrl n = nextImgLink baseUrl imgsCount n
+    noAccess x = "access denied for: " <> show x
 
 errorMsg m = div ! className "error" $ text ("Error: " <> m)
 infoMsg m  = div ! className "info" $ text ("NB    : " <> m)
@@ -72,9 +71,8 @@ imgLink baseUrl idx = baseUrl <> "/" <> show idx
 
 htmlLinkImg :: Url -> Tuple String Int -> Markup
 htmlLinkImg baseUrl (Tuple src' idx) =
-  a ! href (baseUrl <> "/" <> show idx) $
+  a ! href (imgLink baseUrl idx) $
     img ! className "image" ! src src'
-
 
 renderImgList :: Url -> Array String -> Markup
 renderImgList baseUrl srcs =
