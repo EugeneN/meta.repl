@@ -123,8 +123,9 @@ blogProcessor (StringInput toc) apst@(AppState s) = do
 
     _ -> pure $ Just <<< HTML <<< errorMsg $ ("unknown request: " <> show s.currentPath)
 
+-- TODO lib
 errorMsg m = div ! className "error" $ text ("Error: " <> m)
-infoMsg m = div ! className "info" $ text ("NB: " <> m)
+infoMsg m  = div ! className "info" $ text ("NB    : " <> m)
 
 formatBlogPosts :: Array (Either Error Article) -> AppState -> Maybe Internal
 formatBlogPosts ps apst = Just <<< HTML <<< renderListH $ ps
@@ -170,7 +171,7 @@ renderFileH (File f) =
 
 getBlogPostsIds toc = cleanIds
   where
-  regexFlags = noFlags{ global= true, ignoreCase= true, multiline= true }
+  regexFlags = noFlags{ global = true, ignoreCase = true, multiline = true }
   idRegex    = regex "\\([a-f0-9]{20}\\)" regexFlags
   rawIds     = match idRegex toc
   justIds    = fromMaybe [] (A.catMaybes <$> rawIds)
@@ -185,10 +186,10 @@ loadNparseGist gid = do
 
 parseJsonGistResponse :: String -> Either Error Article
 parseJsonGistResponse respJson = case readJSON respJson :: F Article of
-  Left e -> Left <<< Error <<< show $ e
+  Left e  -> Left <<< Error <<< show $ e
   Right x -> Right x
 
 loadGist' :: String -> Aff _ { response :: String
-                             , headers :: Array ResponseHeader
-                             , status :: StatusCode }
+                             , headers  :: Array ResponseHeader
+                             , status   :: StatusCode }
 loadGist' gid = get $ "https://api.github.com/gists/" <> gid

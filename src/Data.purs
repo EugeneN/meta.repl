@@ -53,7 +53,7 @@ appDNA = Node {
       , Node { title: "Photos"
              , path: "photos"
              , processor: ImgListProcessor
-             , pathProcessor: GlobalPP
+             , pathProcessor: ChildPP
              , children: []
              , dataSource: ArraySource [ "https://lh3.googleusercontent.com/eWwR1tPCh42kvp3g5cd2ajogkUhGp9ol0_N08gsJf8DvIAK8AI_0zRW0WaWUxnQ0eGhUlerXo_psMw=w1084-h610-no"
                                        , "https://lh3.googleusercontent.com/-kkUBuYKmHSBTj5ad8yHfC5uRgH1V2edL9nnSgBY2GqFaDegNV02fCEQogrogXf60J0wmOW1PjrffQ=w1474-h1105-no"
