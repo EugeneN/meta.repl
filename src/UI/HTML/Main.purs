@@ -10,7 +10,7 @@ import Signal.Channel (Chan())
 
 import Data.Foldable (for_)
 import Data.Array (length, (!!), uncons)
-import Data.List hiding (head, span, length, (!!), uncons)
+import Data.List hiding (head, span, length, (!!), uncons, filter)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (mempty)
 import Data.String (split, joinWith)
@@ -19,8 +19,9 @@ import qualified DOM.Node.Types as DT
 
 import Routing (hashChanged)
 
-import Signal (foldp, runSignal)
+import Signal (foldp, runSignal, (~>), filter)
 import Signal.Channel (channel, subscribe, send, Channel())
+import Signal.DOM
 
 import Text.Markdown.SlamDown.Pretty
 import Text.Markdown.SlamDown.Parser
@@ -40,6 +41,7 @@ import Types
 import Utils
 import Internal
 import UI.HTML.Utils
+import KeyCodes as K
 import qualified UI.HTML.VDom as VDom
 
 
@@ -49,6 +51,7 @@ defaultTitle = "Eugene Naumenko" -- read from appDNA
 
 data UIState = UIState { rootNode    :: DT.Node
                        , title       :: String
+                       , cmd         :: Maybe UICmd
                        , oldVDom     :: VTree
                        , newVDom     :: VTree }
 
@@ -56,10 +59,13 @@ data UIState = UIState { rootNode    :: DT.Node
 uiLogic (RenderState appState) (UIState u) =
   UIState (u { oldVDom = u.newVDom
              , title   = calcTitle appState
+             , cmd     = Nothing
              , newVDom = newVDom })
   where
   newMarkup = renderHTML appState
   newVDom = vNode2vTree $ VDom.render newMarkup
+
+uiLogic (SetCmd c apst) (UIState u) = UIState (u{cmd = Just c})
 
 uiLogic RenderNoop uiState = uiState
 
@@ -75,10 +81,27 @@ setupHtmlUi inputChannel = do
     let initialUIState = UIState { rootNode: rootNode
                                  , oldVDom: initialVDom
                                  , title: defaultTitle
+                                 , cmd: Nothing
                                  , newVDom: initialVDom }
-    let ui = foldp uiLogic initialUIState renderSignal
+    let justRender (UIState u) = case u.cmd of
+                                    Nothing -> true
+                                    _ -> false
+    let justCmd (UIState u) = case u.cmd of
+                                    Nothing -> false
+                                    _ -> true
 
-    runSignal (patchVDom <$> ui)
+    let ui = foldp uiLogic initialUIState renderSignal
+        renderSig = filter justRender initialUIState ui
+        cmdSig    = filter justCmd initialUIState ui
+
+    runSignal (patchVDom <$> renderSig)
+    runSignal (execCmd <$> ui)
+
+    left <- keyPressed 37 -- TODO get rid of magic numbers
+    right <- keyPressed 39
+
+    runSignal $ left ~> (\x -> if x then send inputChannel $ KeyboardInput K.LeftArrow else pure unit)
+    runSignal $ right ~> (\x -> if x then send inputChannel $ KeyboardInput K.RightArrow else pure unit)
 
     hashChanged $ \old new -> do
       log $ "hash changed: " ++ old ++ " -> " ++ new
@@ -86,6 +109,12 @@ setupHtmlUi inputChannel = do
       pure unit
 
     pure renderChan
+
+execCmd (UIState u) = do
+  case u.cmd of
+    Just (RouteTo url) -> setLocationUrl url
+    _ -> pure unit
+
 
 patchVDom :: UIState -> Eff _ Unit
 patchVDom (UIState s) = do

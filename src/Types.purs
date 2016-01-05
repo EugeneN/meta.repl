@@ -12,15 +12,19 @@ import Network.HTTP.Affjax (AJAX())
 
 import Text.Smolder.Markup
 
+import KeyCodes
+
 
 -- | Here is the specification for inter-component APIs
 -- | aka the heart of the application :-)
 
-data BLActions = Navigate (Array Url) | Noop
-data UIActions = RenderState AppState | RenderNoop
+data BLActions = Navigate (Array Url) | Noop | KeyboardInput KeyCode
+data UIActions = RenderState AppState | RenderNoop | SetCmd UICmd AppState
 
 type UIInterface blActions uiActions uiEff = Channel blActions -> uiEff (Channel uiActions)
 type UnitInterface parentActions unitActions unitEff = Channel parentActions -> unitEff (Channel unitActions)
+
+type InputDriver blActions inpEff = Channel blActions -> inpEff Unit
 
 type UI eff = UIInterface BLActions UIActions eff
 
@@ -32,6 +36,7 @@ data AppState = AppState {
   , menuPath       :: Array Url
   , currentNode    :: Maybe Node
   , currentContent :: Maybe Internal
+  , keyboardInput  :: Maybe KeyCode
 }
 
 data Node = Node {
@@ -54,6 +59,11 @@ instance showNode :: Show Node where
                     <> " }"
 
 data Processor = MdProcessor | ImgListProcessor | TextProcessor | BlogProcessor
+
+
+-- data InputAbstractionLayer = IAL { mouse :: Signal.Channel
+                                --  , kbd   :: Signal.Channel
+                                --  }
 
 type ProcessorAPI = forall e. Input -> AppState -> Aff ( ajax :: AJAX, avar :: AVAR | e) (Maybe Internal)
 
@@ -81,7 +91,9 @@ instance showDataSource :: Show (DataSource String) where
   show (ArraySource a)  = "<ArraySource " <> show a <> ">"
 
 data Input = StringInput String | ArrayInput (Array String)
-data Internal = Md String | HTML Markup
+data Internal = Md String | HTML Markup | Cmd UICmd
+
+data UICmd = RouteTo Url
 
 data Platform = Browser | Nodejs | Unknown
 

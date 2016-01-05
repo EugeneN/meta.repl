@@ -13,6 +13,8 @@ exports.platformDetect = function () {
   }
 }
 
+
+
 exports.getParameterByName = function (name) {
     return function() {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");

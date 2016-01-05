@@ -6,6 +6,8 @@ import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class
 
 import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe.Unsafe (fromJust)
+
 import Data.Tuple
 import Data.String (joinWith)
 import Data.Int (fromString)
@@ -21,7 +23,9 @@ import qualified Data.Array as A
 
 import Types
 import Utils
+import KeyCodes
 
+import Control.Bind ((>=>))
 import Control.Monad.Aff
 import Control.Monad.Aff.AVar (AVAR())
 import Network.HTTP.Affjax (AJAX())
@@ -36,35 +40,38 @@ go srcs apst@(AppState s) =
   case s.currentPath of
     [] -> pure <<< Just <<< HTML <<< (renderImgList baseUrl) $ srcs
 
-    [x] ->
-      -- basic security check
-      case fromString x of
-        Just n -> if n >= 0 && n < A.length srcs
-                    then pure <<< Just <<< HTML $ fromMaybe (errorMsg (noAccess x))
-                                                            ((renderImgSingle baseUrl (prevUrl n) (nextUrl n)) <$> (srcs A.!! n))
-                    else pure <<< Just <<< HTML <<< errorMsg <<< noAccess $ x
+    [x] -> case fromString >=> (inRange (-1) imgsCount) $ x of
+      Just n -> case s.keyboardInput of
+        Nothing  -> pure <<< Just <<< HTML $ renderImgSingle baseUrl (prevUrl n) (nextUrl n) (fromJust $ srcs A.!! n)
+        Just key -> pure <<< Just <<< Cmd $ (RouteTo (routeByKeyboard key n))
 
-        _ -> pure <<< Just <<< HTML <<< errorMsg <<< noAccess $ x
+      _      -> pure <<< Just <<< HTML <<< errorMsg <<< noAccess $ x
 
-    _ -> pure <<< Just <<< HTML <<< errorMsg $ ("unknown request: " <> show s.currentPath)
+    xs -> pure <<< Just <<< HTML <<< errorMsg <<< unknownRequest $ xs
 
     where
+    inRange a b x = if x > a && x < b then Just x else Nothing
+
+    routeByKeyboard LeftArrow  n = prevUrl n
+    routeByKeyboard RightArrow n = nextUrl n
+
     imgsCount = A.length srcs
     baseUrl = currentPathToUrl apst
     prevUrl n = prevImgLink baseUrl imgsCount n
     nextUrl n = nextImgLink baseUrl imgsCount n
     noAccess x = "access denied for: " <> show x
+    unknownRequest x = "unknown request: " <> show x
 
 errorMsg m = div ! className "error" $ text ("Error: " <> m)
 infoMsg m  = div ! className "info" $ text ("NB    : " <> m)
 
 currentPathToUrl (AppState s) = "#" <> (fromMaybe "" (s.menuPath A.!! 0))
 
-prevImgLink baseUrl imgsCount idx = imgLink baseUrl next
-  where next = if idx - 1 < 0 then imgsCount - 1 else idx - 1
+prevInRange a b n = if n - 1 < a then b - 1 else n - 1
+nextInRange a b n = if n + 1 > b - 1 then a else n + 1
 
-nextImgLink baseUrl imgsCount idx = imgLink baseUrl next
-  where next = if idx + 1 > imgsCount - 1 then 0 else idx + 1
+prevImgLink baseUrl imgsCount idx = imgLink baseUrl (prevInRange 0 imgsCount idx)
+nextImgLink baseUrl imgsCount idx = imgLink baseUrl (nextInRange 0 imgsCount idx)
 
 imgLink :: Url -> Int -> String
 imgLink baseUrl idx = baseUrl <> "/" <> show idx

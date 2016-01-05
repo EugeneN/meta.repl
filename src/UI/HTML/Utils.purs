@@ -16,13 +16,17 @@ import Utils
 import Core
 import Internal
 import qualified UI.HTML.VDom as VDom
+import Unsafe.Coerce (unsafeCoerce)
 
+foreign import setLocationUrl :: forall e. Url -> Eff e Unit
 
 parseContent :: Internal -> Markup
 parseContent (Md x) = toHtml $ parseMd x
 parseContent (HTML h) = h
 
-foreign import vNode2vTree :: VDom.VNode -> VTree
+vNode2vTree :: VDom.VNode -> VTree
+vNode2vTree = unsafeCoerce
+
 foreign import appendToBody :: forall e. DT.Node -> Eff e Unit
 
 data MenuItem = MenuItem Url String

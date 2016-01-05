@@ -4,6 +4,7 @@ import Control.Monad.Aff
 import Control.Monad.Aff.Par
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class
+import Control.Monad.Aff.Class
 
 import Control.Alt(Alt, (<|>))
 import Control.Monad.Eff.Exception(error)
@@ -29,19 +30,29 @@ import Processors.Blog.Main (blogProcessor)
 import Processors.ImgList.Main (imgListProcessor)
 import Processors.PlainText.Main (textProcessor)
 
+import Control.Monad.Maybe.Trans
+
 
 appEffectsLogic :: Channel UIActions -> AppState -> Eff _ Unit
-appEffectsLogic uiChannel apst@(AppState s) = runAff handleError handleResult $ do
+appEffectsLogic uiChannel apst@(AppState s) = runAppEffects do
   liftEff $ setBusy
-  input <- mbReadSource ds
-  internal <- mbCallProcessor proc input apst
-  liftEff $ setContent internal
+
+
+  input       <- mbReadSource ds
+  internal    <- mbCallProcessor proc input apst
+  case internal of
+    Just (Cmd x) -> liftEff $ setCmd x
+    _            -> liftEff $ setContent internal
+
 
   where
-  -- currentNode = findChildNodeByPath s.currentPath appDNA
-  currentNode = s.currentNode
-  ds = getDataSource <$> currentNode
-  proc = getProcessor <$> currentNode
+  getCurrentNode :: AppState -> Maybe Node
+  getCurrentNode (AppState s) = s.currentNode
+  runAppEffects x = runAff handleError handleResult x
+
+  currentNode = getCurrentNode apst
+  ds          = getDataSource <$> currentNode
+  proc        = getProcessor <$> currentNode
 
   -- TODO lift this
   mbReadSource :: Maybe (DataSource String) -> Aff _ (Maybe Input)
@@ -57,6 +68,8 @@ appEffectsLogic uiChannel apst@(AppState s) = runAff handleError handleResult $ 
 
   setContent :: Maybe Internal -> Eff _ Unit
   setContent x   = send uiChannel $ RenderState (AppState s{currentContent = x})
+
+  setCmd x   = send uiChannel $ SetCmd x apst
 
   handleError e  = setContent $ Just $ Md $ toString e
   handleResult x = pure unit
@@ -98,6 +111,7 @@ appLogic (Navigate path) (AppState s) =
     Nothing -> AppState (s { actionsCount = s.actionsCount + 1
                            , currentPath = path
                            , menuPath = path
+                           , keyboardInput = Nothing
                            , currentNode = Nothing })
     Just (Tuple targetNode pathTail) ->
       let newPath = case getDataSource targetNode of
@@ -112,9 +126,12 @@ appLogic (Navigate path) (AppState s) =
       in AppState (s { actionsCount = s.actionsCount + 1
                      , currentPath = newPath
                      , menuPath = menuPath
+                     , keyboardInput = Nothing
                      , currentNode = newTargetNode })
 
-appLogic Noop            (AppState s) = AppState (s { actionsCount = s.actionsCount + 1 })
+appLogic (KeyboardInput k) (AppState s) = AppState (s { keyboardInput = Just k
+                                                      , actionsCount = s.actionsCount + 1 })
+appLogic Noop              (AppState s) = AppState (s { actionsCount = s.actionsCount + 1 })
 
 getCurrentNode :: AppState -> Maybe Node
 getCurrentNode appState = findChildNodeByPath (getCurrentPath appState) appDNA
@@ -142,7 +159,7 @@ getMenuPath (AppState s) = s.menuPath
 
 calcTitle :: AppState -> String
 calcTitle appState =
-  joinWith " <*> " [(fromMaybe "404" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]
+  joinWith " <*> " [(fromMaybe "Hi" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]
 
 
 getTitle :: Node -> String
