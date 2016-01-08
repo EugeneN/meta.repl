@@ -31,19 +31,21 @@ import Processors.ImgList.Main (imgListProcessor)
 import Processors.PlainText.Main (textProcessor)
 
 import Control.Monad.Maybe.Trans
+import Data.Foldable (for_)
 
 
 appEffectsLogic :: Channel UIActions -> AppState -> Eff _ Unit
 appEffectsLogic uiChannel apst@(AppState s) = runAppEffects do
   liftEff $ setBusy
 
-
-  input       <- mbReadSource ds
-  internal    <- mbCallProcessor proc input apst
-  case internal of
-    Just (Cmd x) -> liftEff $ setCmd x
-    _            -> liftEff $ setContent internal
-
+  for_ ds \d -> do
+    input <- readSource d
+    for_ input \i -> do
+      for_ proc \p -> do
+        internal <- callProcessor p apst i
+        case internal of
+          Just (Cmd x) -> liftEff $ setCmd x
+          _            -> liftEff $ setContent internal
 
   where
   getCurrentNode :: AppState -> Maybe Node
@@ -53,15 +55,6 @@ appEffectsLogic uiChannel apst@(AppState s) = runAppEffects do
   currentNode = getCurrentNode apst
   ds          = getDataSource <$> currentNode
   proc        = getProcessor <$> currentNode
-
-  -- TODO lift this
-  mbReadSource :: Maybe (DataSource String) -> Aff _ (Maybe Input)
-  mbReadSource (Just ds) = readSource ds
-  mbReadSource _         = pure Nothing
-
-  mbCallProcessor :: Maybe Processor -> Maybe Input -> AppState -> Aff _ (Maybe Internal)
-  mbCallProcessor (Just proc) (Just input) apst = callProcessor proc input apst
-  mbCallProcessor _ _ _                         = pure Nothing
 
   setBusy :: Eff _ Unit
   setBusy = send uiChannel $ RenderState $ (AppState s{currentContent = Just (Md "###### ![...](ajax-loader.gif) Loading...")})
@@ -74,11 +67,11 @@ appEffectsLogic uiChannel apst@(AppState s) = runAppEffects do
   handleError e  = setContent $ Just $ Md $ toString e
   handleResult x = pure unit
 
-  callProcessor :: Processor -> Input -> AppState -> Aff _ (Maybe Internal)
-  callProcessor MdProcessor i apst      = textProcessor i apst
-  callProcessor TextProcessor i apst    = textProcessor i apst
-  callProcessor ImgListProcessor i apst = imgListProcessor i apst
-  callProcessor BlogProcessor i apst    = blogProcessor i apst
+  callProcessor :: Processor -> AppState -> Input -> Aff _ (Maybe Internal)
+  callProcessor MdProcessor apst i      = textProcessor i apst
+  callProcessor TextProcessor apst i    = textProcessor i apst
+  callProcessor ImgListProcessor apst i = imgListProcessor i apst
+  callProcessor BlogProcessor apst i    = blogProcessor i apst
 
   callProcessor _ _ _                   = pure Nothing
 
