@@ -25,16 +25,17 @@ import Data.Foreign.Class
 import Data.Foreign.Keys (keys)
 import Data.Either
 
-import Prelude hiding (div, map, sub)
+import Prelude hiding (div, map, sub, id)
 
 import Signal.Channel (send, Channel())
 import Text.Markdown.SlamDown.Parser
 
 import Text.Smolder.HTML
-import Text.Smolder.HTML.Attributes (href, className, src, lang, charset, name, content, rel)
+import Text.Smolder.HTML.Attributes (id, href, className, src, lang, charset, name, content, rel)
 import Text.Smolder.Markup
 
 import Data.Foldable (for_)
+import Data.Monoid (mempty)
 
 import Types
 import Utils
@@ -144,6 +145,21 @@ renderFullArticle (Article art) = do
     div ! className "article-file-body" $ do
       toHtml <<< parseMd $ art.description
       renderFilesH art.files
+
+    div ! className "comments-block" $ do
+      div ! id "disqus_thread" $ mempty
+      script $ text (joinWith "\n" [
+            "var disqus_config = function () {"
+          , "//this.page.url = '" <> ("#blog/" <> art.id) <> "';"
+          , "this.page.identifier = '" <> ("#blog/" <> art.id) <> "';"
+          , "};"
+          , "(function() { "
+          , "var d = document, s = d.createElement('script');"
+          , "s.src = '//eugenen-github-io-html.disqus.com/embed.js';"
+          , "s.setAttribute('data-timestamp', +new Date());"
+          , "(d.head || d.body).appendChild(s);"
+          , "})();"
+        ])
 
 renderArticleH :: Article -> Markup
 renderArticleH (Article art) =
