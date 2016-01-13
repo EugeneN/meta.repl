@@ -56,7 +56,7 @@ instance toHtmlInline :: ToHtml Inline where
   toHtml (Strong is)                 = strong $ for_ is toHtml
   toHtml (Code e s)                  = div ! className "inline-code" $ text $ s
   toHtml (Link is (InlineLink uri))           = a ! href uri $ for_ is toHtml
-  toHtml (Link is (ReferenceLink Nothing))    = a ! href "#" $ for_ is toHtml
+  toHtml (Link is (ReferenceLink Nothing))    = a ! href "#!" $ for_ is toHtml
   toHtml (Link is (ReferenceLink (Just uri))) = a ! href uri $ for_ is toHtml
   toHtml (Image is uri)              = img ! src uri
   toHtml (FormField s b ff)          = text $ "[form-field " ++ show s ++ " " ++ show b ++ " " ++ show ff ++ "]"

@@ -412,3 +412,7 @@ blockquote ul li {
   font-size: 40px;
   margin: auto;
 }
+
+.hidden {
+  display: none;
+}

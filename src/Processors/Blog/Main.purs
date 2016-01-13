@@ -140,7 +140,7 @@ formatBlogPosts ps apst = Just <<< HTML <<< renderListH $ ps
 renderFullArticle :: Article -> Markup
 renderFullArticle (Article art) = do
   div ! className "sub-nav" $ do
-    a ! href "#blog" $ text "↑up to index"
+    a ! href "#!blog" $ text "↑up to index"
   div ! className "article" $ do
     div ! className "article-file-body" $ do
       toHtml <<< parseMd $ art.description
@@ -148,27 +148,16 @@ renderFullArticle (Article art) = do
 
     div ! className "comments-block" $ do
       div ! id "disqus_thread" $ mempty
-      script $ text (joinWith "\n" [
-            "var disqus_config = function () {"
-          , "//this.page.url = '" <> ("#blog/" <> art.id) <> "';"
-          , "this.page.identifier = '" <> ("#blog/" <> art.id) <> "';"
-          , "};"
-          , "(function() { "
-          , "var d = document, s = d.createElement('script');"
-          , "s.src = '//eugenen-github-io-html.disqus.com/embed.js';"
-          , "s.setAttribute('data-timestamp', +new Date());"
-          , "(d.head || d.body).appendChild(s);"
-          , "})();"
-        ])
+
 
 renderArticleH :: Article -> Markup
 renderArticleH (Article art) =
   div ! className "article" $ do
     -- div ! className "article-title" $ do
-      -- a ! href ("?ui=html#blog/" <> art.id) $ text $ "Entry: " <> art.id
+      -- a ! href ("?ui=html#!blog/" <> art.id) $ text $ "Entry: " <> art.id
     div ! className "article-file-body" $ do
       span $ text "Entry "
-      a ! href ("#blog/" <> art.id) $ text art.id
+      a ! href ("#!blog/" <> art.id) $ text art.id
       -- a ! href ("https://eugenen.github.io/C.MD/#!" <> art.id <> ";p") $ text art.id
       span $ text ": "
 

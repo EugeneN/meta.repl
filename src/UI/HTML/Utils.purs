@@ -29,5 +29,9 @@ vNode2vTree = unsafeCoerce
 
 foreign import appendToBody :: forall e. DT.Node -> Eff e Unit
 
+foreign import resetDisqusUnsafe :: forall e. String -> Url -> String -> Eff e Unit
+
+foreign import getBaseUrl :: forall e. Eff e Url
+
 data MenuItem = MenuItem Url String
 getMenuItems (Node x) = x.children <#> \(Node y) -> MenuItem y.path y.title

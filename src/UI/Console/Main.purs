@@ -34,7 +34,7 @@ setupCliUi inputChannel = do
     , "<p>Application is in REPL interface mode.</p>"
 
     , "<p>To use the aplication please open browser console and follow prompts. "
-    , "Alternatively switch to <a href='?ui=html#about'>HTML</a> or "
+    , "Alternatively switch to <a href='?ui=html#!about'>HTML</a> or "
     , "<a href='app.js'>CLI/telnet</a> mode.</p>"
 
     , "<p>For CLI/telnet mode please run `app.js` with Node.js and "

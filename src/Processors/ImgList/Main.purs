@@ -65,7 +65,7 @@ go srcs apst@(AppState s) =
 errorMsg m = div ! className "error" $ text ("Error: " <> m)
 infoMsg m  = div ! className "info" $ text ("NB    : " <> m)
 
-currentPathToUrl (AppState s) = "#" <> (fromMaybe "" (s.menuPath A.!! 0))
+currentPathToUrl (AppState s) = "#!" <> (fromMaybe "" (s.menuPath A.!! 0))
 
 prevInRange a b n = if n - 1 < a then b - 1 else n - 1
 nextInRange a b n = if n + 1 > b - 1 then a else n + 1

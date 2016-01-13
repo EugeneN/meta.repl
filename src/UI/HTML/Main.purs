@@ -1,6 +1,6 @@
 module UI.HTML.Main (setupHtmlUi) where
 
-import Prelude hiding (div, map, sub)
+import Prelude hiding (div, map, sub, id)
 
 import Control.Monad.Eff.Console
 import Control.Monad.Eff (Eff())
@@ -10,10 +10,10 @@ import Signal.Channel (Chan())
 
 import Data.Foldable (for_)
 import Data.Array (length, (!!), uncons)
-import Data.List hiding (head, span, length, (!!), uncons, filter)
+import Data.List hiding (head, span, length, (!!), uncons, filter, drop)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (mempty)
-import Data.String (split, joinWith)
+import Data.String (split, joinWith, drop)
 
 import qualified DOM.Node.Types as DT
 
@@ -28,7 +28,7 @@ import Text.Markdown.SlamDown.Parser
 import Text.Markdown.SlamDown
 
 import Text.Smolder.HTML hiding (title)
-import Text.Smolder.HTML.Attributes (href, className, src, lang, charset, name, content, rel, title)
+import Text.Smolder.HTML.Attributes (id, href, className, src, lang, charset, name, content, rel, title)
 import Text.Smolder.Markup
 import Text.Smolder.Renderer.String (render)
 
@@ -47,10 +47,12 @@ import qualified UI.HTML.VDom as VDom
 
 page404 = toHtml <<< parseMd $ "> ## 404 Not found"
 initialVDom = vNode2vTree $ VDom.render $ div $ text "One moment please"
-defaultTitle = "Eugene Naumenko" -- read from appDNA
+defaultTitle = getTitle appDNA --"Eugene Naumenko" -- read from appDNA
 
 data UIState = UIState { rootNode    :: DT.Node
                        , title       :: String
+                       , pageUrl     :: Url
+                       , pageId      :: String
                        , cmd         :: Maybe UICmd
                        , oldVDom     :: VTree
                        , newVDom     :: VTree }
@@ -59,6 +61,8 @@ data UIState = UIState { rootNode    :: DT.Node
 uiLogic (RenderState appState) (UIState u) =
   UIState (u { oldVDom = u.newVDom
              , title   = calcTitle appState
+             , pageUrl = calcPageUrl appState
+             , pageId  = calcPageId appState
              , cmd     = Nothing
              , newVDom = newVDom })
   where
@@ -81,6 +85,8 @@ setupHtmlUi inputChannel = do
     let initialUIState = UIState { rootNode: rootNode
                                  , oldVDom: initialVDom
                                  , title: defaultTitle
+                                 , pageUrl: ""
+                                 , pageId: ""
                                  , cmd: Nothing
                                  , newVDom: initialVDom }
     let justRender (UIState u) = case u.cmd of
@@ -95,6 +101,7 @@ setupHtmlUi inputChannel = do
         cmdSig    = filter justCmd initialUIState ui
 
     runSignal (patchVDom <$> renderSig)
+    runSignal (resetDisqus <$> renderSig)
     runSignal (execCmd <$> ui)
 
     left <- keyPressed 37 -- TODO get rid of magic numbers
@@ -105,7 +112,7 @@ setupHtmlUi inputChannel = do
 
     hashChanged $ \old new -> do
       log $ "hash changed: " ++ old ++ " -> " ++ new
-      send inputChannel $ Navigate $ split "/" new
+      send inputChannel $ Navigate $ split "/" (drop 1 new)
       pure unit
 
     pure renderChan
@@ -115,6 +122,11 @@ execCmd (UIState u) = do
     Just (RouteTo url) -> setLocationUrl url
     _ -> pure unit
 
+resetDisqus :: UIState -> Eff _ Unit
+resetDisqus (UIState s) = do
+  baseUrl <- getBaseUrl
+  resetDisqusUnsafe s.pageId (baseUrl <> s.pageUrl) s.title
+  pure unit
 
 patchVDom :: UIState -> Eff _ Unit
 patchVDom (UIState s) = do
@@ -122,7 +134,6 @@ patchVDom (UIState s) = do
   newRootNode <- patch s.rootNode patches
 
   setTitle s.title
-
   pure unit
 
 renderMenu :: Array Url -> Maybe Node -> Array String -> Int -> Markup
@@ -150,7 +161,7 @@ renderMenu fullPath (Just node) baseUrl level = case uncons fullPath of
                 then a ! className "current-menu-item" ! href (makeUrl baseUrl' slug) $ text title
                 else a ! href (makeUrl baseUrl' slug) $ text title
 
-    makeUrl base_url slug = "#" <> (joinWith "/" (base_url <> [slug]))
+    makeUrl base_url slug = "#!" <> (joinWith "/" (base_url <> [slug]))
 
 renderHTML :: AppState -> Markup
 renderHTML appState@(AppState s) =
@@ -168,6 +179,22 @@ renderHTML appState@(AppState s) =
         --h2 $ text $ fromMaybe "-no title-" $ getTitle <$> getCurrentNode appState
         div ! className "text" $ do
           payloadHtml
+
+    div ! id "disqus_thread" ! className "hidden" $ mempty
+
+    script $ text (joinWith "\n" [
+          ""
+        -- , "var disqus_config = function () {"
+        -- , "this.page.url = document.location.href;" --'" <> ("#!blog/" <> art.id) <> "';"
+        -- , "this.page.identifier = document.location.hash;" --'" <> ("#!blog/" <> art.id) <> "';"
+        -- , "};"
+        , "(function() { "
+        , "var d = document, s = d.createElement('script');"
+        , "s.src = 'http://eugenen-github-io-html.disqus.com/embed.js';"
+        , "s.setAttribute('data-timestamp', +new Date());"
+        , "(d.head || d.body).appendChild(s);"
+        , "})();"
+      ])
 
         -- div ! className "section footer" $ do
           -- span $ text "© 2015"

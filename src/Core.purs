@@ -154,6 +154,11 @@ calcTitle :: AppState -> String
 calcTitle appState =
   joinWith " <*> " [(fromMaybe "Hi" $ getTitle <$> getCurrentNode appState ), (getTitle appDNA)]
 
+calcPageUrl :: AppState -> Url
+calcPageUrl (AppState s) = "#!" <> (joinWith "/" s.menuPath) -- add base url
+
+calcPageId :: AppState -> String
+calcPageId (AppState s) = "#!" <> (joinWith "/" s.menuPath)
 
 getTitle :: Node -> String
 getTitle (Node x) = x.title
