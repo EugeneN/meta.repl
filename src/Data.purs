@@ -15,6 +15,7 @@ initialState = AppState {
   , currentNode: Nothing
   , currentContent: Nothing
   , keyboardInput: Nothing
+  , commentsMode: Livefyre
 }
 
 appDNA = Node {

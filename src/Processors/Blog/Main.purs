@@ -160,6 +160,7 @@ renderFullArticle (Article art) = do
 
     div ! className "comments-block" $ do
       div ! id "disqus_thread" $ mempty
+      div ! id "livefyre-comments" $ mempty
 
 showDate :: Maybe Date -> String
 showDate (Just d) = (take 3 $ show $ month d) <> " " <> (showDay $ dayOfMonth d) <> ", " <> (showYear $ year d)

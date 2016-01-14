@@ -54,6 +54,7 @@ data UIState = UIState { rootNode    :: DT.Node
                        , pageUrl     :: Url
                        , pageId      :: String
                        , cmd         :: Maybe UICmd
+                       , commentsMode :: Comments
                        , oldVDom     :: VTree
                        , newVDom     :: VTree }
 
@@ -63,9 +64,11 @@ uiLogic (RenderState appState) (UIState u) =
              , title   = calcTitle appState
              , pageUrl = calcPageUrl appState
              , pageId  = calcPageId appState
+             , commentsMode = comments appState
              , cmd     = Nothing
              , newVDom = newVDom })
   where
+  comments (AppState s) = s.commentsMode
   newMarkup = renderHTML appState
   newVDom = vNode2vTree $ VDom.render newMarkup
 
@@ -87,6 +90,7 @@ setupHtmlUi inputChannel = do
                                  , title: defaultTitle
                                  , pageUrl: ""
                                  , pageId: ""
+                                 , commentsMode: NoComments
                                  , cmd: Nothing
                                  , newVDom: initialVDom }
     let justRender (UIState u) = case u.cmd of
@@ -101,7 +105,7 @@ setupHtmlUi inputChannel = do
         cmdSig    = filter justCmd initialUIState ui
 
     runSignal (patchVDom <$> renderSig)
-    runSignal (resetDisqus <$> renderSig)
+    runSignal (resetComments <$> renderSig)
     runSignal (execCmd <$> ui)
 
     left <- keyPressed 37 -- TODO get rid of magic numbers
@@ -122,10 +126,14 @@ execCmd (UIState u) = do
     Just (RouteTo url) -> setLocationUrl url
     _ -> pure unit
 
-resetDisqus :: UIState -> Eff _ Unit
-resetDisqus (UIState s) = do
+resetComments :: UIState -> Eff _ Unit
+resetComments (UIState s) = do
   baseUrl <- getBaseUrl
-  resetDisqusUnsafe s.pageId (baseUrl <> s.pageUrl) s.title
+
+  case s.commentsMode of
+    Disqus   -> resetDisqusUnsafe s.pageId (baseUrl <> s.pageUrl) s.title
+    Livefyre -> resetLivefyreUnsafe s.pageId (baseUrl <> s.pageUrl) s.title
+    _        -> pure unit
   pure unit
 
 patchVDom :: UIState -> Eff _ Unit
@@ -180,21 +188,16 @@ renderHTML appState@(AppState s) =
         div ! className "text" $ do
           payloadHtml
 
-    div ! id "disqus_thread" ! className "hidden" $ mempty
+    case s.commentsMode of
+      Disqus -> do
+        div ! id "disqus_thread" ! className "hidden" $ mempty
+        script $ text discusScript
 
-    script $ text (joinWith "\n" [
-          ""
-        -- , "var disqus_config = function () {"
-        -- , "this.page.url = document.location.href;" --'" <> ("#!blog/" <> art.id) <> "';"
-        -- , "this.page.identifier = document.location.hash;" --'" <> ("#!blog/" <> art.id) <> "';"
-        -- , "};"
-        , "(function() { "
-        , "var d = document, s = d.createElement('script');"
-        , "s.src = 'http://eugenen-github-io-html.disqus.com/embed.js';"
-        , "s.setAttribute('data-timestamp', +new Date());"
-        , "(d.head || d.body).appendChild(s);"
-        , "})();"
-      ])
+      Livefyre -> do
+        div ! id "livefyre-comments" ! className "hidden" $ mempty
+        script ! src "http://zor.livefyre.com/wjs/v3.0/javascripts/livefyre.js" $ mempty
+
+      _ -> mempty
 
         -- div ! className "section footer" $ do
           -- span $ text "© 2015"
@@ -204,3 +207,12 @@ renderHTML appState@(AppState s) =
   currentNode = getCurrentNode appState
   internalAST = fromMaybe page404 $ parseContent <$> s.currentContent
   payloadHtml = internalAST
+
+  discusScript = joinWith "\n" [
+        "(function() { "
+      , "var d = document, s = d.createElement('script');"
+      , "s.src = 'http://eugenen-github-io-html.disqus.com/embed.js';"
+      , "s.setAttribute('data-timestamp', +new Date());"
+      , "(d.head || d.body).appendChild(s);"
+      , "})();"
+    ]

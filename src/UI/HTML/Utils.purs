@@ -31,6 +31,8 @@ foreign import appendToBody :: forall e. DT.Node -> Eff e Unit
 
 foreign import resetDisqusUnsafe :: forall e. String -> Url -> String -> Eff e Unit
 
+foreign import resetLivefyreUnsafe :: forall e. String -> Url -> String -> Eff e Unit
+
 foreign import getBaseUrl :: forall e. Eff e Url
 
 data MenuItem = MenuItem Url String

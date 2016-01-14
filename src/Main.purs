@@ -29,6 +29,14 @@ parseUiParam = do
     Just "telnet"  -> Just TelnetUI
     _              -> Nothing
 
+parseCommentsParam = do
+  x <- getParameterByName' "comments"
+  pure $ case x of
+    Just "disqus"      -> Just Disqus
+    Just "livefyre"    -> Just Livefyre
+    Just "nocomments"  -> Just NoComments
+    _                  -> Nothing
+
 setupUI appSignal actionsChannel uiParam = do
   uiChannel <- case uiParam of
     HtmlUI    -> setupHtmlUi   actionsChannel
@@ -37,9 +45,11 @@ setupUI appSignal actionsChannel uiParam = do
 
   runSignal (appSignal ~> (appEffectsLogic uiChannel))
 
+setCommentsMode (AppState s) m = AppState s{commentsMode = m}
+
 main = do
   platform <- platformDetect'
-  log $ "platform " ++ show platform
+  log $ "Platform " ++ show platform
 
   uiParam <- case platform of
     Browser -> do
@@ -49,10 +59,21 @@ main = do
     Nodejs  -> pure $ Just TelnetUI
     _       -> pure Nothing
 
+  commentsParam <- case platform of
+    Browser -> do
+      y <- parseCommentsParam
+      pure $ fromMaybe Disqus y
+
+    _ -> pure NoComments
+
+  let initialState' = setCommentsMode initialState commentsParam
+
+  log $ "Setting comments mode " ++ show commentsParam
+
   actionsChannel <- channel Noop
 
   let actionsSignal = subscribe actionsChannel
-  let appSignal = foldp appLogic initialState actionsSignal
+  let appSignal = foldp appLogic initialState' actionsSignal
 
   case uiParam of
     Just x     -> setupUI appSignal actionsChannel x

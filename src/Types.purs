@@ -28,6 +28,12 @@ type InputDriver blActions inpEff = Channel blActions -> inpEff Unit
 
 type UI eff = UIInterface BLActions UIActions eff
 
+data Comments = Disqus | Livefyre | NoComments
+instance showComments :: Show Comments where
+  show Disqus     = "Disqus"
+  show Livefyre   = "Livefyre"
+  show NoComments = "NoComments"
+
 -- | Application core's types
 
 data AppState = AppState {
@@ -37,6 +43,7 @@ data AppState = AppState {
   , currentNode    :: Maybe Node
   , currentContent :: Maybe Internal
   , keyboardInput  :: Maybe KeyCode
+  , commentsMode   :: Comments
 }
 
 data Node = Node {
