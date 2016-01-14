@@ -21,6 +21,7 @@ import Network.HTTP.ResponseHeader
 import Network.HTTP.StatusCode
 
 import Data.Foreign
+import Data.Foreign.Index (Index)
 import Data.Foreign.Class
 import Data.Foreign.Keys (keys)
 import Data.Either
@@ -36,6 +37,9 @@ import Text.Smolder.Markup
 
 import Data.Foldable (for_)
 import Data.Monoid (mempty)
+
+import Data.Date
+import Data.Date.UTC
 
 import Types
 import Utils
@@ -86,19 +90,28 @@ instance isForeignFile :: IsForeign File where
                 , size:     s
                 , mimetype: m }
 
-data Article = Article { updatedAt   :: String
+
+data Article = Article { updatedAt   :: Maybe Date
+                       , createdAt   :: Maybe Date
                        , id          :: HexString
                        , description :: String
                        , files       :: Files }
 
+readDate :: forall k. (Index k) => k -> Foreign -> F (Maybe Date)
+readDate key obj = case readProp key obj of
+  Right y -> Right $ fromString y
+  _       -> Right Nothing
+
 instance isForeignArticle :: IsForeign Article where
   read raw = do
-    updatedAt <- readProp "updated_at" raw
-    id <- readProp "id" raw
-    desc <- readProp "description" raw
-    files <- readProp "files" raw
+    updatedAt <- readDate "updated_at" raw
+    createdAt <- readDate "created_at" raw
+    id        <- readProp "id" raw
+    desc      <- readProp "description" raw
+    files     <- readProp "files" raw
 
     pure $ Article { updatedAt: updatedAt
+                   , createdAt: createdAt
                    , id:        id
                    , description: desc
                    , files:     files }
@@ -110,7 +123,7 @@ blogProcessor (StringInput toc) apst@(AppState s) = do
       let gids = getBlogPostsIds toc
       blogPosts <- runPar $ traverse (Par <$> loadNparseGist) gids
 
-      pure $ formatBlogPosts blogPosts apst
+      pure $ renderIndex blogPosts apst
 
     [x] -> do
       -- basic security check
@@ -128,14 +141,14 @@ blogProcessor (StringInput toc) apst@(AppState s) = do
 errorMsg m = div ! className "error" $ text ("Error: " <> m)
 infoMsg m  = div ! className "info" $ text ("NB    : " <> m)
 
-formatBlogPosts :: Array (Either Error Article) -> AppState -> Maybe Internal
-formatBlogPosts ps apst = Just <<< HTML <<< renderListH $ ps
+renderIndex :: Array (Either Error Article) -> AppState -> Maybe Internal
+renderIndex ps apst = Just <<< HTML <<< renderListH $ ps
   where
 
   renderListH :: Array (Either Error Article) -> Markup
   renderListH ps = do
-    div ! className "articles-list" $ do
-      for_ ps (either (errorMsg <<< show) renderArticleH)
+    ul ! className "articles-list" $ do
+      for_ ps (either (errorMsg <<< show) renderArticleIndexTitle)
 
 renderFullArticle :: Article -> Markup
 renderFullArticle (Article art) = do
@@ -143,26 +156,27 @@ renderFullArticle (Article art) = do
     a ! href "#!blog" $ text "↑up to index"
   div ! className "article" $ do
     div ! className "article-file-body" $ do
-      toHtml <<< parseMd $ art.description
       renderFilesH art.files
 
     div ! className "comments-block" $ do
       div ! id "disqus_thread" $ mempty
 
+showDate :: Maybe Date -> String
+showDate (Just d) = (take 3 $ show $ month d) <> " " <> (showDay $ dayOfMonth d) <> ", " <> (showYear $ year d)
+  where
+    showDay (DayOfMonth n) = show n
+    showYear (Year n) = show n
 
-renderArticleH :: Article -> Markup
-renderArticleH (Article art) =
-  div ! className "article" $ do
-    -- div ! className "article-title" $ do
-      -- a ! href ("?ui=html#!blog/" <> art.id) $ text $ "Entry: " <> art.id
-    div ! className "article-file-body" $ do
-      span $ text "Entry "
-      a ! href ("#!blog/" <> art.id) $ text art.id
-      -- a ! href ("https://eugenen.github.io/C.MD/#!" <> art.id <> ";p") $ text art.id
-      span $ text ": "
+showDate _        = "Invalid date"
 
-      toHtml <<< parseMd $ art.description
-    -- renderFilesH art.files
+
+renderArticleIndexTitle :: Article -> Markup
+renderArticleIndexTitle (Article art) =
+  li ! className "articles-index" $ do
+    div ! className "article-index-title" $ do
+      span $ text $ showDate art.createdAt
+      span $ text "⇒"
+      a ! href ("#!blog/" <> art.id) $ toHtml <<< parseMd $ art.description
 
 renderFilesH :: Files -> Markup
 renderFilesH (Files fs) = for_ fs renderFileH

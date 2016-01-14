@@ -416,3 +416,17 @@ blockquote ul li {
 .hidden {
   display: none;
 }
+
+.articles-index a:hover {
+  text-decoration: underline;
+}
+
+.articles-index span {
+  display: inline-block;
+  margin-right: 10px;
+}
+.articles-index a {
+  display: inline-block;;
+  text-decoration: underline !important;
+  color: black;
+}

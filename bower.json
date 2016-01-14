@@ -21,5 +21,6 @@
     , "purescript-virtual-dom": "EugeneN/purescript-virtual-dom#a0461cdbe8b9b8cc003438c2d81fda5073b71264"
     , "purescript-node-net": "EugeneN/purescript-node-net#edac5a58ff807d9c87e9ce3faff4d9bccca42b24"
     , "purescript-node-readline": "*"
+    , "purescript-datetime": "*"
   }
 }
