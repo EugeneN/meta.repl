@@ -125,7 +125,7 @@ aboutDS = StringSource (unlines[
      , "Contacts: [e-mail](mailto:eugene.naumenko@gmail.com), [github](https://github.com/EugeneN), [twitter](https://twitter.com/8gene)."
      , ""
      , ""
-     , "*"
+     , "⊨"
      , ""
      , ""
      , "> ![Prom.ua](promua.png)"

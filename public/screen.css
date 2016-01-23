@@ -24,6 +24,14 @@ div, h1, h2, img, p, span {
 
 }
 
+a {
+  color: #4078c0;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
 
 body {
   padding: 0px;
@@ -215,7 +223,7 @@ blockquote {
 }
 .code {
   font-family: "Courier New", sans-serif;
-  background-color: #eee;
+  background-color: rgba(0,0,0,0.04);
   padding: 10px;
   font-size: 80%;
   overflow: auto;
@@ -223,7 +231,7 @@ blockquote {
 .inline-code {
   display: inline-block;
   font-family: "Courier New", sans-serif;
-  background-color: #eee;
+  background-color: rgba(0,0,0,0.04);
   padding-left: .5em;
   padding-right: .5em;
 }
@@ -429,4 +437,8 @@ blockquote ul li {
   display: inline-block;;
   text-decoration: underline !important;
   color: black;
+}
+
+.comments-block {
+  margin-top: 55px;
 }
