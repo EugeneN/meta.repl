@@ -10,6 +10,16 @@ exports.getBaseUrl = function() {
   return document.location.href.replace(/#.*$/, "");
 }
 
+exports.highlightCodeUnsafe = function() {
+  try {
+    Prism.highlightAll();
+    console.log("Prism success")
+  } catch(e) {
+    console.log("Prism error:", e)
+  }
+
+}
+
 exports.resetDisqusUnsafe = function(id) {
   return function(url) {
     return function(title) {

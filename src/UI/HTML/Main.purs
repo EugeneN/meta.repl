@@ -106,6 +106,7 @@ setupHtmlUi inputChannel = do
 
     runSignal (patchVDom <$> renderSig)
     runSignal (resetComments <$> renderSig)
+    runSignal (highlightCode <$> renderSig)
     runSignal (execCmd <$> ui)
 
     left <- keyPressed 37 -- TODO get rid of magic numbers
@@ -125,6 +126,12 @@ execCmd (UIState u) = do
   case u.cmd of
     Just (RouteTo url) -> setLocationUrl url
     _ -> pure unit
+
+highlightCode :: UIState -> Eff _ Unit
+highlightCode _ = do
+  highlightCodeUnsafe
+  pure unit
+
 
 resetComments :: UIState -> Eff _ Unit
 resetComments (UIState s) = do

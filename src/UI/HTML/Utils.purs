@@ -33,6 +33,8 @@ foreign import resetDisqusUnsafe :: forall e. String -> Url -> String -> Eff e U
 
 foreign import resetLivefyreUnsafe :: forall e. String -> Url -> String -> Eff e Unit
 
+foreign import highlightCodeUnsafe :: forall e. Eff e Unit
+
 foreign import getBaseUrl :: forall e. Eff e Url
 
 data MenuItem = MenuItem Url String

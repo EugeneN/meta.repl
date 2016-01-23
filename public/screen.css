@@ -221,6 +221,9 @@ blockquote {
   color: black;
   text-decoration: underline;
 }
+code {
+  display: block;
+}
 .code {
   font-family: "Courier New", sans-serif;
   background-color: rgba(0,0,0,0.04);

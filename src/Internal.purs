@@ -42,7 +42,7 @@ instance toHtmlBlock :: ToHtml Block where
   toHtml (Blockquote bs)             = blockquote $ for_ bs toHtml
   toHtml (Lst (Bullet _) bss)        = ul $ for_ bss (\bs -> li $ for_ bs toHtml)
   toHtml (Lst (Ordered _) bss)       = ol $ for_ bss (\bs -> li $ for_ bs toHtml)
-  toHtml (CodeBlock _ ss)            = div ! className "code" $ for_ ss (\s -> pre ! className "code-line" $ text s)
+  toHtml (CodeBlock _ ss)            = pre ! className "code" $ for_ ss (\s -> code ! className "code-line language-haskell" $ text s)
   toHtml (LinkReference l uri)       = a ! href uri $ text $ l
   toHtml Rule                        = hr
 
@@ -54,7 +54,7 @@ instance toHtmlInline :: ToHtml Inline where
   toHtml LineBreak                   = br
   toHtml (Emph is)                   = em     $ for_ is toHtml
   toHtml (Strong is)                 = strong $ for_ is toHtml
-  toHtml (Code e s)                  = div ! className "inline-code" $ text $ s
+  toHtml (Code e s)                  = code ! className "inline-code language-haskell" $ text $ s
   toHtml (Link is (InlineLink uri))           = a ! href uri $ for_ is toHtml
   toHtml (Link is (ReferenceLink Nothing))    = a ! href "#!" $ for_ is toHtml
   toHtml (Link is (ReferenceLink (Just uri))) = a ! href uri $ for_ is toHtml
