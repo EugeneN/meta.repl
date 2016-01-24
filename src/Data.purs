@@ -119,7 +119,7 @@ aboutDS = StringSource (unlines[
      , ""
      , "Software {engineer, architect} with 10 years of experience in networking, distributed and high load systems, web development, software design and project management."
      , ""
-     , "Worked on online education systems, spam protection systems, online GIS systems, accounting and trading software, rich web applications, IT/network infrastructure systems."
+     , "Worked on online education systems, spam protection systems, online GIS systems, accounting and trading software, rich web applications, IT/network infrastructure systems.&nbsp;"
      , "Created own small language for web development and a few open source utilities and applications."
      , ""
      , "Contacts: [e-mail](mailto:eugene.naumenko@gmail.com), [github](https://github.com/EugeneN), [twitter](https://twitter.com/8gene)."
@@ -149,24 +149,24 @@ photosDS = ArraySource [ "https://lh3.googleusercontent.com/eWwR1tPCh42kvp3g5cd2
                         ]
 
 helpDS = StringSource (unlines [
-     "This «web site» is a *concept application* aimed to explore ways to reach *The Holy Grail* of software engineering -"
-   , "*composability* and *reusability*. These ways look like following SOLID, GRASP, "
-   , "and reinventing «OOP in a large» using [purely functional language with powerful type system](http://www.purescript.org/), "
-   , "high level abstractions, immutable data, messaging, some Category Theory and engineering approach for the win."
+     "This «web site» is a *concept application* aimed to explore ways to reach *The Holy Grail* of software engineering&nbsp;&mdash;&nbsp;"
+   , "*composability* and *reusability*. Essential prerequisite for this is *state encapsulation*, which correlates with OOP principles.&nbsp;"
+   , "Only without mutability, imperativity, but using pure functional languages with powerful type system,&nbsp;"
+   , "high level abstractions, FRP, some Category Theory and engineering approach for the win.&nbsp;"
    , "Currently it is at a very early stage. Github link: [https://github.com/EugeneN/meta.repl](https://github.com/EugeneN/meta.repl) "
    , ""
    , ""
-   , "The application can be run either in browsers or under node.js - 100% *isomorphic* application :-)"
+   , "The application can be run either in browsers or under node.js - *100*% *isomorphic* application :-)"
    , ""
    , ""
-   , "To run it in a browser, just open [eugenen.github.io](http://eugenen.github.io/) and then follow instructions. "
+   , "To run it in a browser, just open [eugenen.github.io](http://eugenen.github.io/) and then follow instructions.&nbsp;"
    , "There are 2 distinct user interfaces for browsers: "
    , "- [conventional HTML-based](?ui=html#!about), rendered using virtual dom;"
-   , "- [REPL-based](?ui=console#!about) using Javascript console. After switching to this mode one has to open Javascript console and "
+   , "- [REPL-based](?ui=console#!about) using Javascript console. After switching to this mode one has to open Javascript console and &nbsp;"
    , "  use functions provided to interact with the application."
    , ""
    , ""
-   , "Another option is to run the application without a browser. Just save the very same [app.js](app.js) file, which is used "
+   , "Another option is to run the application without a browser. Just save the very same [app.js](app.js) file, which is used &nbsp;"
    , "in browsers, to your filesystem, then run it with `node.js` and connect using `telnet`:"
    , ""
    , "```bash"
@@ -200,10 +200,10 @@ talksDS = StringSource (unlines [
  ])
 
 g4DS = StringSource (unlines [
-     "G4 is a rich web application for managing geospatial data – GPS tracks, waypoints, geotagged items, custom maps etc. "
-   , "The application features complex geographical/geometric calculations, automatic categorization and clustering of data, "
-   , "real-time push based communications, external RESTful API, spatial search, uses advanced HTML5 "
-   , "features like drag-and-drop multi-file upload, sound effects, interactive svg charting etc."
+     "G4 is a rich web application for managing geospatial data – GPS tracks, waypoints, geotagged items, custom maps etc. &nbsp;"
+   , "The application features complex geographical/geometric calculations, automatic categorization and clustering of data, &nbsp;"
+   , "real-time push based communications, external RESTful API, spatial search, uses advanced HTML5 &nbsp;"
+   , "features like drag-and-drop multi-file upload, sound effects, interactive svg charting etc.&nbsp;"
    , ""
    , ""
    , "The application is currently offline, but you can see some screenshots here:"
@@ -224,7 +224,7 @@ metareplDS = StringSource (unlines [
    ])
 
 twicDS = StringSource (unlines [
-     "Experimental Twitter client written in Haskell and Purescript with clean UI and simple UX. "
+     "Experimental Twitter client written in Haskell and Purescript with clean UI and simple UX. &nbsp;"
    , "Written to explore component models for web applications and usage of immutable cloud database for eventual consistency."
    , ""
    , "[twic](https://github.com/EugeneN/twic)"
@@ -233,9 +233,9 @@ twicDS = StringSource (unlines [
    ])
 
 golDS = StringSource (unlines [
-     "“Game of Life” game written in Purescript as a research on"
-   , "decoupling and encapsulating state between user interface, application core and input effects in reactive web applications. "
-   , "Features a stateful core and few distinct interchangeable stateful user interfaces."
+     "“Game of Life” game written in Purescript as a research on &nbsp;"
+   , "decoupling and encapsulating state between user interface, application core and input effects in reactive web applications. &nbsp;"
+   , "Features a stateful core and few distinct interchangeable stateful user interfaces.&nbsp;"
    , ""
    , "[pureGoL](http://eugenen.github.io/pureGoL)"
    , "# ![gol](gol.png)"
