@@ -17,5 +17,6 @@
   },
   "dependencies": {
     "virtual-dom": "^2.0.1"
+    , "html-entities": "*"
   }
 }

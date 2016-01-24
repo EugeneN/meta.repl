@@ -48,7 +48,7 @@ instance toHtmlBlock :: ToHtml Block where
 
 instance toHtmlInline :: ToHtml Inline where
   toHtml (Str s)                     = text $ s
-  toHtml (Entity s)                  = text $ s
+  toHtml (Entity s)                  = htmlEntity $ s
   toHtml Space                       = text $ " "
   toHtml SoftBreak                   = text $ " " --"&shy;"
   toHtml LineBreak                   = br
