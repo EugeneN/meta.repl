@@ -42,6 +42,7 @@ instance toHtmlBlock :: ToHtml Block where
   toHtml (Blockquote bs)             = blockquote $ for_ bs toHtml
   toHtml (Lst (Bullet _) bss)        = ul $ for_ bss (\bs -> li $ for_ bs toHtml)
   toHtml (Lst (Ordered _) bss)       = ol $ for_ bss (\bs -> li $ for_ bs toHtml)
+  toHtml (CodeBlock (Fenced _ info) ss) = pre ! className "code" $ for_ ss (\s -> code ! className ("code-line language-" <> info) $ text s)
   toHtml (CodeBlock _ ss)            = pre ! className "code" $ for_ ss (\s -> code ! className "code-line language-haskell" $ text s)
   toHtml (LinkReference l uri)       = a ! href uri $ text $ l
   toHtml Rule                        = hr

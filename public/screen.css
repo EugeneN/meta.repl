@@ -242,6 +242,7 @@ code {
   font-family: "Courier New", sans-serif;
   margin: 0px;
   padding: 0px;
+  min-height: 1em;
 }
 
 ul li {
