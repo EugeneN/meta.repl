@@ -149,7 +149,7 @@ photosDS = ArraySource [ "https://lh3.googleusercontent.com/eWwR1tPCh42kvp3g5cd2
                         ]
 
 helpDS = StringSource (unlines [
-     "This «web site» is a *concept application* aimed to explore ways to reach *The Holy Grail* of software engineering&nbsp;&mdash;&nbsp;"
+     "This &laquo;web site&raquo; is a *concept application* aimed to explore ways to reach *The Holy Grail* of software engineering&nbsp;&mdash;&nbsp;"
    , "*composability* and *reusability*. Essential prerequisite for this is *state encapsulation*, which correlates with OOP principles.&nbsp;"
    , "Only without mutability, imperativity, but using pure functional languages with powerful type system,&nbsp;"
    , "high level abstractions, FRP, some Category Theory and engineering approach for the win.&nbsp;"
@@ -167,7 +167,7 @@ helpDS = StringSource (unlines [
    , ""
    , ""
    , "Another option is to run the application without a browser. Just save the very same [app.js](app.js) file, which is used &nbsp;"
-   , "in browsers, to your filesystem, then run it with `node.js` and connect using `telnet`:"
+   , "in browsers, to your filesystem, then run it with `nodejs` and connect using `telnet`:"
    , ""
    , "```bash"
    , "$ wget http://eugenen.github.io/app.js"
@@ -186,7 +186,16 @@ helpDS = StringSource (unlines [
    , "&nbsp;"
    , ""
    , ""
-   , "Here be dragons."
+   , "***"
+   , ""
+   , ""
+   , "All data on this site &copy; 2005-2016 Eugene Naumenko, unless stated otherwise."
+   , ""
+   , ""
+   , "***"
+   , ""
+   , ""
+   , "*Here be dragons*."
    ])
 
 talksDS = StringSource (unlines [
@@ -214,6 +223,22 @@ g4DS = StringSource (unlines [
    , "# ![Track charts](http://eugenen.github.io/g4/g4chartsnew.png)"
    , "# ![More charts](http://eugenen.github.io/g4/g4evolving.png)"
    , "# ![Tracks comparison](http://eugenen.github.io/g4/g4r.jpg)"
+
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/g4.png)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/g42kml1.png)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/g4sl.png)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/0.jpg)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/4.jpg)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/6.jpg)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/g4r 2.jpg)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/g4oxygen1.png)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/09.jpg)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/g4iconsng.png)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/g4tocluster.png)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/g4newicons.png)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/9.jpg)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/g4gt.jpg)"
+   , "# ![g4 screenshot](http://eugenen.github.io/g4/g4ad.jpg)"
  ])
 
 metareplDS = StringSource (unlines [
