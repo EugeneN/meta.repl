@@ -15,6 +15,7 @@ import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String (joinWith, drop, take)
 import Data.String.Regex hiding (source)
 import Data.Traversable
+import Data.Foldable (foldl)
 
 import Network.HTTP.Affjax
 import Network.HTTP.ResponseHeader
@@ -151,7 +152,22 @@ renderIndex ps apst = Just <<< HTML <<< renderListH $ ps
   renderListH :: Array (Either Error Article) -> Markup
   renderListH ps = do
     ul ! className "articles-list" $ do
-      for_ ps (either (errorMsg <<< show) renderArticleIndexTitle)
+      for_ (zipYears ps) (either renderArticleIndexYear renderArticleIndexTitle)
+
+
+  zipYears :: Array (Either Error Article) -> Array (Either String Article)
+  zipYears ps = foldl extractYear ([] :: Array (Either String Article)) ps
+
+  extractYear :: Array (Either String Article) -> Either Error Article -> Array (Either String Article)
+  extractYear b (Left err) = b <> [Left (show err)]
+  extractYear b (Right art@(Article a')) = case A.last b of
+    Nothing -> b <> [(Left (fromMaybe "Invalid date" ((showYear <<< year) <$> a'.createdAt)))] <> [Right art]
+    Just (Right (Article a'')) -> if (fromMaybe "x" $ showYear <<< year <$> a''.createdAt) == (fromMaybe "y" $ showYear <<< year <$> a'.createdAt)
+                                    then b <> [Right art]
+                                    else b <> [Left (fromMaybe "Invalid date" $ showYear <<< year <$> a'.createdAt)] <> [Right art]
+    Just (Left y) -> if y == (fromMaybe "y" $ showYear <<< year <$> a'.createdAt)
+                        then b <> [Right art]
+                        else b <> [Left (fromMaybe "Invalid date" $ showYear <<< year <$> a'.createdAt)] <> [Right art]
 
 renderFullArticle :: Article -> Markup
 renderFullArticle article@(Article art) = do
@@ -173,21 +189,45 @@ tweetUrl (Article art) =
                                      <> "&url=" <> (encodeURIUnsafe $  baseUrl <> "#!blog/" <> art.id)
                                      <> "&via=8gene"
 
-showDate :: Maybe Date -> String
-showDate (Just d) = (take 3 $ show $ month d) <> " " <> (showDay $ dayOfMonth d) <> ", " <> (showYear $ year d)
-  where
-    showDay (DayOfMonth n) = show n
-    showYear (Year n) = show n
+-- showDate :: Maybe Date -> String
+-- showDate (Just d) = (take 3 $ show $ month d) <> " " <> (showDay $ dayOfMonth d) <> ", " <> (showYear $ year d)
+--   where
+--     showDay (DayOfMonth n) = show n
+--     showYear (Year n) = show n
+--
+-- showDate _        = "Invalid date"
 
+showDate :: Maybe Date -> String
+showDate (Just d) = (showMonth $ month d) <> "/" <> (showDay $ dayOfMonth d) -- <> "/" <> (showYear $ year d)
 showDate _        = "Invalid date"
 
+showDay (DayOfMonth n) = show n
+showYear (Year n) = show n
+showMonth January   = "1"
+showMonth February  = "2"
+showMonth March     = "3"
+showMonth April     = "4"
+showMonth May       = "5"
+showMonth June      = "6"
+showMonth July      = "7"
+showMonth August    = "8"
+showMonth September = "9"
+showMonth October   = "10"
+showMonth November  = "11"
+showMonth December  = "12"
+
+
+renderArticleIndexYear :: String -> Markup
+renderArticleIndexYear y =
+  li ! className "articles-index" $ do
+    div ! className "article-index-year" $ text y
 
 renderArticleIndexTitle :: Article -> Markup
 renderArticleIndexTitle (Article art) =
   li ! className "articles-index" $ do
     div ! className "article-index-title" $ do
-      span $ text $ showDate art.createdAt
-      span $ text "⇒"
+      span ! className "article-index-title-date" $ text $ showDate art.createdAt
+      -- span $ text "⇒"
       a ! href ("#!blog/" <> art.id) $ toHtml <<< parseMd $ art.description
 
 renderFilesH :: Files -> Markup

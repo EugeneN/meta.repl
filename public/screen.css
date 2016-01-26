@@ -249,6 +249,11 @@ ul li {
   list-style-type: circle;
 }
 
+ul.articles-list li {
+  list-style-type: none;
+}
+
+
 h6 img {
   width: 16px;
   margin: 2px;
@@ -429,8 +434,15 @@ blockquote ul li {
   display: none;
 }
 
+.articles-index p {
+  margin: 0;
+  padding: 0;
+}
+
+
 .articles-index a:hover {
-  text-decoration: underline;
+  /*text-decoration: underline;*/
+  border-bottom: 3px solid grey;
 }
 
 .articles-index span {
@@ -441,8 +453,22 @@ blockquote ul li {
   display: inline-block;;
   text-decoration: underline !important;
   color: black;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  border-bottom: 3px solid white;
 }
 
 .comments-block {
   margin-top: 55px;
+}
+
+.article-index-year {
+  font-size: 150%;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.article-index-title-date {
+  font-size: 80%;
+  color: grey;
 }
