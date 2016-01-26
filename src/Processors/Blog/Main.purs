@@ -155,8 +155,8 @@ renderIndex ps apst = Just <<< HTML <<< renderListH $ ps
 
 renderFullArticle :: Article -> Markup
 renderFullArticle article@(Article art) = do
-  div ! className "sub-nav" $ do
-    a ! href "#!blog" $ text "↑up to index"
+  -- div ! className "sub-nav" $ do
+    -- a ! href "#!blog" $ text "↑up to index"
   div ! className "article" $ do
     div ! className "article-file-body" $ do
       renderFilesH art.files
