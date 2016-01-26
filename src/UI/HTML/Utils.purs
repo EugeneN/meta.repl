@@ -35,6 +35,8 @@ foreign import resetLivefyreUnsafe :: forall e. String -> Url -> String -> Eff e
 
 foreign import highlightCodeUnsafe :: forall e. Eff e Unit
 
+foreign import loadTwitterUnsafe :: forall e. Eff e Unit
+
 foreign import getBaseUrl :: forall e. Eff e Url
 
 data MenuItem = MenuItem Url String

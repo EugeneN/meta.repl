@@ -45,6 +45,9 @@ import Types
 import Utils
 import Internal
 
+
+baseUrl = "http://eugenen.github.io/?ui=html"
+
 data Error = Error String
 
 instance showError :: Show Error where
@@ -151,16 +154,24 @@ renderIndex ps apst = Just <<< HTML <<< renderListH $ ps
       for_ ps (either (errorMsg <<< show) renderArticleIndexTitle)
 
 renderFullArticle :: Article -> Markup
-renderFullArticle (Article art) = do
+renderFullArticle article@(Article art) = do
   div ! className "sub-nav" $ do
     a ! href "#!blog" $ text "↑up to index"
   div ! className "article" $ do
     div ! className "article-file-body" $ do
       renderFilesH art.files
 
+    div ! className "social-block" $ do
+      a ! className "twitter-share-button" ! href (tweetUrl article) $ text "Tweet"
+
     div ! className "comments-block" $ do
       div ! id "disqus_thread" $ mempty
       div ! id "livefyre-comments" $ mempty
+
+tweetUrl (Article art) =
+  "https://twitter.com/intent/tweet" <> "?text=" <> (encodeURIUnsafe art.description)
+                                     <> "&url=" <> (encodeURIUnsafe $  baseUrl <> "#!blog/" <> art.id)
+                                     <> "&via=8gene"
 
 showDate :: Maybe Date -> String
 showDate (Just d) = (take 3 $ show $ month d) <> " " <> (showDay $ dayOfMonth d) <> ", " <> (showYear $ year d)

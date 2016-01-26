@@ -13,8 +13,6 @@ exports.platformDetect = function () {
   }
 }
 
-
-
 exports.getParameterByName = function (name) {
     return function() {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -31,4 +29,9 @@ exports.parseGistResponse = function(gist) {
   console.log(jsn);
   var filenames = Object.keys(jsn.files);
   return jsn.files[filenames[0]].content;
+}
+
+exports.encodeURIUnsafe = function(orig) {
+  var x = encodeURIComponent(orig);
+  return x;
 }

@@ -107,6 +107,7 @@ setupHtmlUi inputChannel = do
     runSignal (patchVDom <$> renderSig)
     runSignal (resetComments <$> renderSig)
     runSignal (highlightCode <$> renderSig)
+    runSignal (loadTwitter <$> renderSig)
     runSignal (execCmd <$> ui)
 
     left <- keyPressed 37 -- TODO get rid of magic numbers
@@ -132,6 +133,10 @@ highlightCode _ = do
   highlightCodeUnsafe
   pure unit
 
+loadTwitter :: UIState -> Eff _ Unit
+loadTwitter _ = do
+  loadTwitterUnsafe
+  pure unit
 
 resetComments :: UIState -> Eff _ Unit
 resetComments (UIState s) = do
@@ -195,6 +200,8 @@ renderHTML appState@(AppState s) =
         div ! className "text" $ do
           payloadHtml
 
+    script $ text twitterScript
+
     case s.commentsMode of
       Disqus -> do
         div ! id "disqus_thread" ! className "hidden" $ mempty
@@ -222,4 +229,23 @@ renderHTML appState@(AppState s) =
       , "s.setAttribute('data-timestamp', +new Date());"
       , "(d.head || d.body).appendChild(s);"
       , "})();"
+    ]
+
+  twitterScript = joinWith "\n" [
+      "window.twttr = (function(d, s, id) {"
+    , "var js, fjs = d.getElementsByTagName(s)[0],"
+    , "  t = window.twttr || {};"
+    , "if (d.getElementById(id)) return t;"
+    , "js = d.createElement(s);"
+    , "js.id = id;"
+    , "js.src = 'https://platform.twitter.com/widgets.js';"
+    , "fjs.parentNode.insertBefore(js, fjs);"
+    , ""
+    , "t._e = [];"
+    , "t.ready = function(f) {"
+    , "  t._e.push(f);"
+    , "};"
+    , ""
+    , "return t;"
+    , "}(document, 'script', 'twitter-wjs'));"
     ]

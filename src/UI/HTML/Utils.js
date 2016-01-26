@@ -11,14 +11,15 @@ exports.getBaseUrl = function() {
 }
 
 exports.highlightCodeUnsafe = function() {
-  try {
-    Prism.highlightAll();
-    console.log("Prism success")
-  } catch(e) {
-    console.log("Prism error:", e)
-  }
-
+  try { Prism.highlightAll(); console.log("Prism success") }
+  catch(e) { console.log("Prism error:", e) }
 }
+
+exports.loadTwitterUnsafe = function() {
+  try { twttr.widgets.load(); console.log("Twitter load success") }
+  catch(e) { console.log("Twitter load error:", e) }
+}
+
 
 exports.resetDisqusUnsafe = function(id) {
   return function(url) {

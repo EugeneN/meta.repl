@@ -29,6 +29,8 @@ foreign import platformDetect :: forall e. Eff e String
 
 foreign import parseGistResponse :: String -> String
 
+foreign import encodeURIUnsafe :: String -> String
+
 
 platformDetect' :: Eff _ Platform
 platformDetect' = do
